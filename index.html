@@ -106,6 +106,36 @@
             font-weight: bold;
         }
 
+        .social-links a {
+            position: relative;
+            overflow: visible;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: max-content;
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: center;
+            padding: 5px 8px;
+            border-radius: 4px;
+            position: absolute;
+            z-index: 10;
+            bottom: 110%;
+            /* position above icon */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            transition: opacity 0.3s;
+        }
+
+        .social-links a:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
         footer {
             text-align: center;
             padding: 40px 0;
@@ -145,16 +175,20 @@
         <h1>Akash G Krishnan</h1>
         <p id="experience-text">Senior Flutter Developer | <span id="experience-years"></span> Years of Experience</p>
         <div class="social-links">
-            <a href="mailto:krishnanag1996@gmail.com"><i class="fas fa-envelope"></i></a>
-            <a href="https://www.linkedin.com/in/akashgkrishnan"><i class="fab fa-linkedin"></i></a>
-            <a href="https://github.com/akashgk"><i class="fab fa-github"></i></a>
-            <a href="https://medium.com/@krishnanag1996"><i class="fab fa-medium"></i></a>
-            <a href="./AKASH_2025_FEB.pdf" target="_blank"><i class="fas fa-eye"></i></a>
-            <a href="https://pub.dev/publishers/akashgk.com/packages"><i class="fa-solid fa-cube"></i></a>
+            <a href="mailto:krishnanag1996@gmail.com"><i class="fas fa-envelope"></i><span
+                    class="tooltip-text">Email</span></a>
+            <a href="https://www.linkedin.com/in/akashgkrishnan"><i class="fab fa-linkedin"></i><span
+                    class="tooltip-text">LinkedIn</span></a>
+            <a href="https://github.com/akashgk"><i class="fab fa-github"></i><span
+                    class="tooltip-text">GitHub</span></a>
+            <a href="https://medium.com/@krishnanag1996"><i class="fab fa-medium"></i><span
+                    class="tooltip-text">Medium</span></a>
+            <a href="./AKASH_2025_FEB.pdf" target="_blank"><i class="fas fa-eye"></i><span
+                    class="tooltip-text">Resume</span></a>
+            <a href="https://pub.dev/publishers/akashgk.com/packages"><i class="fa-solid fa-cube"></i><span
+                    class="tooltip-text">Pub Packages</span></a>
             <a href="https://stackoverflow.com/users/10167101/akash-g-krishnan"><i
-                    class="fa-brands fa-stack-overflow"></i></a>
-
-
+                    class="fa-brands fa-stack-overflow"></i><span class="tooltip-text">Stack Overflow</span></a>
         </div>
     </header>
 
