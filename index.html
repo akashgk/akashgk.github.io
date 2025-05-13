@@ -174,7 +174,14 @@
 
     gtag('config', 'G-SKBCVDV7G0');
 </script>
-
+<script>
+  function trackClick(label) {
+    gtag('event', 'click', {
+      event_category: 'Link Click',
+      event_label: label
+    });
+  }
+</script>
 <body>
     <header class="hero">
         <a href="./AKASH_2025_FEB.pdf" target="_blank">
@@ -185,23 +192,30 @@
         <p id="experience-text">Senior Flutter Developer | <span id="experience-years"></span> Years of Experience</p>
         <p id="experience-text">Location: Qatar 🇶🇦 | <span id="experience-years"></span>Nationality: Indian 🇮🇳</p>
         <div class="social-links">
-            <a href="mailto:krishnanag1996@gmail.com"><i class="fas fa-envelope"></i><span
-                    class="tooltip-text">Email</span></a>
-            <a href="https://wa.me/+918130233807"><i class="fa-solid fab fa-whatsapp"></i><span
-                    class="tooltip-text">WhatsApp</span></a>
-
-            <a href="https://www.linkedin.com/in/akashgkrishnan"><i class="fab fa-linkedin"></i><span
-                    class="tooltip-text">LinkedIn</span></a>
-            <a href="https://github.com/akashgk"><i class="fab fa-github"></i><span
-                    class="tooltip-text">GitHub</span></a>
-            <a href="https://medium.com/@krishnanag1996"><i class="fab fa-medium"></i><span
-                    class="tooltip-text">Medium</span></a>
-            <a href="./AKASH_2025_FEB.pdf" target="_blank"><i class="fas fa-eye"></i><span
-                    class="tooltip-text">Resume</span></a>
-            <a href="https://pub.dev/publishers/akashgk.com/packages"><i class="fa-solid fa-cube"></i><span
-                    class="tooltip-text">Pub Packages</span></a>
-            <a href="https://stackoverflow.com/users/10167101/akash-g-krishnan"><i
-                    class="fa-brands fa-stack-overflow"></i><span class="tooltip-text">Stack Overflow</span></a>
+<a href="mailto:krishnanag1996@gmail.com" onclick="trackClick('Email')">
+  <i class="fas fa-envelope"></i><span class="tooltip-text">Email</span>
+</a>
+<a href="https://wa.me/+918130233807" onclick="trackClick('WhatsApp')">
+  <i class="fa-solid fab fa-whatsapp"></i><span class="tooltip-text">WhatsApp</span>
+</a>
+<a href="https://www.linkedin.com/in/akashgkrishnan" onclick="trackClick('LinkedIn')">
+  <i class="fab fa-linkedin"></i><span class="tooltip-text">LinkedIn</span>
+</a>
+<a href="https://github.com/akashgk" onclick="trackClick('GitHub')">
+  <i class="fab fa-github"></i><span class="tooltip-text">GitHub</span>
+</a>
+<a href="https://medium.com/@krishnanag1996" onclick="trackClick('Medium')">
+  <i class="fab fa-medium"></i><span class="tooltip-text">Medium</span>
+</a>
+<a href="./AKASH_2025_FEB.pdf" target="_blank" onclick="trackClick('Resume')">
+  <i class="fas fa-eye"></i><span class="tooltip-text">Resume</span>
+</a>
+<a href="https://pub.dev/publishers/akashgk.com/packages" onclick="trackClick('Pub.dev')">
+  <i class="fa-solid fa-cube"></i><span class="tooltip-text">Pub Packages</span>
+</a>
+<a href="https://stackoverflow.com/users/10167101/akash-g-krishnan" onclick="trackClick('Stack Overflow')">
+  <i class="fa-brands fa-stack-overflow"></i><span class="tooltip-text">Stack Overflow</span>
+</a>
         </div>
     </header>
 
