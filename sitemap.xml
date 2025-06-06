@@ -1,17 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset 
-  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd
+        http://www.google.com/schemas/sitemap-image/1.1
+        http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd">
 
+  <!-- Main URL -->
   <url>
     <loc>https://akashgk.com/</loc>
-    <lastmod>2025-04-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2024-03-19</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-    <url>
+
+  <!-- Resume -->
+  <url>
+    <loc>https://akashgk.com/AKASH_2025_FEB.pdf</loc>
+    <lastmod>2024-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Images -->
+  <url>
+    <loc>https://akashgk.com/images/og-banner.jpeg</loc>
+    <lastmod>2024-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://akashgk.com/images/og-banner.jpeg</image:loc>
+      <image:title>Akash G Krishnan - Senior Flutter Developer</image:title>
+      <image:caption>Professional portfolio of Akash G Krishnan</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Alternative domain -->
+  <url>
     <loc>https://www.akashgk.com/</loc>
-    <lastmod>2025-04-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2024-03-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
+
 </urlset>

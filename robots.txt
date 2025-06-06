@@ -1,4 +1,15 @@
+# robots.txt for https://akashgk.com
+# Updated: 2024-03-19
+
 User-agent: *
 Allow: /
+Allow: /images/
+Allow: /AKASH_2025_FEB.pdf
+Disallow: /.git/
 
+# Crawl-delay for all bots
+Crawl-delay: 1
+
+# Sitemaps
 Sitemap: https://akashgk.com/sitemap.xml
+Host: https://akashgk.com

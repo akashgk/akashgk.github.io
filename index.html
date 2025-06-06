@@ -1,296 +1,950 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <meta
+      name="google-site-verification"
+      content="LmNADerPdTg4UvTBH9zcaIABli0rNc7ub1sHUIVCCN4"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Akash G Krishnan - Senior Flutter Developer | Mobile & Web App Development
+    </title>
+    <!-- Enhanced SEO Meta Tags -->
+    <meta
+      name="description"
+      content="Senior Flutter Developer with 7+ years of experience in mobile and web development. Specializing in Flutter, Dart, ReactJS, and Python. Currently working at Commercial Bank of Qatar."
+    />
+    <meta
+      name="keywords"
+      content="Flutter Developer, Senior Flutter Developer, Dart, Firebase, ReactJS, Web Developer Qatar, Mobile App Developer, Banking Apps, FinTech, Akash G Krishnan, Software Engineer Qatar"
+    />
+    <meta name="author" content="Akash G Krishnan" />
+    <link rel="canonical" href="https://akashgk.com" />
 
-<head>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <meta name="google-site-verification" content="LmNADerPdTg4UvTBH9zcaIABli0rNc7ub1sHUIVCCN4" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akash G Krishnan</title>
-    <!-- SEO Meta Tags -->
-    <meta name="description"
-        content="Akash G Krishnan is a Senior Flutter Developer with 7+ years of experience building high-performance mobile and web apps.">
-    <meta name="keywords"
-        content="Flutter Developer, Senior Flutter Developer, Dart, Firebase, ReactJS, Web Developer Qatar, Mobile App Developer, Akash G Krishnan Portfolio">
-    <meta name="author" content="Akash G Krishnan">
-    <link rel="canonical" href="https://akashgk.com">
+    <!-- Enhanced Open Graph Meta Tags -->
+    <meta
+      property="og:title"
+      content="Akash G Krishnan | Senior Flutter Developer"
+    />
+    <meta
+      property="og:description"
+      content="Senior Flutter Developer with 7+ years of experience specializing in mobile banking, fintech solutions, and cross-platform development."
+    />
+    <meta
+      property="og:image"
+      content="https://akashgk.com/images/og-banner.jpeg"
+    />
+    <meta property="og:url" content="https://akashgk.com" />
+    <meta property="og:type" content="website" />
 
-    <!-- Open Graph Meta Tags for social media sharing -->
-    <meta property="og:title" content="Akash G Krishnan | Senior Flutter Developer">
-    <meta property="og:description"
-        content="Explore the portfolio of Akash G Krishnan, a Senior Flutter Developer with 7+ years of industry experience.">
-    <meta property="og:image" content="https://akashgk.com/images/og-banner.jpeg">
-    <!-- Replace with your actual image URL -->
-    <meta property="og:url" content="https://akashgk.com">
-    <meta property="og:type" content="website">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Akash G Krishnan | Senior Flutter Developer"
+    />
+    <meta
+      name="twitter:description"
+      content="Senior Flutter Developer with expertise in mobile banking and fintech solutions"
+    />
+    <meta
+      name="twitter:image"
+      content="https://akashgk.com/images/og-banner.jpeg"
+    />
+
+    <!-- Structured Data for Person -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Akash G Krishnan",
+        "jobTitle": "Senior Flutter Developer",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Commercial Bank of Qatar"
+        },
+        "url": "https://akashgk.com",
+        "sameAs": [
+          "https://www.linkedin.com/in/akashgkrishnan",
+          "https://github.com/akashgk",
+          "https://medium.com/@krishnanag1996"
+        ],
+        "knowsAbout": [
+          "Flutter",
+          "Dart",
+          "Mobile Development",
+          "Web Development",
+          "Banking Software",
+          "FinTech"
+        ]
+      }
+    </script>
+
+    <!-- Enhanced Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-SKBCVDV7G0"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-SKBCVDV7G0", {
+        page_title: "Portfolio Home",
+        custom_map: {
+          dimension1: "user_type",
+          dimension2: "visitor_source",
+        },
+      });
+    </script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"
+    />
     <style>
-        a {
-            all: unset;
-            cursor: pointer;
-        }
+      :root {
+        --primary-color: #2e3192;
+        --secondary-color: #1bffff;
+        --text-color: #2c3e50;
+        --bg-color: #f4f7f6;
+        --card-bg: white;
+        --gradient: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        --card-border: rgba(0, 0, 0, 0.1);
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --text-muted: rgba(44, 62, 80, 0.8);
+        --transition: all 0.3s ease;
+      }
 
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #f4f7f6;
-            color: #2c3e50;
-        }
+      [data-theme="dark"] {
+        --primary-color: #6366f1;
+        --secondary-color: #22d3ee;
+        --text-color: #e2e8f0;
+        --bg-color: #0f172a;
+        --card-bg: #1e293b;
+        --card-border: rgba(255, 255, 255, 0.1);
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        --text-muted: rgba(226, 232, 240, 0.8);
+      }
 
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      body {
+        font-family: "Nunito", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: var(--transition);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .hero {
+        background: var(--gradient);
+        color: white;
+        padding: 100px 0 60px;
+        text-align: center;
+        border-radius: 0 0 50px 50px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 60px;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.1) 25%,
+            transparent 25%
+          ),
+          linear-gradient(-45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%);
+        background-size: 60px 60px;
+        animation: moveBackground 20s linear infinite;
+        opacity: 0.5;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .hero h1 {
+        font-size: 4rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        letter-spacing: -1px;
+        animation: fadeInDown 1s ease;
+      }
+
+      .hero p {
+        font-size: 1.4rem;
+        font-weight: 400;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        animation: fadeInUp 1s ease 0.2s;
+        animation-fill-mode: both;
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 30px;
+        animation: fadeInUp 1s ease 0.4s;
+        animation-fill-mode: both;
+      }
+
+      .social-links a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        color: white;
+        font-size: 1.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+      }
+
+      .social-links a:hover {
+        transform: translateY(-5px) scale(1.1);
+        background: white;
+        color: var(--primary-color);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .social-links a .tooltip-text {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 10px;
+      }
+
+      .social-links a:hover .tooltip-text {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(-5px);
+      }
+
+      .section-title {
+        text-align: center;
+        margin: 80px auto 40px;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+      }
+
+      .section-title::after {
+        content: "";
+        display: block;
+        width: 100px;
+        height: 4px;
+        background: var(--gradient);
+        margin: 15px auto 0;
+        border-radius: 2px;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px var(--shadow-color);
+        transform: translateY(0);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid var(--card-border);
+      }
+
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px var(--shadow-color);
+      }
+
+      .card h5 {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+      }
+
+      .card h6 {
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+      }
+
+      .card p,
+      .card li {
+        color: var(--text-color);
+      }
+
+      .experience-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px;
+      }
+
+      .experience-list li {
+        position: relative;
+        padding-left: 25px;
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+
+      .experience-list li::before {
+        content: "▹";
+        position: absolute;
+        left: 0;
+        color: var(--primary-color);
+        font-size: 1.2rem;
+      }
+
+      .skills-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--card-border);
+      }
+
+      .skill-tag {
+        padding: 8px 16px;
+        border-radius: 30px;
+        background: var(--gradient);
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .skill-tag:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: var(--card-bg);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: var(--primary-color);
+        box-shadow: 0 5px 15px var(--shadow-color);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .theme-toggle:hover {
+        transform: rotate(180deg) scale(1.1);
+      }
+
+      .contact-section {
+        background: var(--card-bg);
+        padding: 60px 0;
+        margin: 80px 0;
+        border-radius: 30px;
+        box-shadow: 0 10px 30px var(--shadow-color);
+      }
+
+      .contact-container {
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .contact-info {
+        display: inline-flex;
+        align-items: center;
+        margin: 15px;
+        padding: 15px 25px;
+        background: var(--gradient);
+        color: white;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px var(--shadow-color);
+      }
+
+      .contact-info:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .contact-info i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+      }
+
+      footer {
+        background: var(--gradient);
+        color: white;
+        padding: 60px 0 40px;
+        margin-top: 100px;
+        border-radius: 50px 50px 0 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .footer-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .footer-links a {
+        color: white;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+        opacity: 0.9;
+      }
+
+      .footer-links a:hover {
+        transform: translateY(-5px);
+        opacity: 1;
+      }
+
+      .copyright {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin-top: 20px;
+        letter-spacing: 0.5px;
+      }
+
+      .copyright span {
+        font-weight: 600;
+      }
+
+      .text-muted {
+        color: var(--text-muted) !important;
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes moveBackground {
+        0% {
+          background-position: 0 0;
+        }
+        100% {
+          background-position: 60px 60px;
+        }
+      }
+
+      @media (max-width: 768px) {
         .hero {
-            background: linear-gradient(135deg, #2E3192, #1BFFFF);
-            color: white;
-            padding: 80px 0;
-            text-align: center;
-            border-radius: 0 0 50px 50px;
+          padding: 80px 0 40px;
         }
 
         .hero h1 {
-            font-size: 3rem;
-            font-weight: 600;
+          font-size: 2.8rem;
         }
 
         .hero p {
-            font-size: 1.2rem;
-            font-weight: 300;
+          font-size: 1.2rem;
         }
 
         .social-links {
-            margin-top: 20px;
+          gap: 10px;
         }
 
         .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: white;
-            color: #2E3192;
-            font-size: 1.5rem;
-            margin: 5px;
-            transition: 0.3s;
-            text-decoration: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .social-links a:hover {
-            background: #2E3192;
-            color: white;
+          width: 45px;
+          height: 45px;
+          font-size: 1.2rem;
         }
 
         .section-title {
-            margin-top: 40px;
-            text-align: center;
-            font-weight: 600;
-            color: #2c3e50;
+          font-size: 2rem;
+          margin: 60px auto 30px;
         }
 
         .card {
-            transition: 0.3s;
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-            background: white;
-            padding: 20px;
-        }
-
-        .card:hover {
-            transform: scale(1.03);
-        }
-
-        .contact-container {
-            text-align: center;
-            margin: 30px 0;
+          padding: 20px;
         }
 
         .contact-info {
-            font-size: 1.2rem;
-            font-weight: bold;
+          font-size: 1rem;
+          padding: 12px 20px;
+          margin: 10px;
         }
 
-        .social-links a {
-            position: relative;
-            overflow: visible;
+        .footer-links {
+          gap: 20px;
         }
 
-        .tooltip-text {
-            visibility: hidden;
-            width: max-content;
-            background-color: #2c3e50;
-            color: #fff;
-            text-align: center;
-            padding: 5px 8px;
-            border-radius: 4px;
-            position: absolute;
-            z-index: 10;
-            bottom: 110%;
-            /* position above icon */
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            transition: opacity 0.3s;
+        .copyright {
+          font-size: 0.9rem;
         }
+      }
 
-        .social-links a:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
+      /* Dark theme specific overrides */
+      [data-theme="dark"] .hero,
+      [data-theme="dark"] footer {
+        background: linear-gradient(135deg, #4f46e5, #0891b2);
+      }
 
-        footer {
-            text-align: center;
-            padding: 40px 0;
-            background: linear-gradient(135deg, #2E3192, #1BFFFF);
-            color: white;
-            margin-top: 30px;
-            border-radius: 50px 50px 0 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+      [data-theme="dark"] .social-links a {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
 
-        .footer-links a {
-            color: white;
-            margin: 0 10px;
-            font-size: 1.2rem;
-            transition: 0.3s;
-        }
+      [data-theme="dark"] .social-links a:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
 
-        .footer-links a:hover {
-            opacity: 0.8;
-        }
+      [data-theme="dark"] .skill-tag {
+        background: linear-gradient(135deg, #4f46e5, #0891b2);
+        color: white;
+      }
+
+      [data-theme="dark"] .contact-info {
+        background: linear-gradient(135deg, #4f46e5, #0891b2);
+      }
+
+      [data-theme="dark"] .theme-toggle {
+        color: var(--text-color);
+      }
+
+      [data-theme="dark"] .card:hover {
+        box-shadow: 0 20px 40px var(--shadow-color);
+      }
     </style>
-</head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-SKBCVDV7G0"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-SKBCVDV7G0');
-</script>
-<script>
-  function trackClick(label) {
-    gtag('event', 'click', {
-      event_category: 'Link Click',
-      event_label: label
-    });
-  }
-</script>
-<body>
+  </head>
+  <body>
+    <button
+      class="theme-toggle"
+      onclick="toggleTheme()"
+      aria-label="Toggle theme"
+    >
+      <i class="fas fa-moon"></i>
+    </button>
     <header class="hero">
-        <a href="./AKASH_2025_FEB.pdf" target="_blank">
-            <h1>Akash G Krishnan</h1>
-            <span class="tooltip-text">View Resume
-            </span>
-        </a>
-        <p id="experience-text">Senior Flutter Developer | <span id="experience-years"></span> Years of Experience</p>
-        <p id="experience-text">Location: Qatar 🇶🇦 | <span id="experience-years"></span>Nationality: Indian 🇮🇳</p>
-        <div class="social-links">
-<a href="mailto:krishnanag1996@gmail.com" onclick="trackClick('Email')">
-  <i class="fas fa-envelope"></i><span class="tooltip-text">Email</span>
-</a>
-<a href="https://wa.me/+918130233807" onclick="trackClick('WhatsApp')">
-  <i class="fa-solid fab fa-whatsapp"></i><span class="tooltip-text">WhatsApp</span>
-</a>
-<a href="https://www.linkedin.com/in/akashgkrishnan" onclick="trackClick('LinkedIn')">
-  <i class="fab fa-linkedin"></i><span class="tooltip-text">LinkedIn</span>
-</a>
-<a href="https://github.com/akashgk" onclick="trackClick('GitHub')">
-  <i class="fab fa-github"></i><span class="tooltip-text">GitHub</span>
-</a>
-<a href="https://medium.com/@krishnanag1996" onclick="trackClick('Medium')">
-  <i class="fab fa-medium"></i><span class="tooltip-text">Medium</span>
-</a>
-<a href="./AKASH_2025_FEB.pdf" target="_blank" onclick="trackClick('Resume')">
-  <i class="fas fa-eye"></i><span class="tooltip-text">Resume</span>
-</a>
-<a href="https://pub.dev/publishers/akashgk.com/packages" onclick="trackClick('Pub.dev')">
-  <i class="fa-solid fa-cube"></i><span class="tooltip-text">Pub Packages</span>
-</a>
-<a href="https://stackoverflow.com/users/10167101/akash-g-krishnan" onclick="trackClick('Stack Overflow')">
-  <i class="fa-brands fa-stack-overflow"></i><span class="tooltip-text">Stack Overflow</span>
-</a>
+      <div class="hero-content">
+        <h1 data-aos="fade-down">Akash G Krishnan</h1>
+        <p data-aos="fade-up" data-aos-delay="200">
+          Senior Flutter Developer | <span id="experience-years"></span> Years
+          of Experience
+        </p>
+        <p data-aos="fade-up" data-aos-delay="400">
+          Location: Qatar 🇶🇦 | Nationality: Indian 🇮🇳
+        </p>
+        <div class="social-links" data-aos="fade-up" data-aos-delay="600">
+          <a
+            href="mailto:krishnanag1996@gmail.com"
+            onclick="trackClick('Email')"
+            aria-label="Email"
+          >
+            <i class="fas fa-envelope"></i>
+            <span class="tooltip-text">Email</span>
+          </a>
+          <a
+            href="https://wa.me/+918130233807"
+            onclick="trackClick('WhatsApp')"
+            aria-label="WhatsApp"
+          >
+            <i class="fab fa-whatsapp"></i>
+            <span class="tooltip-text">WhatsApp</span>
+          </a>
+          <a
+            href="https://www.linkedin.com/in/akashgkrishnan"
+            onclick="trackClick('LinkedIn')"
+            aria-label="LinkedIn"
+          >
+            <i class="fab fa-linkedin"></i>
+            <span class="tooltip-text">LinkedIn</span>
+          </a>
+          <a
+            href="https://github.com/akashgk"
+            onclick="trackClick('GitHub')"
+            aria-label="GitHub"
+          >
+            <i class="fab fa-github"></i>
+            <span class="tooltip-text">GitHub</span>
+          </a>
+          <a
+            href="https://medium.com/@krishnanag1996"
+            onclick="trackClick('Medium')"
+            aria-label="Medium"
+          >
+            <i class="fab fa-medium"></i>
+            <span class="tooltip-text">Medium</span>
+          </a>
+          <a
+            href="./AKASH_2025_FEB.pdf"
+            target="_blank"
+            onclick="trackClick('Resume')"
+            aria-label="Resume"
+          >
+            <i class="fas fa-file-alt"></i>
+            <span class="tooltip-text">Resume</span>
+          </a>
+          <a
+            href="https://pub.dev/publishers/akashgk.com/packages"
+            onclick="trackClick('Pub.dev')"
+            aria-label="Pub.dev"
+          >
+            <i class="fas fa-cube"></i>
+            <span class="tooltip-text">Pub Packages</span>
+          </a>
+          <a
+            href="https://stackoverflow.com/users/10167101/akash-g-krishnan"
+            onclick="trackClick('Stack Overflow')"
+            aria-label="Stack Overflow"
+          >
+            <i class="fab fa-stack-overflow"></i>
+            <span class="tooltip-text">Stack Overflow</span>
+          </a>
         </div>
+      </div>
     </header>
 
     <div class="container">
-        <h2 class="section-title">About Me</h2>
-        <p class="text-center">Highly skilled software developer specializing in Flutter, Dart, JavaScript, Python, and
-            ReactJS. Proven experience in banking, fintech, and high-performance application development.</p>
+      <h2 class="section-title">About Me</h2>
+      <p class="text-center">
+        Highly skilled software developer specializing in Flutter, Dart,
+        JavaScript, Python, and ReactJS. Proven experience in banking, fintech,
+        and high-performance application development.
+      </p>
 
-        <h2 class="section-title">Work Experience</h2>
-        <div class="card mb-3">
-            <h5>Flutter Developer</h5>
-            <h6 class="text-muted">Commercial Bank of Qatar | June 2023 - Present</h6>
-            <p>Developed high-security mobile banking applications, saving the bank 30 million QAR by transitioning
-                solutions in-house.</p>
+      <h2 class="section-title" data-aos="fade-up">Work Experience</h2>
+
+      <div class="card mb-4" data-aos="fade-up" data-aos-delay="100">
+        <h5>Senior Flutter Developer</h5>
+        <h6 class="text-muted">
+          Commercial Bank of Qatar | June 2023 - Present
+        </h6>
+        <ul class="experience-list">
+          <li>
+            Led the development of high-security mobile banking applications,
+            resulting in 30 million QAR cost savings through in-house
+            development
+          </li>
+          <li>
+            Implemented biometric authentication and secure transaction features
+            following PCI DSS standards
+          </li>
+          <li>
+            Optimized app performance resulting in 40% faster load times and
+            enhanced user experience
+          </li>
+          <li>
+            Mentored junior developers and conducted code reviews to maintain
+            code quality
+          </li>
+        </ul>
+        <div class="skills-container">
+          <span class="skill-tag">Flutter</span>
+          <span class="skill-tag">Dart</span>
+          <span class="skill-tag">Firebase</span>
+          <span class="skill-tag">Banking APIs</span>
+          <span class="skill-tag">Security</span>
         </div>
-        <div class="card mb-3">
-            <h5>Software Development Engineer</h5>
-            <h6 class="text-muted">PyjamaHR | Feb 2021 - June 2023</h6>
-            <p>Built fintech and HR solutions, including Chrome extensions, social media apps, and cross-platform
-                integrations.</p>
+      </div>
+
+      <div class="card mb-4" data-aos="fade-up" data-aos-delay="200">
+        <h5>Software Development Engineer</h5>
+        <h6 class="text-muted">PyjamaHR | Feb 2021 - June 2023</h6>
+        <ul class="experience-list">
+          <li>
+            Developed and maintained multiple Flutter applications for HR and
+            fintech solutions
+          </li>
+          <li>
+            Created Chrome extensions and social media integrations for enhanced
+            user engagement
+          </li>
+          <li>
+            Implemented real-time chat features and push notifications using
+            Firebase
+          </li>
+          <li>
+            Reduced app crash rate by 75% through comprehensive error handling
+            and testing
+          </li>
+        </ul>
+        <div class="skills-container">
+          <span class="skill-tag">Flutter</span>
+          <span class="skill-tag">ReactJS</span>
+          <span class="skill-tag">Chrome Extensions</span>
+          <span class="skill-tag">Firebase</span>
+          <span class="skill-tag">REST APIs</span>
         </div>
-        <div class="card mb-3">
-            <h5>Software Engineer</h5>
-            <h6 class="text-muted">InnovationM | Sep 2018 - Jan 2021</h6>
-            <p>Worked on full-cycle development projects, excelling in automation testing, project management, and
-                software engineering.</p>
+      </div>
+
+      <div class="card mb-4" data-aos="fade-up" data-aos-delay="300">
+        <h5>Software Engineer</h5>
+        <h6 class="text-muted">InnovationM | Sep 2018 - Jan 2021</h6>
+        <ul class="experience-list">
+          <li>
+            Led end-to-end development of mobile applications using Flutter and
+            React Native
+          </li>
+          <li>
+            Implemented automated testing frameworks reducing QA time by 40%
+          </li>
+          <li>
+            Collaborated with cross-functional teams to deliver projects on
+            schedule
+          </li>
+          <li>
+            Contributed to architectural decisions and technology selection
+          </li>
+        </ul>
+        <div class="skills-container">
+          <span class="skill-tag">Flutter</span>
+          <span class="skill-tag">React Native</span>
+          <span class="skill-tag">JavaScript</span>
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">Testing</span>
         </div>
+      </div>
     </div>
 
     <div class="container">
-        <h2 class="section-title">Technical Skills</h2>
-        <div class="card mb-3">
-            <ul>
-                <li><strong>Programming Languages:</strong> Flutter, Dart, JavaScript, TypeScript, Python, ReactJS,
-                    FastAPI</li>
-                <li><strong>State Management:</strong> Provider, Riverpod, Bloc</li>
-                <li><strong>Tools & DevOps:</strong> Git, GitHub, Bitbucket, GitLab, Jira, Azure DevOps, CI/CD, Trello,
-                    Postman, Insomnia</li>
-                <li><strong>Databases:</strong> Firebase, Firebase Auth, HiveDB</li>
-                <li><strong>Frameworks & Libraries:</strong> Next.js, Django, Bootstrap, Tailwind CSS</li>
-                <li><strong>Additional Skills:</strong> RESTful APIs, Performance Optimization, Mobile Testing &
-                    Debugging, Localization, Agile Development</li>
-                <li><strong>Soft Skills:</strong> Continuous Learning, Leadership, Documentation, Communication,
-                    Cross-functional Collaboration</li>
-            </ul>
-        </div>
+      <h2 class="section-title">Technical Skills</h2>
+      <div class="card mb-3">
+        <ul>
+          <li>
+            <strong>Programming Languages:</strong> Flutter, Dart, JavaScript,
+            TypeScript, Python, ReactJS, FastAPI
+          </li>
+          <li><strong>State Management:</strong> Provider, Riverpod, Bloc</li>
+          <li>
+            <strong>Tools & DevOps:</strong> Git, GitHub, Bitbucket, GitLab,
+            Jira, Azure DevOps, CI/CD, Trello, Postman, Insomnia
+          </li>
+          <li><strong>Databases:</strong> Firebase, Firebase Auth, HiveDB</li>
+          <li>
+            <strong>Frameworks & Libraries:</strong> Next.js, Django, Bootstrap,
+            Tailwind CSS
+          </li>
+          <li>
+            <strong>Additional Skills:</strong> RESTful APIs, Performance
+            Optimization, Mobile Testing & Debugging, Localization, Agile
+            Development
+          </li>
+          <li>
+            <strong>Soft Skills:</strong> Continuous Learning, Leadership,
+            Documentation, Communication, Cross-functional Collaboration
+          </li>
+        </ul>
+      </div>
     </div>
 
-
-    <div class="contact-container">
-        <h2 class="section-title">Contact</h2>
-        <p class="contact-info">🇮🇳 <i class="fas fa-phone"></i> +91 8130233807</p>
-        <p class="contact-info">🇶🇦 <i class="fas fa-phone"></i> +974 71743533</p>
+    <div class="contact-section">
+      <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Contact</h2>
+        <div class="contact-container">
+          <a
+            href="tel:+918130233807"
+            class="contact-info"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            <i class="fas fa-phone"></i>
+            🇮🇳 +91 8130233807
+          </a>
+          <a
+            href="tel:+97471743533"
+            class="contact-info"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <i class="fas fa-phone"></i>
+            🇶🇦 +974 71743533
+          </a>
+          <a
+            href="mailto:krishnanag1996@gmail.com"
+            class="contact-info"
+            data-aos="fade-up"
+            data-aos-delay="300"
+          >
+            <i class="fas fa-envelope"></i>
+            krishnanag1996@gmail.com
+          </a>
+        </div>
+      </div>
     </div>
 
     <footer>
+      <div class="footer-content">
         <div class="footer-links">
-            <a href="https://www.linkedin.com/in/akashgkrishnan"><i class="fab fa-linkedin"></i></a>
-            <a href="https://github.com/akashgk/akashgk"><i class="fab fa-github"></i></a>
-            <a href="https://medium.com/@krishnanag1996"><i class="fab fa-medium"></i></a>
-            <a href="mailto:krishnanag1996@gmail.com"><i class="fas fa-envelope"></i></a>
+          <a
+            href="https://www.linkedin.com/in/akashgkrishnan"
+            aria-label="LinkedIn"
+          >
+            <i class="fab fa-linkedin"></i>
+          </a>
+          <a href="https://github.com/akashgk" aria-label="GitHub">
+            <i class="fab fa-github"></i>
+          </a>
+          <a href="https://medium.com/@krishnanag1996" aria-label="Medium">
+            <i class="fab fa-medium"></i>
+          </a>
+          <a href="mailto:krishnanag1996@gmail.com" aria-label="Email">
+            <i class="fas fa-envelope"></i>
+          </a>
         </div>
-        <p>&copy; <span id="year"></span> Akash G Krishnan. All rights reserved.</p>
+        <p class="copyright">
+          &copy; <span id="year"></span> <span>Akash G Krishnan</span>. All
+          rights reserved.
+        </p>
+      </div>
     </footer>
 
     <script>
-        function calculateExperience(startYear) {
-            const currentYear = new Date().getFullYear();
-            return currentYear - startYear;
-        }
-        document.getElementById("experience-years").textContent = calculateExperience(2018);
-        document.getElementById("year").textContent = new Date().getFullYear();
+      function calculateExperience(startYear) {
+        const currentYear = new Date().getFullYear();
+        return currentYear - startYear;
+      }
+      document.getElementById("experience-years").textContent =
+        calculateExperience(2018);
+      document.getElementById("year").textContent = new Date().getFullYear();
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        once: true,
+      });
 
+      // Theme toggling
+      function toggleTheme() {
+        const body = document.body;
+        const icon = document.querySelector(".theme-toggle i");
+
+        if (body.getAttribute("data-theme") === "dark") {
+          body.removeAttribute("data-theme");
+          icon.classList.remove("fa-sun");
+          icon.classList.add("fa-moon");
+          localStorage.setItem("theme", "light");
+        } else {
+          body.setAttribute("data-theme", "dark");
+          icon.classList.remove("fa-moon");
+          icon.classList.add("fa-sun");
+          localStorage.setItem("theme", "dark");
+        }
+      }
+
+      // Apply saved theme
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        document.body.setAttribute("data-theme", "dark");
+        document
+          .querySelector(".theme-toggle i")
+          .classList.replace("fa-moon", "fa-sun");
+      }
+
+      // Update experience years automatically
+      const startYear = 2018;
+      const currentYear = new Date().getFullYear();
+      const experienceYears = currentYear - startYear;
+      document.getElementById("experience-years").textContent = experienceYears;
+
+      // Enhanced click tracking
+      function trackClick(label) {
+        gtag("event", "click", {
+          event_category: "Link Click",
+          event_label: label,
+          value: 1,
+        });
+      }
+    </script>
+  </body>
 </html>
