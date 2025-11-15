@@ -456,8 +456,30 @@
         font-size: clamp(1.5rem, 4vw, 2rem);
         font-weight: 700;
         text-align: center;
+        margin-top: 1.5rem;
         margin-bottom: 2rem;
         color: var(--text-primary);
+      }
+
+      /* First section title after header */
+      section:first-of-type .section-title {
+        margin-top: 0;
+      }
+
+      /* Mobile spacing for sections */
+      @media (max-width: 767px) {
+        section {
+          padding: 2.5rem 0;
+        }
+
+        .section-title {
+          margin-top: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        section:first-of-type .section-title {
+          margin-top: 0;
+        }
       }
 
       /* Skills */
