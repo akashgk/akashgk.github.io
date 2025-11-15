@@ -8,64 +8,81 @@
     />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Primary Meta Tags -->
     <title>
-      Akash G Krishnan - Senior Flutter Developer | Mobile & Web App Development
+      Akash G Krishnan — Senior Flutter Developer | Skills-first Portfolio
     </title>
-    <!-- Enhanced SEO Meta Tags -->
+    <meta
+      name="title"
+      content="Akash G Krishnan — Senior Flutter Developer | Skills-first Portfolio"
+    />
     <meta
       name="description"
-      content="Senior Flutter Developer with 7+ years of experience in mobile and web development. Specializing in Flutter, Dart, ReactJS, and Python. Currently working at Commercial Bank of Qatar."
+      content="Senior Flutter Developer with 7+ years experience. Flutter, Dart, React, Python, Firebase, CI/CD, MVVM & Clean Architecture. Skills-first, mobile-first portfolio."
     />
     <meta
       name="keywords"
-      content="Flutter Developer, Senior Flutter Developer, Dart, Firebase, ReactJS, Web Developer Qatar, Mobile App Developer, Banking Apps, FinTech, Akash G Krishnan, Software Engineer Qatar"
+      content="Flutter Developer, Senior Flutter Developer, Dart, Firebase, ReactJS, Mobile App Developer, Banking Apps, FinTech, Akash G Krishnan, Software Engineer Qatar"
     />
     <meta name="author" content="Akash G Krishnan" />
     <link rel="canonical" href="https://akashgk.com" />
 
-    <!-- Enhanced Open Graph Meta Tags -->
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://akashgk.com" />
     <meta
       property="og:title"
-      content="Akash G Krishnan | Senior Flutter Developer"
+      content="Akash G Krishnan — Senior Flutter Developer | Skills-first Portfolio"
     />
     <meta
       property="og:description"
-      content="Senior Flutter Developer with 7+ years of experience specializing in mobile banking, fintech solutions, and cross-platform development."
+      content="Senior Flutter Developer with 7+ years experience. Flutter, Dart, React, Python, Firebase, CI/CD, MVVM & Clean Architecture. Skills-first, mobile-first portfolio."
     />
     <meta
       property="og:image"
-      content="https://akashgk.com/images/og-banner.jpeg"
+      content="https://akashgk.com/images/og-banner.webp"
     />
-    <meta property="og:url" content="https://akashgk.com" />
-    <meta property="og:type" content="website" />
 
-    <!-- Twitter Card Meta Tags -->
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://akashgk.com" />
     <meta
       name="twitter:title"
-      content="Akash G Krishnan | Senior Flutter Developer"
+      content="Akash G Krishnan — Senior Flutter Developer | Skills-first Portfolio"
     />
     <meta
       name="twitter:description"
-      content="Senior Flutter Developer with expertise in mobile banking and fintech solutions"
+      content="Senior Flutter Developer with 7+ years experience. Flutter, Dart, React, Python, Firebase, CI/CD, MVVM & Clean Architecture."
     />
     <meta
       name="twitter:image"
       content="https://akashgk.com/images/og-banner.jpeg"
     />
 
-    <!-- Structured Data for Person -->
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+    <!-- Preconnect (minimal) -->
+    <link
+      rel="preconnect"
+      href="https://www.googletagmanager.com"
+      crossorigin
+    />
+
+    <!-- Structured Data -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Akash G Krishnan",
+        "url": "https://akashgk.com",
         "jobTitle": "Senior Flutter Developer",
         "worksFor": {
           "@type": "Organization",
           "name": "Commercial Bank of Qatar"
         },
-        "url": "https://akashgk.com",
         "sameAs": [
           "https://www.linkedin.com/in/akashgkrishnan",
           "https://github.com/akashgk",
@@ -121,31 +138,44 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <style>
       :root {
-        --primary-color: #2e3192;
-        --secondary-color: #1bffff;
-        --text-color: #2c3e50;
-        --bg-color: #f4f7f6;
-        --card-bg: white;
+        /* Light Mode */
+        --primary: #3d5afe;
+        --primary-hover: #2c44d6;
+        --secondary: #00c4b4;
+        --accent: #ffb300;
+        --bg: #f9fafb;
+        --card: #ffffff;
+        --text-primary: #1f2937;
+        --text-secondary: #4b5563;
+        --border: #e5e7eb;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
         --gradient: linear-gradient(
           135deg,
-          var(--primary-color),
-          var(--secondary-color)
+          #3d5afe 0%,
+          #00c4b4 50%,
+          #ffb300 100%
         );
-        --card-border: rgba(0, 0, 0, 0.1);
-        --shadow-color: rgba(0, 0, 0, 0.1);
-        --text-muted: rgba(44, 62, 80, 0.8);
-        --transition: all 0.3s ease;
       }
 
       [data-theme="dark"] {
-        --primary-color: #6366f1;
-        --secondary-color: #22d3ee;
-        --text-color: #e2e8f0;
-        --bg-color: #0f172a;
-        --card-bg: #1e293b;
-        --card-border: rgba(255, 255, 255, 0.1);
-        --shadow-color: rgba(0, 0, 0, 0.3);
-        --text-muted: rgba(226, 232, 240, 0.8);
+        --primary: #6c8cff;
+        --primary-hover: #5271e0;
+        --secondary: #27e0d3;
+        --accent: #ffd155;
+        --bg: #0d1117;
+        --card: #161b22;
+        --text-primary: #e5e7eb;
+        --text-secondary: #9ca3af;
+        --border: #2d333b;
+        --gradient: linear-gradient(
+          135deg,
+          #6c8cff 0%,
+          #27e0d3 50%,
+          #ffd155 100%
+        );
       }
 
       * {
@@ -154,1174 +184,1119 @@
         box-sizing: border-box;
       }
 
-      a {
-        text-decoration: none;
-        color: inherit;
+      html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
       }
 
       body {
-        font-family: "Nunito", sans-serif;
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        transition: var(--transition);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text-primary);
         line-height: 1.6;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        font-feature-settings: "kern" 1, "liga" 1;
       }
 
+      h1,
+      h2,
+      h3,
+      .skill-name,
+      .exp-title,
+      .edu-title {
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        text-rendering: optimizeLegibility;
+      }
+
+      /* Mobile-first base */
       .container {
+        width: 100%;
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0 20px;
+        padding: 0 1rem;
       }
 
-      .hero {
+      /* Header with cool animated background */
+      header {
         background: var(--gradient);
-        color: white;
-        padding: 100px 0 60px;
+        background-size: 200% 200%;
+        color: #fff;
+        padding: 3rem 1rem 4rem;
         text-align: center;
-        border-radius: 0 0 50px 50px;
         position: relative;
         overflow: hidden;
-        margin-bottom: 60px;
+        animation: gradientShift 8s ease infinite;
       }
 
-      .hero::before {
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      header::before {
         content: "";
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(
-            45deg,
-            rgba(255, 255, 255, 0.1) 25%,
-            transparent 25%
-          ),
-          linear-gradient(-45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%);
-        background-size: 60px 60px;
-        animation: moveBackground 20s linear infinite;
-        opacity: 0.5;
-      }
-
-      .hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 800px;
-        margin: 0 auto;
-      }
-
-      .hero h1 {
-        font-size: 4rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        letter-spacing: -1px;
-        animation: fadeInDown 1s ease;
-      }
-
-      .hero p {
-        font-size: 1.4rem;
-        font-weight: 400;
-        margin-bottom: 2rem;
-        opacity: 0.9;
-        animation: fadeInUp 1s ease 0.2s;
-        animation-fill-mode: both;
-      }
-
-      .social-links {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 15px;
-        margin-top: 30px;
-        animation: fadeInUp 1s ease 0.4s;
-        animation-fill-mode: both;
-      }
-
-      .social-links a {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
+        width: 600px;
+        height: 600px;
+        left: -150px;
+        top: -150px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.15) 0%,
+          transparent 70%
+        );
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(5px);
-        color: white;
-        font-size: 1.5rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
+        animation: float 12s ease-in-out infinite alternate;
       }
 
-      .social-links a:hover {
-        transform: translateY(-5px) scale(1.1);
-        background: white;
-        color: var(--primary-color);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      }
-
-      .social-links a .tooltip-text {
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 5px 10px;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        white-space: nowrap;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        margin-bottom: 10px;
-      }
-
-      .social-links a:hover .tooltip-text {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(-50%) translateY(-5px);
-      }
-
-      .section-title {
-        text-align: center;
-        margin: 80px auto 40px;
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--text-color);
-        position: relative;
-        width: 100%;
-        max-width: 600px;
-      }
-
-      .section-title::after {
+      header::after {
         content: "";
-        display: block;
-        width: 0;
-        height: 4px;
-        background: var(--gradient);
-        margin: 15px auto 0;
-        border-radius: 2px;
-        transition: width 1s cubic-bezier(0.77, 0, 0.18, 1);
-      }
-
-      .section-title[data-animated]::after {
-        width: 100px;
-      }
-
-      .card {
-        background: var(--card-bg);
-        border-radius: 20px;
-        padding: 30px;
-        margin-bottom: 30px;
-        box-shadow: 0 10px 30px var(--shadow-color);
-        transform: translateY(0);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid var(--card-border);
-      }
-
-      .card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px var(--shadow-color);
-      }
-
-      .card h5 {
-        font-size: 1.5rem;
-        color: var(--primary-color);
-        margin-bottom: 15px;
-      }
-
-      .card h6 {
-        font-size: 1.1rem;
-        color: var(--text-muted);
-        margin-bottom: 20px;
-      }
-
-      .card p,
-      .card li {
-        color: var(--text-color);
-      }
-
-      .experience-list {
-        list-style: none;
-        padding: 0;
-        margin: 0 0 20px;
-      }
-
-      .experience-list li {
-        position: relative;
-        padding-left: 25px;
-        margin-bottom: 15px;
-        line-height: 1.6;
-      }
-
-      .experience-list li::before {
-        content: "▹";
         position: absolute;
-        left: 0;
-        color: var(--primary-color);
-        font-size: 1.2rem;
+        width: 500px;
+        height: 500px;
+        right: -100px;
+        bottom: -100px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 70%
+        );
+        border-radius: 50%;
+        animation: floatReverse 10s ease-in-out infinite alternate;
       }
 
-      .skills-container {
+      @keyframes float {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 0.5;
+        }
+        100% {
+          transform: translate(50px, 50px) scale(1.1);
+          opacity: 0.8;
+        }
+      }
+
+      @keyframes floatReverse {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 0.3;
+        }
+        100% {
+          transform: translate(-40px, -40px) scale(1.15);
+          opacity: 0.6;
+        }
+      }
+
+      .header-content {
+        position: relative;
+        z-index: 1;
+      }
+
+      h1 {
+        font-size: clamp(1.75rem, 5vw, 2.5rem);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        font-size: clamp(1rem, 3vw, 1.25rem);
+        font-weight: 400;
+        margin-bottom: 0.25rem;
+        opacity: 0.95;
+      }
+
+      .micro {
+        font-size: 0.875rem;
+        opacity: 0.85;
+        margin-bottom: 1.5rem;
+      }
+
+      .quick-stats {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 20px;
-        padding-top: 20px;
-        border-top: 1px solid var(--card-border);
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 1rem 0 0;
       }
 
-      .skill-tag {
-        padding: 8px 16px;
-        border-radius: 30px;
-        background: var(--gradient);
-        color: white;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
+      .stat-pill {
+        padding: 0.375rem 0.75rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 999px;
+        font-size: 0.875rem;
+        font-weight: 600;
       }
 
-      .skill-tag:hover {
-        transform: translateY(-2px) scale(1.05);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      .cta-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+        margin-top: 1.5rem;
       }
 
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(8px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 999px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        transition: all 0.22s cubic-bezier(0.77, 0, 0.18, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+      }
+
+      .btn:hover::before {
+        width: 300px;
+        height: 300px;
+      }
+
+      .btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+
+      .btn-primary {
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--primary);
+        border-color: rgba(255, 255, 255, 0.9);
+      }
+
+      .btn-primary:hover {
+        background: #fff;
+        color: var(--primary-hover);
+      }
+
+      .btn span {
+        position: relative;
+        z-index: 1;
+      }
+
+      .btn:active {
+        transform: translateY(-1px) scale(1.02);
+      }
+
+      /* Theme Toggle */
       .theme-toggle {
         position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        width: 45px;
-        height: 45px;
+        top: 1rem;
+        right: 1rem;
+        width: 2.75rem;
+        height: 2.75rem;
         border-radius: 50%;
-        background: var(--card-bg);
-        border: none;
+        background: var(--card);
+        border: 2px solid var(--border);
+        color: var(--text-primary);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.2rem;
-        color: var(--primary-color);
-        box-shadow: 0 5px 15px var(--shadow-color);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+        box-shadow: var(--shadow);
+        transition: all 0.22s cubic-bezier(0.77, 0, 0.18, 1);
       }
 
       .theme-toggle:hover {
-        transform: rotate(180deg) scale(1.1);
+        transform: scale(1.1) rotate(180deg);
+        border-color: var(--primary);
+        color: var(--primary);
+        box-shadow: var(--shadow-lg);
       }
 
-      .contact-section {
-        background: var(--card-bg);
-        padding: 60px 0;
-        margin: 80px 0;
-        border-radius: 30px;
-        box-shadow: 0 10px 30px var(--shadow-color);
+      .theme-toggle:active {
+        transform: scale(1.05) rotate(180deg);
       }
 
-      .contact-container {
-        max-width: 600px;
-        margin: 0 auto;
+      .theme-toggle svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+
+      /* Sections */
+      section {
+        padding: 3rem 0;
+      }
+
+      .section-title {
+        font-size: clamp(1.5rem, 4vw, 2rem);
+        font-weight: 700;
         text-align: center;
+        margin-bottom: 2rem;
+        color: var(--text-primary);
       }
 
-      .contact-info {
-        display: inline-flex;
+      /* Skills */
+      .skills-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+      }
+
+      @media (min-width: 640px) {
+        .skills-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .skills-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      .skill-card {
+        background: var(--card);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        transition: transform 0.22s cubic-bezier(0.77, 0, 0.18, 1),
+          box-shadow 0.22s, border-color 0.22s;
+        border: 2px solid var(--border);
+        cursor: pointer;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.5s cubic-bezier(0.77, 0, 0.18, 1) forwards;
+      }
+
+      .skill-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .skill-card:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .skill-card:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      .skill-card:nth-child(4) {
+        animation-delay: 0.25s;
+      }
+      .skill-card:nth-child(5) {
+        animation-delay: 0.3s;
+      }
+      .skill-card:nth-child(6) {
+        animation-delay: 0.35s;
+      }
+
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .skill-card:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary);
+      }
+
+      .skill-header {
+        display: flex;
         align-items: center;
-        margin: 15px;
-        padding: 15px 25px;
-        background: var(--gradient);
-        color: white;
-        border-radius: 50px;
-        font-size: 1.1rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 15px var(--shadow-color);
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+      }
+
+      .skill-name {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--primary);
+        transition: color 0.22s;
+      }
+
+      .skill-card:hover .skill-name {
+        color: var(--primary-hover);
+      }
+
+      .skill-tagline {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+        margin-top: 0.5rem;
+      }
+
+      /* Experience */
+      .experience-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .exp-card {
+        background: var(--card);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        border: 2px solid var(--border);
+        transition: transform 0.22s cubic-bezier(0.77, 0, 0.18, 1),
+          box-shadow 0.22s, border-color 0.22s;
+      }
+
+      .exp-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary);
+      }
+
+      .exp-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.25rem;
+        transition: color 0.22s;
+      }
+
+      .exp-card:hover .exp-title {
+        color: var(--primary-hover);
+      }
+
+      .exp-company {
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.75rem;
+      }
+
+      .exp-bullets {
+        list-style: none;
+        padding: 0;
+      }
+
+      .exp-bullets li {
         position: relative;
-        overflow: hidden;
+        padding-left: 1.25rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        color: var(--text-secondary);
       }
 
-      .contact-info:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      .exp-bullets li::before {
+        content: "▹";
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+        font-size: 1rem;
       }
 
-      .contact-info i {
-        margin-right: 10px;
-        font-size: 1.2rem;
+      /* Education */
+      .edu-card {
+        background: var(--card);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        text-align: center;
+        border: 2px solid var(--border);
+        transition: transform 0.22s cubic-bezier(0.77, 0, 0.18, 1),
+          box-shadow 0.22s, border-color 0.22s;
       }
 
+      .edu-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary);
+      }
+
+      .edu-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        transition: color 0.22s;
+      }
+
+      .edu-card:hover .edu-title {
+        color: var(--primary-hover);
+      }
+
+      .edu-details {
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
+      }
+
+      /* About */
+      .about-content {
+        background: var(--card);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        max-width: 800px;
+        margin: 0 auto;
+        border: 2px solid var(--border);
+      }
+
+      .about-content p {
+        margin-bottom: 1rem;
+        font-size: 0.9375rem;
+        line-height: 1.7;
+        color: var(--text-primary);
+      }
+
+      .about-bullets {
+        list-style: none;
+        padding: 0;
+        margin-top: 1rem;
+      }
+
+      .about-bullets li {
+        position: relative;
+        padding-left: 1.25rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
+      }
+
+      .about-bullets li::before {
+        content: "▹";
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+      }
+
+      /* Contact */
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      .contact-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: var(--card);
+        border-radius: 0.75rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        box-shadow: var(--shadow);
+        transition: all 0.22s cubic-bezier(0.77, 0, 0.18, 1);
+        border: 2px solid var(--border);
+      }
+
+      .contact-link:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .contact-link svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        flex-shrink: 0;
+      }
+
+      /* Footer */
       footer {
         background: var(--gradient);
-        color: white;
-        padding: 60px 0 40px;
-        margin-top: 100px;
-        border-radius: 50px 50px 0 0;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .footer-content {
-        position: relative;
-        z-index: 2;
+        color: #fff;
+        padding: 2rem 1rem;
         text-align: center;
+        margin-top: 3rem;
       }
 
       .footer-links {
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
-        gap: 25px;
-        margin-bottom: 30px;
+        gap: 1rem;
+        margin-bottom: 1rem;
       }
 
       .footer-links a {
-        color: white;
-        font-size: 1.5rem;
-        transition: all 0.3s ease;
+        color: #fff;
         opacity: 0.9;
+        transition: opacity 0.2s;
       }
 
       .footer-links a:hover {
-        transform: translateY(-5px);
         opacity: 1;
+      }
+
+      .footer-links svg {
+        width: 1.5rem;
+        height: 1.5rem;
       }
 
       .copyright {
-        font-size: 1rem;
-        opacity: 0.9;
-        margin-top: 20px;
-        letter-spacing: 0.5px;
+        font-size: 0.875rem;
+        opacity: 0.8;
       }
 
-      .copyright span {
-        font-weight: 600;
-      }
-
-      .text-muted {
-        color: var(--text-muted) !important;
-      }
-
-      @keyframes fadeInDown {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes moveBackground {
-        0% {
-          background-position: 0 0;
-        }
-        100% {
-          background-position: 60px 60px;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .hero {
-          padding: 80px 0 40px;
-        }
-
-        .hero h1 {
-          font-size: 2.8rem;
-        }
-
-        .hero p {
-          font-size: 1.2rem;
-        }
-
-        .social-links {
-          gap: 10px;
-        }
-
-        .social-links a {
-          width: 45px;
-          height: 45px;
-          font-size: 1.2rem;
-        }
-
-        .section-title {
-          font-size: 2rem;
-          margin: 60px auto 30px;
-        }
-
-        .card {
-          padding: 20px;
-        }
-
-        .contact-info {
-          font-size: 1rem;
-          padding: 12px 20px;
-          margin: 10px;
-        }
-
-        .footer-links {
-          gap: 20px;
-        }
-
-        .copyright {
-          font-size: 0.9rem;
-        }
-      }
-
-      /* Dark theme specific overrides */
-      [data-theme="dark"] .hero,
-      [data-theme="dark"] footer {
-        background: linear-gradient(135deg, #4f46e5, #0891b2);
-      }
-
-      [data-theme="dark"] .social-links a {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-      }
-
-      [data-theme="dark"] .social-links a:hover {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-      }
-
-      [data-theme="dark"] .skill-tag {
-        background: linear-gradient(135deg, #4f46e5, #0891b2);
-        color: white;
-      }
-
-      [data-theme="dark"] .contact-info {
-        background: linear-gradient(135deg, #4f46e5, #0891b2);
-      }
-
-      [data-theme="dark"] .theme-toggle {
-        color: var(--text-color);
-      }
-
-      [data-theme="dark"] .card:hover {
-        box-shadow: 0 20px 40px var(--shadow-color);
-      }
-
-      .skill-progress {
-        width: 100%;
-        background: var(--card-border);
-        border-radius: 8px;
-        height: 12px;
-        margin: 10px 0 20px;
-        overflow: hidden;
-      }
-
-      .skill-progress-bar {
-        height: 100%;
-        width: 0;
-        background: var(--gradient);
-        border-radius: 8px;
-        transition: width 1.2s cubic-bezier(0.77, 0, 0.18, 1);
-      }
-
-      .skill-progress-bar[data-animate] {
-        width: var(--progress);
-      }
-
-      .contact-info .ripple {
-        position: absolute;
-        border-radius: 50%;
-        transform: scale(0);
-        animation: ripple 0.6s linear;
-        background: rgba(255, 255, 255, 0.5);
-        pointer-events: none;
-      }
-
-      @keyframes ripple {
-        to {
-          transform: scale(4);
-          opacity: 0;
-        }
-      }
-
-      .social-links a {
-        transition: transform 0.2s cubic-bezier(0.77, 0, 0.18, 1);
-      }
-
-      .social-links a:hover {
-        transform: scale(1.2) rotate(-8deg);
-      }
-
-      .experience-card,
-      .skills-card,
-      .education-card {
-        transition: transform 0.3s cubic-bezier(0.77, 0, 0.18, 1),
-          box-shadow 0.3s;
-      }
-
-      .experience-card:hover,
-      .skills-card:hover,
-      .education-card:hover {
-        transform: perspective(600px) rotateY(4deg) scale(1.03);
-        box-shadow: 0 12px 32px var(--shadow-color);
-      }
-
-      .skill-tag {
-        transition: transform 0.2s cubic-bezier(0.77, 0, 0.18, 1);
-      }
-
-      .skill-tag:hover {
-        transform: scale(1.15) rotate(-4deg);
-      }
-
-      .section-title {
-        cursor: pointer;
-      }
-
-      .section-title:hover {
-        color: var(--primary-color);
-      }
-
-      .skills-circular-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 32px 32px;
-        margin: 40px 0 10px;
-        justify-items: center;
-      }
-
-      .skill-circle-card {
-        background: var(--card-bg);
-        border-radius: 20px;
-        box-shadow: 0 4px 18px var(--shadow-color);
-        padding: 24px 12px 18px 12px;
+      /* Sticky CTA (mobile) */
+      .sticky-cta {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--card);
+        border-top: 2px solid var(--border);
+        padding: 0.75rem 1rem;
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        transition: transform 0.3s cubic-bezier(0.77, 0, 0.18, 1),
-          box-shadow 0.3s;
-        position: relative;
-        cursor: pointer;
-        will-change: transform;
+        gap: 0.5rem;
+        z-index: 999;
+        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(8px);
       }
 
-      .skill-circle-card:hover {
-        transform: perspective(600px) rotateY(8deg) scale(1.07);
-        box-shadow: 0 12px 32px 0 var(--primary-color),
-          0 2px 8px var(--shadow-color);
-        z-index: 2;
-      }
-
-      .skill-circle-card:active {
-        transform: scale(0.97) rotateY(-4deg);
-      }
-
-      .circle-progress {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: conic-gradient(
-          var(--primary-color) 0% 0%,
-          var(--card-border) 0% 100%
-        );
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      .sticky-cta .btn {
+        flex: 1;
         justify-content: center;
-        position: relative;
-        margin-bottom: 10px;
-        transition: box-shadow 0.3s;
-        box-shadow: 0 2px 8px var(--shadow-color);
-      }
-
-      .circle-progress .circle-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -60%);
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        text-align: center;
-        width: 90px;
-        pointer-events: none;
-      }
-
-      .circle-progress .circle-value {
-        position: absolute;
-        top: 60%;
-        left: 50%;
-        transform: translate(-50%, 0);
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text-color);
-        pointer-events: none;
-      }
-
-      .skill-circle-card[data-tooltip]:hover::after {
-        content: attr(data-tooltip);
-        position: absolute;
-        left: 50%;
-        bottom: -18px;
-        transform: translateX(-50%) translateY(100%);
-        background: var(--primary-color);
+        padding: 0.625rem 1rem;
+        font-size: 0.875rem;
+        background: var(--primary);
         color: #fff;
-        padding: 7px 16px;
-        border-radius: 8px;
-        font-size: 0.95rem;
+        border-color: var(--primary);
+      }
+
+      .sticky-cta .btn:hover {
+        background: var(--primary-hover);
+        border-color: var(--primary-hover);
+      }
+
+      .sticky-cta .btn-primary {
+        background: #fff;
+        color: var(--primary);
+        border-color: var(--border);
+      }
+
+      .sticky-cta .btn-primary:hover {
+        background: var(--bg);
+        color: var(--primary-hover);
+      }
+
+      @media (min-width: 768px) {
+        .sticky-cta {
+          display: none;
+        }
+      }
+
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      /* Focus states */
+      a:focus-visible,
+      button:focus-visible {
+        outline: 3px solid var(--primary);
+        outline-offset: 3px;
+        border-radius: 4px;
+      }
+
+      /* Utility */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
         white-space: nowrap;
-        opacity: 1;
-        pointer-events: none;
-        z-index: 10;
-        box-shadow: 0 2px 8px var(--shadow-color);
-        animation: tooltipIn 0.3s cubic-bezier(0.77, 0, 0.18, 1);
-      }
-
-      @keyframes tooltipIn {
-        from {
-          opacity: 0;
-          transform: translateX(-50%) translateY(120%);
-        }
-        to {
-          opacity: 1;
-          transform: translateX(-50%) translateY(100%);
-        }
-      }
-
-      @media (max-width: 600px) {
-        .skills-circular-grid {
-          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-          gap: 18px 8px;
-        }
-        .circle-progress {
-          width: 70px;
-          height: 70px;
-        }
-        .circle-progress .circle-text,
-        .circle-progress .circle-value {
-          font-size: 0.9rem;
-          width: 60px;
-        }
+        border-width: 0;
       }
     </style>
   </head>
-  <body data-theme="dark">
-    <button
-      class="theme-toggle"
-      onclick="toggleTheme()"
-      aria-label="Toggle theme"
-    >
-      <i class="fas fa-moon"></i>
+  <body data-theme="light">
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" aria-label="Toggle theme" id="themeToggle">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+        />
+      </svg>
     </button>
-    <header class="hero" id="hero">
-      <div class="hero-content">
-        <h1 data-aos="fade-down">Akash G Krishnan</h1>
-        <h2 class="subtitle" data-aos="fade-up" data-aos-delay="100">
-          Professional Software Development Engineer
-        </h2>
-        <p class="summary" data-aos="fade-up" data-aos-delay="200">
-          Senior Flutter Developer | 7+ Years in Software Development|<br />
-          5+ Years in Flutter<br />
-          Qatar &bull; <a href="tel:+97471743533">+974 71743533</a> &bull;
-          <a href="mailto:krishnanag1996@gmail.com">krishnanag1996@gmail.com</a>
+
+    <!-- Header -->
+    <header>
+      <div class="header-content container">
+        <h1>Akash G Krishnan</h1>
+        <p class="subtitle">
+          Senior Flutter Developer — 7+ years building high-performance mobile &
+          web apps
         </p>
-        <div class="social-links" data-aos="fade-up" data-aos-delay="300">
-          <a
-            href="mailto:krishnanag1996@gmail.com"
-            onclick="trackClick('Email')"
-            aria-label="Email"
-          >
-            <i class="fas fa-envelope"></i>
-            <span class="tooltip-text">Email</span>
+        <p class="micro">Skills-first. Mobile-first. Performance-first.</p>
+
+        <div class="quick-stats">
+          <span class="stat-pill"><span id="yoe">7+</span> Total YOE</span>
+          <span class="stat-pill">Location: Qatar</span>
+          <span class="stat-pill">Nationality: Indian</span>
+        </div>
+
+        <div class="cta-group">
+          <a href="mailto:krishnanag1996@gmail.com" class="btn btn-primary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+            Contact
           </a>
-          <a
-            href="https://wa.me/+918130233807"
-            onclick="trackClick('WhatsApp')"
-            aria-label="WhatsApp"
-          >
-            <i class="fab fa-whatsapp"></i>
-            <span class="tooltip-text">WhatsApp</span>
-          </a>
-          <a
-            href="https://www.linkedin.com/in/akashgkrishnan"
-            onclick="trackClick('LinkedIn')"
-            aria-label="LinkedIn"
-          >
-            <i class="fab fa-linkedin"></i>
-            <span class="tooltip-text">LinkedIn</span>
-          </a>
-          <a
-            href="https://github.com/akashgk"
-            onclick="trackClick('GitHub')"
-            aria-label="GitHub"
-          >
-            <i class="fab fa-github"></i>
-            <span class="tooltip-text">GitHub</span>
-          </a>
-          <a
-            href="https://medium.com/@krishnanag1996"
-            onclick="trackClick('Medium')"
-            aria-label="Medium"
-          >
-            <i class="fab fa-medium"></i>
-            <span class="tooltip-text">Medium</span>
-          </a>
-          <a
-            href="./AKASH_G_KRISHNAN_RESUME.pdf"
-            target="_blank"
-            onclick="trackClick('Resume')"
-            aria-label="Resume"
-          >
-            <i class="fas fa-file-alt"></i>
-            <span class="tooltip-text">Resume</span>
-          </a>
-          <a
-            href="https://pub.dev/publishers/akashgk.com/packages"
-            onclick="trackClick('Pub.dev')"
-            aria-label="Pub.dev"
-          >
-            <i class="fas fa-cube"></i>
-            <span class="tooltip-text">Pub Packages</span>
-          </a>
-          <a
-            href="https://stackoverflow.com/users/10167101/akash-g-krishnan"
-            onclick="trackClick('Stack Overflow')"
-            aria-label="Stack Overflow"
-          >
-            <i class="fab fa-stack-overflow"></i>
-            <span class="tooltip-text">Stack Overflow</span>
+          <a href="/AKASH_G_KRISHNAN_RESUME.pdf" class="btn" download>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            Download Resume
           </a>
         </div>
       </div>
     </header>
 
     <main>
-      <!-- ABOUT / SUMMARY -->
-      <section class="about-section container" id="about">
-        <h2 class="section-title" data-aos="fade-up">About Me</h2>
-        <p class="about-text" data-aos="fade-up" data-aos-delay="100">
-          Highly skilled, passionate software developer with extensive
-          experience in crafting visually stunning, responsive, and
-          high-performance applications across mobile and web platforms.<br />
-          Expertise across a versatile tech stack – Flutter, Dart, ReactJS,
-          JavaScript, NodeJS, TypeScript, Python, Django, Bootstrap, Tailwind,
-          CSS, and HTML. Adept at designing and developing elegant, functional
-          user interfaces that seamlessly integrate with robust backend
-          systems.<br />
-          Proven track record of full-cycle mobile app development for Android
-          and iOS, from initial concept and design to deployment and
-          maintenance. Consistently delivers polished, intuitive applications
-          that exceed client and user expectations.<br />
-          Key contributor to high-impact projects in the Middle East banking
-          sector (1.8+ years), with a focus on secure, scalable applications
-          adhering to stringent banking standards. Spearheaded solutions that
-          strengthened project security while optimizing performance.<br />
-          Dedicated to fostering growth and best practices – experienced in
-          mentoring junior developers, guiding teams to achieve technical
-          excellence, and ensuring adherence to clean code principles, security
-          standards, and scalable architectures.<br />
-          Skilled in modern DevOps workflows – proficient in GitHub, Bitbucket,
-          GitLab, and Azure DevOps with hands-on experience in CI/CD pipelines
-          to streamline development and deployment.<br />
-          Known for optimizing codebases, enhancing performance, and driving
-          innovation while consistently delivering secure, scalable, and
-          user-friendly software solutions.
-        </p>
+      <!-- Skills -->
+      <section id="skills" class="container">
+        <h2 class="section-title">Core Skills</h2>
+        <div class="skills-grid">
+          <div class="skill-card">
+            <div class="skill-header">
+              <span class="skill-name">Flutter</span>
+            </div>
+            <p class="skill-tagline">
+              High-fidelity cross-platform UI, performance tuning, platform
+              channels
+            </p>
+          </div>
+
+          <div class="skill-card">
+            <div class="skill-header">
+              <span class="skill-name">Dart</span>
+            </div>
+            <p class="skill-tagline">
+              Strong typed, async-heavy code, package authoring
+            </p>
+          </div>
+
+          <div class="skill-card">
+            <div class="skill-header">
+              <span class="skill-name">JavaScript</span>
+            </div>
+            <p class="skill-tagline">Modern web UIs and SPA patterns</p>
+          </div>
+
+          <div class="skill-card">
+            <div class="skill-header">
+              <span class="skill-name">ReactJS</span>
+            </div>
+            <p class="skill-tagline">
+              Component-driven UI, hooks and state management
+            </p>
+          </div>
+
+          <div class="skill-card">
+            <div class="skill-header">
+              <span class="skill-name">Python</span>
+            </div>
+            <p class="skill-tagline">APIs, automation, data pipelines</p>
+          </div>
+
+          <div class="skill-card">
+            <div class="skill-header">
+              <span class="skill-name">Firebase</span>
+            </div>
+            <p class="skill-tagline">
+              Auth, Firestore, Cloud Functions, messaging
+            </p>
+          </div>
+        </div>
       </section>
 
-      <!-- WORK EXPERIENCE -->
-      <section class="experience-section container" id="experience">
-        <h2 class="section-title" data-aos="fade-up">Work Experience</h2>
+      <!-- About -->
+      <section id="about" class="container">
+        <h2 class="section-title">About</h2>
+        <div class="about-content">
+          <p>
+            Highly skilled software engineer focusing on cross-platform UI,
+            performance optimization, secure banking-grade apps, and scalable
+            architecture. Strong mentoring and team-lead experience.
+          </p>
+          <ul class="about-bullets">
+            <li>
+              Flutter & Dart — Cross-platform UI, widget design, platform
+              channels
+            </li>
+            <li>
+              Architecture — Clean Architecture, MVVM, modular code,
+              unit/automation testing
+            </li>
+            <li>
+              Backend & Tools — Python, Firebase, REST, CI/CD, Git workflows
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Experience -->
+      <section id="experience" class="container">
+        <h2 class="section-title">Experience</h2>
         <div class="experience-list">
-          <!-- Commercial Bank of Qatar -->
-          <div
-            class="card experience-card"
-            data-aos="fade-up"
-            data-aos-delay="100"
-          >
-            <h5>Flutter Developer</h5>
-            <h6 class="text-muted">
-              Commercial Bank of Qatar, Qatar &mdash; June 2023 - Present
-            </h6>
-            <ul>
-              <li>
-                Led the frontend development of the Corporate Trade Portal,
-                successfully transitioning from a third-party vendor solution to
-                an in-house solution, resulting in a cost saving of 30 million
-                QAR for the bank.
-              </li>
-              <li>
-                Spearheaded the development and deployment of mission-critical
-                mobile applications using Flutter.
-              </li>
-              <li>
-                Collaborated closely with internal stakeholders including
-                business analysts and project managers to gather requirements,
-                prioritize features, and deliver solutions that meet the bank's
-                strategic objectives and customer needs.
-              </li>
-              <li>
-                Led efforts to optimize app performance and security through
-                rigorous testing, code reviews, and performance monitoring,
-                resulting in a significant decrease in application downtime and
-                enhancement of overall user satisfaction.
-              </li>
-              <li>
-                Mentored 8 junior developers in the team, providing technical
-                guidance, code reviews, and training sessions to foster skill
-                development and ensure adherence to best practices in software
-                development methodologies and architectural design.
-              </li>
-            </ul>
-            <div class="skills-container">
-              <span class="skill-tag">Flutter</span>
-              <span class="skill-tag">Dart</span>
-              <span class="skill-tag">Banking</span>
-              <span class="skill-tag">Security</span>
+          <div class="exp-card">
+            <div class="exp-title">Flutter Developer</div>
+            <div class="exp-company">
+              Commercial Bank of Qatar — Jun 2023 – Present
             </div>
+            <ul class="exp-bullets">
+              <li>
+                Led frontend delivery for Corporate Trade Portal; reduced vendor
+                costs and improved performance
+              </li>
+              <li>Mentor: led and mentored 8+ developers</li>
+              <li>Focus: security, performance, banking compliance</li>
+            </ul>
           </div>
-          <!-- PyjamaHR -->
-          <div
-            class="card experience-card"
-            data-aos="fade-up"
-            data-aos-delay="200"
-          >
-            <h5>Software Development Engineer</h5>
-            <h6 class="text-muted">
-              PyjamaHR, Bangalore, India &mdash; Feb 2021 - June 2023
-            </h6>
-            <ul>
+
+          <div class="exp-card">
+            <div class="exp-title">Software Development Engineer</div>
+            <div class="exp-company">PyjamaHR — Feb 2021 – Jun 2023</div>
+            <ul class="exp-bullets">
               <li>
-                Delivered the first version of PyjamaHR with excellent
-                performance, rich features, and minimal bugs.
+                Built initial product with Flutter; delivered Chrome extension
+                (React) and integrations
               </li>
               <li>
-                Built applications using Flutter, Dart, JavaScript, Next.js,
-                React.js, CSS, Firebase, and Firebase Cloud Functions.
-              </li>
-              <li>
-                Developed landing pages, social media, and health challenge
-                apps, integrating payment and health APIs.
-              </li>
-              <li>
-                Managed the entire mobile development lifecycle, conducted code
-                reviews, and managed releases to app stores.
-              </li>
-              <li>
-                Developed a widely-used Chrome extension for recruiter
-                productivity, and contributed to web app authentication and
-                onboarding flows.
+                Focus: rapid iteration, performance, cross-platform parity
               </li>
             </ul>
-            <div class="skills-container">
-              <span class="skill-tag">Flutter</span>
-              <span class="skill-tag">Dart</span>
-              <span class="skill-tag">ReactJS</span>
-              <span class="skill-tag">Firebase</span>
-              <span class="skill-tag">Next.js</span>
-            </div>
           </div>
-          <!-- InnovationM -->
-          <div
-            class="card experience-card"
-            data-aos="fade-up"
-            data-aos-delay="300"
-          >
-            <h5>Software Engineer</h5>
-            <h6 class="text-muted">
-              InnovationM, Noida, India &mdash; Sep 2018 - Jan 2021
-            </h6>
-            <ul>
+
+          <div class="exp-card">
+            <div class="exp-title">Software Engineer</div>
+            <div class="exp-company">InnovationM — Sep 2018 – Jan 2021</div>
+            <ul class="exp-bullets">
               <li>
-                Contributed to numerous in-house and client projects, taking on
-                roles in manual/automation testing, project management, and
-                software development.
-              </li>
-              <li>
-                Consistently received client praise for delivering high-quality
-                work with remarkable speed and dedication.
+                Contributed full-stack features and QA automation; supported
+                client delivery
               </li>
             </ul>
-            <div class="skills-container">
-              <span class="skill-tag">Flutter</span>
-              <span class="skill-tag">Dart</span>
-              <span class="skill-tag">ReactJS</span>
-              <span class="skill-tag">Testing</span>
-            </div>
           </div>
         </div>
       </section>
 
-      <!-- EDUCATION -->
-      <section class="education-section container" id="education">
-        <h2 class="section-title" data-aos="fade-up">Education</h2>
-        <div
-          class="card education-card"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
-          <h5>Bachelor's Degree in Computer Science Engineering</h5>
-          <h6 class="text-muted">
-            College of Engineering, Aranmula (CAPE), Cochin University of
-            Science and Technology &mdash; 2014 - 2018
-          </h6>
-          <p>Course Completion: 2018</p>
+      <!-- Education -->
+      <section id="education" class="container">
+        <h2 class="section-title">Education</h2>
+        <div class="edu-card">
+          <div class="edu-title">B.Tech — Computer Science & Engineering</div>
+          <div class="edu-details">
+            College of Engineering, Aranmula — 2014–2018
+          </div>
         </div>
       </section>
 
-      <!-- TECHNICAL SKILLS -->
-      <section class="skills-section container" id="skills">
-        <h2 class="section-title" data-aos="fade-up">Technical Skills</h2>
-        <div class="card skills-card" data-aos="fade-up" data-aos-delay="100">
-          <h5>Hard Skills</h5>
-          <ul class="skills-list">
-            <li>
-              Flutter Framework, Dart Programming Language, UI/UX Design
-              Principles, MVC, MVVM, Clean Architecture, Cross-platform
-              Development, Material Design, Widget Development, RESTful APIs,
-              Responsive Design, Mobile App Testing, Debugging, Agile,
-              Performance Optimization, Localization, Push Notifications, CI/CD,
-              Troubleshooting
-            </li>
-          </ul>
-          <h5>Technical Stack</h5>
-          <div class="skills-circular-grid">
-            <div
-              class="skill-circle-card"
-              data-tooltip="Flutter is awesome! 🚀"
+      <!-- Contact -->
+      <section id="contact" class="container">
+        <h2 class="section-title">Contact</h2>
+        <div class="contact-grid">
+          <a
+            href="mailto:krishnanag1996@gmail.com"
+            class="contact-link"
+            aria-label="Email"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <div class="circle-progress" data-percent="95">
-                <span class="circle-text">Flutter</span>
-                <span class="circle-value">95%</span>
-              </div>
-            </div>
-            <div class="skill-circle-card" data-tooltip="Dart for the win! 🎯">
-              <div class="circle-progress" data-percent="92">
-                <span class="circle-text">Dart</span>
-                <span class="circle-value">92%</span>
-              </div>
-            </div>
-            <div
-              class="skill-circle-card"
-              data-tooltip="ReactJS makes UI fun! ⚛️"
-            >
-              <div class="circle-progress" data-percent="85">
-                <span class="circle-text">ReactJS</span>
-                <span class="circle-value">85%</span>
-              </div>
-            </div>
-            <div
-              class="skill-circle-card"
-              data-tooltip="Pythonic and powerful! 🐍"
-            >
-              <div class="circle-progress" data-percent="80">
-                <span class="circle-text">Python</span>
-                <span class="circle-value">80%</span>
-              </div>
-            </div>
-            <div class="skill-circle-card" data-tooltip="JS everywhere! ✨">
-              <div class="circle-progress" data-percent="88">
-                <span class="circle-text">JavaScript</span>
-                <span class="circle-value">88%</span>
-              </div>
-            </div>
-            <div class="skill-circle-card" data-tooltip="Firebase magic! 🔥">
-              <div class="circle-progress" data-percent="82">
-                <span class="circle-text">Firebase</span>
-                <span class="circle-value">82%</span>
-              </div>
-            </div>
-          </div>
-          <h5>Soft Skills</h5>
-          <ul class="skills-list">
-            <li>
-              Continuous Learning, Cross-Functional Collaboration, Leadership,
-              Team Management, Documentation, Timelines Management, Conflict
-              Resolution, Negotiation, Presentation, Communication
-            </li>
-          </ul>
-        </div>
-      </section>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+            <span>Email</span>
+          </a>
 
-      <!-- CONTACT SECTION -->
-      <section class="contact-section" id="contact">
-        <div class="container">
-          <h2 class="section-title" data-aos="fade-up">Contact</h2>
-          <div class="contact-container">
-            <a
-              href="tel:+918130233807"
-              class="contact-info"
-              data-aos="fade-up"
-              data-aos-delay="100"
+          <a
+            href="https://wa.me/+918130233807"
+            class="contact-link"
+            aria-label="WhatsApp"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <i class="fas fa-phone"></i> 🇮🇳 +91 8130233807
-            </a>
-            <a
-              href="tel:+97471743533"
-              class="contact-info"
-              data-aos="fade-up"
-              data-aos-delay="200"
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+            <span>WhatsApp</span>
+          </a>
+
+          <a
+            href="tel:+97471743533"
+            class="contact-link"
+            aria-label="Phone Qatar"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <i class="fas fa-phone"></i> 🇶🇦 +974 71743533
-            </a>
-            <a
-              href="mailto:krishnanag1996@gmail.com"
-              class="contact-info"
-              data-aos="fade-up"
-              data-aos-delay="300"
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+              />
+            </svg>
+            <span>🇶🇦 +974 71743533</span>
+          </a>
+
+          <a
+            href="tel:+918130233807"
+            class="contact-link"
+            aria-label="Phone India"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <i class="fas fa-envelope"></i> krishnanag1996@gmail.com
-            </a>
-          </div>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+              />
+            </svg>
+            <span>🇮🇳 +91 8130233807</span>
+          </a>
         </div>
       </section>
     </main>
 
+    <!-- Footer -->
     <footer>
-      <div class="footer-content">
-        <div class="footer-links">
-          <a
-            href="https://www.linkedin.com/in/akashgkrishnan"
-            aria-label="LinkedIn"
+      <div class="footer-links">
+        <a
+          href="https://www.linkedin.com/in/akashgkrishnan"
+          aria-label="LinkedIn"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 24 24"
           >
-            <i class="fab fa-linkedin"></i>
-          </a>
-          <a href="https://github.com/akashgk" aria-label="GitHub">
-            <i class="fab fa-github"></i>
-          </a>
-          <a href="https://medium.com/@krishnanag1996" aria-label="Medium">
-            <i class="fab fa-medium"></i>
-          </a>
-          <a href="mailto:krishnanag1996@gmail.com" aria-label="Email">
-            <i class="fas fa-envelope"></i>
-          </a>
-        </div>
-        <p class="copyright">
-          &copy; <span id="year"></span> <span>Akash G Krishnan</span>. All
-          rights reserved.
-        </p>
+            <path
+              d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+            />
+          </svg>
+        </a>
+        <a
+          href="https://github.com/akashgk"
+          aria-label="GitHub"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+            />
+          </svg>
+        </a>
+        <a
+          href="https://medium.com/@krishnanag1996"
+          aria-label="Medium"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"
+            />
+          </svg>
+        </a>
+        <a
+          href="https://pub.dev/publishers/akashgk.com/packages"
+          aria-label="Pub.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 0L2 7v10l10 7 10-7V7L12 0zm0 2.236l7.694 5.386L12 13.01 4.306 7.622 12 2.236zM4 9.266l6.5 4.548v7.184L4 17.09V9.266zm16 0v7.824l-6.5 3.908v-7.184L20 9.266z"
+            />
+          </svg>
+        </a>
       </div>
+      <p class="copyright">
+        &copy; <span id="year"></span> Akash G Krishnan. All rights reserved.
+      </p>
     </footer>
 
+    <!-- Sticky CTA (mobile only) -->
+    <div class="sticky-cta">
+      <a href="mailto:krishnanag1996@gmail.com" class="btn btn-primary"
+        >Contact</a
+      >
+      <a href="/AKASH_G_KRISHNAN_RESUME.pdf" class="btn" download>Resume</a>
+    </div>
+
+    <!-- Minimal JS -->
     <script>
-      function calculateExperience(startYear) {
-        const currentYear = new Date().getFullYear();
-        return currentYear - startYear;
-      }
-      document.getElementById("experience-years").textContent =
-        calculateExperience(2018);
+      // Theme toggle
+      (function () {
+        const themeToggle = document.getElementById("themeToggle");
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem("theme") || "light"; // Default to light
+
+        html.setAttribute("data-theme", savedTheme);
+        updateIcon(savedTheme);
+
+        themeToggle.addEventListener("click", function () {
+          const current = html.getAttribute("data-theme");
+          const next = current === "dark" ? "light" : "dark";
+          html.setAttribute("data-theme", next);
+          localStorage.setItem("theme", next);
+          updateIcon(next);
+        });
+
+        function updateIcon(theme) {
+          const icon = themeToggle.querySelector("svg path");
+          if (theme === "dark") {
+            icon.setAttribute(
+              "d",
+              "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+            );
+          } else {
+            icon.setAttribute(
+              "d",
+              "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+            );
+          }
+        }
+      })();
+
+      // Year
       document.getElementById("year").textContent = new Date().getFullYear();
+
+      // YOE calculation
+      (function () {
+        const startYear = 2018;
+        const yoe = Math.max(0, new Date().getFullYear() - startYear);
+        const el = document.getElementById("yoe");
+        if (el) el.textContent = yoe + "+";
+      })();
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <!-- Analytics (deferred) -->
     <script>
-      // Initialize AOS
-      AOS.init({
-        duration: 800,
-        once: true,
-      });
+      if ("requestIdleCallback" in window) {
+        requestIdleCallback(function () {
+          var script = document.createElement("script");
+          script.async = true;
+          script.src =
+            "https://www.googletagmanager.com/gtag/js?id=G-SKBCVDV7G0";
+          document.head.appendChild(script);
 
-      // Theme toggling
-      function toggleTheme() {
-        const body = document.body;
-        const icon = document.querySelector(".theme-toggle i");
-
-        if (body.getAttribute("data-theme") === "dark") {
-          body.removeAttribute("data-theme");
-          icon.classList.remove("fa-sun");
-          icon.classList.add("fa-moon");
-          localStorage.setItem("theme", "light");
-        } else {
-          body.setAttribute("data-theme", "dark");
-          icon.classList.remove("fa-moon");
-          icon.classList.add("fa-sun");
-          localStorage.setItem("theme", "dark");
-        }
-      }
-
-      // Apply saved theme
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme === "dark") {
-        document.body.setAttribute("data-theme", "dark");
-        document
-          .querySelector(".theme-toggle i")
-          .classList.replace("fa-moon", "fa-sun");
-      }
-
-      // Update experience years automatically
-      const startYear = 2018;
-      const currentYear = new Date().getFullYear();
-      const experienceYears = currentYear - startYear;
-      document.getElementById("experience-years").textContent = experienceYears;
-
-      // Enhanced click tracking
-      function trackClick(label) {
-        gtag("event", "click", {
-          event_category: "Link Click",
-          event_label: label,
-          value: 1,
-        });
-      }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        // Typewriter effect for hero name
-        const el = document.querySelector(".hero-content h1");
-        if (el) {
-          const text = el.textContent;
-          el.textContent = "";
-          let i = 0;
-          function type() {
-            if (i < text.length) {
-              el.textContent += text.charAt(i);
-              i++;
-              setTimeout(type, 80);
+          script.onload = function () {
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
             }
-          }
-          type();
-        }
-      });
-
-      document.addEventListener("DOMContentLoaded", function () {
-        document
-          .querySelectorAll(".section-title")
-          .forEach(function (title, idx) {
-            setTimeout(
-              () => title.setAttribute("data-animated", "true"),
-              400 + idx * 200
-            );
-          });
-      });
-
-      document.querySelectorAll(".circle-progress").forEach(function (circle) {
-        const percent = parseInt(circle.getAttribute("data-percent"), 10);
-        circle.style.background = `conic-gradient(var(--primary-color) 0% 0%, var(--card-border) 0% 100%)`;
-        setTimeout(() => {
-          let current = 0;
-          const animate = () => {
-            current += 2;
-            if (current > percent) current = percent;
-            circle.style.background = `conic-gradient(var(--primary-color) 0% ${current}%, var(--card-border) ${current}% 100%)`;
-            if (current < percent) requestAnimationFrame(animate);
+            gtag("js", new Date());
+            gtag("config", "G-SKBCVDV7G0");
           };
-          animate();
-        }, 400);
-      });
-
-      document.querySelectorAll(".contact-info").forEach((btn) => {
-        btn.addEventListener("click", function (e) {
-          const circle = document.createElement("span");
-          circle.className = "ripple";
-          const rect = btn.getBoundingClientRect();
-          circle.style.left = e.clientX - rect.left + "px";
-          circle.style.top = e.clientY - rect.top + "px";
-          btn.appendChild(circle);
-          setTimeout(() => circle.remove(), 600);
         });
-      });
+      }
     </script>
   </body>
 </html>
