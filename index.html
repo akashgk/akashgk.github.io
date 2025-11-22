@@ -373,7 +373,7 @@
       }
     </style>
   </head>
-  <body data-theme="light">
+  <body data-theme="dark">
     <button id="themeToggle" class="theme-btn" aria-label="Toggle Dark Mode">
       <svg
         class="icon"
@@ -656,7 +656,7 @@
       const moonPath = "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z";
 
       // Load saved theme or default
-      const savedTheme = localStorage.getItem("theme") || "light";
+      const savedTheme = localStorage.getItem("theme") || "dark";
       body.setAttribute("data-theme", savedTheme);
       updateIcon(savedTheme);
 
