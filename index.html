@@ -5,105 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Akash G Krishnan — Senior Flutter Developer. Expert in Dart, Firebase, and Architecture. High-performance mobile-first portfolio."
+      content="Akash G Krishnan - Senior Flutter Developer based in Qatar."
     />
     <title>Akash G Krishnan | Senior Flutter Developer</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="canonical" href="https://akashgk.com" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Space+Grotesk:wght@400;600&display=swap"
       rel="stylesheet"
     />
 
+    <script src="https://unpkg.com/feather-icons"></script>
+
     <style>
       :root {
-        /* Core Variables */
-        --font-main: "Inter", system-ui, -apple-system, sans-serif;
-        --primary: #3d5afe;
-        --primary-rgb: 61, 90, 254;
-        --secondary: #00c4b4;
-        --bg: #ffffff;
-        --bg-alt: #f8fafc;
-        --text: #0f172a;
-        --text-light: #64748b;
+        /* Dark Mode (Default) */
+        --bg: #050a14;
+        --card-bg: rgba(15, 23, 42, 0.6);
+        --primary: #00f2ea;
+        --secondary: #ff0055;
+        --text-main: #f1f5f9;
+        --text-mute: #94a3b8;
+        --border: rgba(255, 255, 255, 0.1);
+        --shadow: 0 10px 30px -10px rgba(0, 242, 234, 0.1);
+        --font-head: "Space Grotesk", sans-serif;
+        --font-body: "Outfit", sans-serif;
+      }
+
+      [data-theme="light"] {
+        --bg: #f8fafc;
         --card-bg: #ffffff;
+        --primary: #0284c7;
+        --secondary: #e11d48;
+        --text-main: #0f172a;
+        --text-mute: #64748b;
         --border: #e2e8f0;
-        --ease: cubic-bezier(0.23, 1, 0.32, 1);
-        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        --shadow-glow: 0 0 20px rgba(61, 90, 254, 0.15);
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       }
 
-      [data-theme="dark"] {
-        --bg: #020617;
-        --bg-alt: #0f172a;
-        --text: #f1f5f9;
-        --text-light: #94a3b8;
-        --card-bg: #1e293b;
-        --border: #334155;
-        --primary: #6366f1;
-        --primary-rgb: 99, 102, 241;
-        --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.25);
-      }
-
-      /* Reset & Base */
-      *,
-      *::before,
-      *::after {
+      * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
       html {
         scroll-behavior: smooth;
-        text-rendering: optimizeLegibility;
-        -webkit-font-smoothing: antialiased;
       }
       body {
-        font-family: var(--font-main);
-        background: var(--bg);
-        color: var(--text);
+        background-color: var(--bg);
+        color: var(--text-main);
+        font-family: var(--font-body);
         line-height: 1.6;
-        transition: background 0.3s ease, color 0.3s ease;
-        overflow-x: hidden;
+        transition: background-color 0.3s, color 0.3s;
+        padding-bottom: 80px; /* Space for sticky footer */
       }
 
-      /* Typography */
-      h1,
-      h2,
-      h3 {
-        font-weight: 700;
-        line-height: 1.2;
-        letter-spacing: -0.02em;
-      }
-      h1 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 1rem;
-      }
-      h2 {
-        font-size: clamp(1.75rem, 3vw, 2.5rem);
-        margin-bottom: 2rem;
-        text-align: center;
-      }
-      p {
-        margin-bottom: 1rem;
-        color: var(--text-light);
-      }
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-      ul {
-        list-style: none;
+      /* Canvas Background */
+      #grid-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.4;
+        pointer-events: none;
       }
 
-      /* Utility Layout */
       .container {
         width: 100%;
         max-width: 1100px;
@@ -111,615 +80,583 @@
         padding: 0 1.5rem;
       }
       section {
-        padding: 5rem 0;
+        padding: 4rem 0;
       }
 
-      /* Header / Hero */
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: var(--font-head);
+        font-weight: 700;
+      }
+      h1 {
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        margin-bottom: 0.5rem;
+      }
+
+      /* Section Titles */
+      .section-title {
+        font-size: clamp(2rem, 4vw, 3rem);
+        margin-bottom: 3rem;
+        text-align: center;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .section-title::after {
+        content: "";
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        margin-top: 10px;
+        border-radius: 2px;
+      }
+
+      /* Header */
       header {
-        min-height: 90vh;
+        min-height: 85vh;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        position: relative;
-        overflow: hidden;
       }
-
-      /* Mesh Gradient Background (CSS Only - High Performance) */
-      .bg-mesh {
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(
-            circle at 50% 50%,
-            rgba(var(--primary-rgb), 0.1) 0%,
-            transparent 50%
-          ),
-          radial-gradient(
-            circle at 0% 0%,
-            rgba(0, 196, 180, 0.1) 0%,
-            transparent 40%
-          );
-        z-index: -1;
-        animation: meshSpin 20s linear infinite;
-        opacity: 0.6;
-      }
-      @keyframes meshSpin {
-        from {
-          transform: rotate(0deg);
-        }
-        to {
-          transform: rotate(360deg);
-        }
+      .hero-content {
+        animation: fadeIn 1s ease-out;
       }
 
       .pill-container {
         display: flex;
-        gap: 0.75rem;
         justify-content: center;
         flex-wrap: wrap;
+        gap: 0.75rem;
         margin: 1.5rem 0;
       }
       .pill {
-        padding: 0.25rem 0.75rem;
-        border-radius: 99px;
-        background: rgba(var(--primary-rgb), 0.1);
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--primary);
+        border-radius: 50px;
+        font-size: 0.9rem;
         color: var(--primary);
-        font-size: 0.875rem;
-        font-weight: 600;
-        border: 1px solid rgba(var(--primary-rgb), 0.2);
+        background: rgba(0, 242, 234, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* Cards */
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        padding: 2rem;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+        backdrop-filter: blur(10px);
+        transition: 0.3s;
+      }
+      .card:hover {
+        border-color: var(--primary);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
+      }
+
+      /* Skills */
+      .grid-skills {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+      }
+      .skill-item {
+        text-align: center;
+        padding: 1.5rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .skill-item:hover {
+        border-color: var(--secondary);
+        color: var(--secondary);
+      }
+
+      /* Experience Timeline */
+      .job-header {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+      }
+      .company {
+        color: var(--primary);
+        font-size: 1.2rem;
+        font-weight: 700;
+      }
+      .duration {
+        font-size: 0.85rem;
+        padding: 0.2rem 0.6rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        height: fit-content;
+      }
+
+      .job-list {
+        list-style: none;
+        margin-top: 1rem;
+      }
+      .job-list li {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-mute);
+        font-size: 0.95rem;
+      }
+      .job-list li::before {
+        content: "▹";
+        position: absolute;
+        left: 0;
+        color: var(--secondary);
       }
 
       /* Buttons */
       .btn {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.5rem;
-        padding: 0.875rem 1.75rem;
-        border-radius: 0.75rem;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
         font-weight: 600;
-        transition: all 0.3s var(--ease);
+        text-decoration: none;
+        transition: 0.3s;
+        font-family: var(--font-head);
         cursor: pointer;
-        position: relative;
-        overflow: hidden;
       }
       .btn-primary {
         background: var(--primary);
-        color: white;
+        color: #000;
         border: 1px solid var(--primary);
-        box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.4);
-      }
-      .btn-outline {
-        background: transparent;
-        border: 1px solid var(--border);
-        color: var(--text);
-      }
-      .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.3);
       }
       .btn-primary:hover {
-        background: color-mix(in srgb, var(--primary), black 10%);
+        background: transparent;
+        color: var(--primary);
+      }
+      .btn-outline {
+        border: 1px solid var(--border);
+        color: var(--text-main);
+        background: transparent;
       }
       .btn-outline:hover {
-        border-color: var(--text);
-        background: var(--bg-alt);
-      }
-
-      /* Cards (Skills, Experience, etc) */
-      .grid {
-        display: grid;
-        gap: 1.5rem;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      }
-
-      .card {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 1rem;
-        padding: 1.75rem;
-        transition: transform 0.2s linear, box-shadow 0.2s linear;
-        position: relative;
-        transform-style: preserve-3d;
-      }
-
-      /* Desktop Hover Effect */
-      @media (min-width: 768px) {
-        .card:hover {
-          z-index: 10;
-        }
-      }
-
-      .card h3 {
-        font-size: 1.25rem;
-        margin-bottom: 0.5rem;
-        color: var(--text);
-      }
-      .card-sub {
-        font-size: 0.875rem;
-        color: var(--primary);
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-        display: block;
-      }
-
-      /* List Styles */
-      .feature-list li {
-        position: relative;
-        padding-left: 1.25rem;
-        margin-bottom: 0.5rem;
-        font-size: 0.9375rem;
-        color: var(--text-light);
-      }
-      .feature-list li::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0.6em;
-        width: 6px;
-        height: 6px;
-        background: var(--secondary);
-        border-radius: 50%;
-      }
-
-      /* Contact Section */
-      .contact-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        justify-content: center;
-      }
-      .contact-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1rem 1.5rem;
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 0.75rem;
-        font-weight: 500;
-        transition: 0.2s;
-      }
-      .contact-item:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-        transform: translateY(-2px);
+        border-color: var(--text-main);
+        background: rgba(255, 255, 255, 0.05);
       }
 
       /* Theme Toggle */
-      .theme-btn {
+      .theme-toggle {
         position: fixed;
         top: 1.5rem;
         right: 1.5rem;
         z-index: 100;
         background: var(--card-bg);
         border: 1px solid var(--border);
-        width: 3rem;
-        height: 3rem;
+        color: var(--text-main);
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
-        display: grid;
-        place-items: center;
         cursor: pointer;
-        box-shadow: var(--shadow-md);
-        color: var(--text);
-      }
-
-      /* Footer */
-      footer {
-        background: var(--bg-alt);
-        padding: 3rem 0;
-        text-align: center;
-        border-top: 1px solid var(--border);
-      }
-      .socials {
         display: flex;
-        gap: 1.5rem;
+        align-items: center;
         justify-content: center;
-        margin-bottom: 1.5rem;
-      }
-      .socials a svg {
-        width: 1.5rem;
-        height: 1.5rem;
-        fill: var(--text-light);
-        transition: 0.2s;
-      }
-      .socials a:hover svg {
-        fill: var(--primary);
-        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
 
-      /* Scroll Animation Utility */
-      .reveal {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
-      }
-      .reveal.active {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      /* Sticky Mobile CTA */
-      .mobile-cta {
+      /* Mobile Sticky Footer */
+      .mobile-sticky-bar {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
         background: var(--card-bg);
-        padding: 1rem;
         border-top: 1px solid var(--border);
+        padding: 1rem;
+        z-index: 999;
         display: flex;
         gap: 1rem;
-        z-index: 99;
+        backdrop-filter: blur(15px);
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
       }
-      @media (min-width: 768px) {
-        .mobile-cta {
-          display: none;
-        }
-      }
-      .mobile-cta .btn {
+      .mobile-sticky-bar .btn {
         flex: 1;
-        justify-content: center;
-        padding: 0.75rem;
+        padding: 0.9rem;
+        font-size: 1rem;
       }
 
-      /* SVGs */
-      .icon {
-        width: 1.25rem;
-        height: 1.25rem;
-        stroke-width: 2;
+      @media (min-width: 768px) {
+        .mobile-sticky-bar {
+          display: none;
+        } /* Hide on Desktop */
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
     </style>
   </head>
   <body data-theme="dark">
-    <button id="themeToggle" class="theme-btn" aria-label="Toggle Dark Mode">
-      <svg
-        class="icon"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-      </svg>
-    </button>
+    <button
+      class="theme-toggle"
+      id="themeBtn"
+      aria-label="Toggle Theme"
+    ></button>
+
+    <canvas id="grid-canvas"></canvas>
 
     <header>
-      <div class="bg-mesh"></div>
-      <div class="container reveal">
-        <h1>Akash G Krishnan</h1>
-        <p style="font-size: 1.25rem; color: var(--text)">
-          Senior Flutter Developer
-        </p>
-        <div class="pill-container">
-          <span class="pill">7+ Years Exp</span>
-          <span class="pill">Mobile-First</span>
-          <span class="pill">Qatar</span>
-        </div>
-        <p style="max-width: 600px; margin: 0 auto 2rem auto">
-          Specializing in high-performance banking applications, clean
-          architecture, and cross-platform scalability.
-        </p>
-        <div
-          class="btn-group"
-          style="display: flex; gap: 1rem; justify-content: center"
+      <div class="container hero-content">
+        <p
+          style="
+            color: var(--secondary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+          "
         >
-          <a href="#contact" class="btn btn-primary"> Contact Me </a>
+          Hello, I am
+        </p>
+        <h1>Akash G Krishnan</h1>
+        <p style="font-size: 1.25rem; color: var(--text-mute)">
+          Senior Flutter Developer & Application Architect
+        </p>
+
+        <div class="pill-container">
+          <div class="pill">
+            <i data-feather="briefcase" width="16"></i> 7+ Years Experience
+          </div>
+          <div class="pill">
+            <i data-feather="map-pin" width="16"></i> Doha, Qatar
+          </div>
+          <div class="pill">
+            <i data-feather="briefcase" width="16"></i> 5+ Years in Flutter
+          </div>
+        </div>
+
+        <div
+          style="
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+          "
+        >
+          <a href="#contact" class="btn btn-primary">Contact Me</a>
           <a
             href="/AKASH_G_KRISHNAN_RESUME.pdf"
             class="btn btn-outline"
             download
           >
-            Resume
-            <svg
-              class="icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
+            <i data-feather="download"></i> Download Resume
           </a>
         </div>
       </div>
     </header>
 
-    <main>
+    <main class="container">
+      <section id="about">
+        <h2 class="section-title">About Me</h2>
+        <div
+          class="card"
+          style="text-align: center; max-width: 800px; margin: 0 auto"
+        >
+          <p style="margin-bottom: 1rem">
+            Software developer with a love for building beautiful UIs and tying
+            them to robust backends. Currently transforming banking experiences
+            at <strong>Commercial Bank of Qatar</strong>.
+          </p>
+          <p>
+            I specialize in rolling out Android and iOS apps from scratch to
+            production. Beyond coding, I mentor junior engineers and maintain
+            open-source repositories. Currently exploring advanced Flutter
+            concepts and architecture patterns to build scalable applications.
+          </p>
+        </div>
+      </section>
+
       <section id="skills">
-        <div class="container">
-          <h2 class="reveal">Technical Arsenal</h2>
-          <div class="grid">
-            <div class="card reveal js-tilt">
-              <h3>Flutter</h3>
-              <span class="card-sub">Advanced</span>
-              <p>
-                High-fidelity UI, Platform Channels, Performance Profiling,
-                Custom Render Objects.
-              </p>
-            </div>
-            <div class="card reveal js-tilt">
-              <h3>Dart</h3>
-              <span class="card-sub">Expert</span>
-              <p>
-                Asynchronous programming, Streams, Isolates, and strong-mode
-                type safety.
-              </p>
-            </div>
-            <div class="card reveal js-tilt">
-              <h3>Architecture</h3>
-              <span class="card-sub">System Design</span>
-              <p>
-                Clean Architecture, MVVM, SOLID principles, Dependency
-                Injection.
-              </p>
-            </div>
-            <div class="card reveal js-tilt">
-              <h3>React & Web</h3>
-              <span class="card-sub">Full Stack</span>
-              <p>
-                Modern JS/TS, React Hooks, Redux, Responsive Design for Web
-                Portals.
-              </p>
-            </div>
-            <div class="card reveal js-tilt">
-              <h3>Backend</h3>
-              <span class="card-sub">Python & Firebase</span>
-              <p>
-                Cloud Functions, Firestore Security Rules, REST API design,
-                CI/CD pipelines.
-              </p>
-            </div>
-            <div class="card reveal js-tilt">
-              <h3>Tooling</h3>
-              <span class="card-sub">DevOps</span>
-              <p>Git, Codemagic, GitHub Actions, Docker, Automated Testing.</p>
-            </div>
+        <h2 class="section-title">Technical Arsenal</h2>
+        <div class="grid-skills">
+          <div class="skill-item">
+            <i
+              data-feather="smartphone"
+              width="32"
+              style="margin-bottom: 1rem"
+            ></i>
+            <h4>Mobile</h4>
+            <p style="font-size: 0.9rem; color: var(--text-mute)">
+              Flutter, Dart, iOS, Android, Swift
+            </p>
           </div>
+          <div class="skill-item">
+            <i data-feather="globe" width="32" style="margin-bottom: 1rem"></i>
+            <h4>Web</h4>
+            <p style="font-size: 0.9rem; color: var(--text-mute)">
+              ReactJS, NextJS, JS
+            </p>
+          </div>
+          <div class="skill-item">
+            <i data-feather="server" width="32" style="margin-bottom: 1rem"></i>
+            <h4>Backend</h4>
+            <p style="font-size: 0.9rem; color: var(--text-mute)">
+              Python, Firebase, Node.js
+            </p>
+          </div>
+          <div class="skill-item">
+            <i data-feather="layers" width="32" style="margin-bottom: 1rem"></i>
+            <h4>Architecture</h4>
+            <p style="font-size: 0.9rem; color: var(--text-mute)">
+              Clean Architecture, MVVM, SOLID
+            </p>
+          </div>
+        </div>
+
+        <div style="margin-top: 2rem; text-align: center">
+          <a
+            href="https://pub.dev/publishers/akashgk.com/packages"
+            target="_blank"
+            class="card"
+            style="
+              display: inline-flex;
+              align-items: center;
+              gap: 1rem;
+              text-decoration: none;
+              border: 1px solid var(--secondary);
+              padding: 1.5rem;
+            "
+          >
+            <i data-feather="package" style="color: var(--secondary)"></i>
+            <div style="text-align: left">
+              <h4 style="color: var(--text-main); margin-bottom: 0">
+                My Dart Packages
+              </h4>
+              <p style="font-size: 0.85rem; color: var(--text-mute); margin: 0">
+                View contributions on pub.dev
+              </p>
+            </div>
+            <i data-feather="external-link" width="16"></i>
+          </a>
         </div>
       </section>
 
-      <section id="experience" style="background: var(--bg-alt)">
-        <div class="container">
-          <h2 class="reveal">Professional History</h2>
-          <div class="grid" style="grid-template-columns: 1fr">
-            <div class="card reveal">
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  flex-wrap: wrap;
-                  align-items: baseline;
-                "
-              >
-                <h3>Commercial Bank of Qatar</h3>
-                <span class="card-sub">Jun 2023 – Present</span>
-              </div>
-              <p style="color: var(--primary)">Senior Flutter Developer</p>
-              <ul class="feature-list">
-                <li>
-                  Led the Corporate Trade Portal frontend, significantly
-                  reducing vendor dependencies and costs.
-                </li>
-                <li>
-                  Managed a team of 8+ developers, enforcing banking-grade
-                  security and performance standards.
-                </li>
-                <li>
-                  Implemented Biometric authentication and complex encryption
-                  for financial transactions.
-                </li>
-              </ul>
-            </div>
+      <section id="experience">
+        <h2 class="section-title">Experience</h2>
 
-            <div class="card reveal">
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  flex-wrap: wrap;
-                  align-items: baseline;
-                "
-              >
-                <h3>PyjamaHR</h3>
-                <span class="card-sub">Feb 2021 – Jun 2023</span>
-              </div>
-              <p style="color: var(--primary)">SDE II</p>
-              <ul class="feature-list">
-                <li>
-                  Architected the initial mobile product using Flutter,
-                  achieving 99% code reuse across iOS and Android.
-                </li>
-                <li>
-                  Developed a Chrome Extension using ReactJS to integrate ATS
-                  features into LinkedIn.
-                </li>
-              </ul>
-            </div>
-
-            <div class="card reveal">
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  flex-wrap: wrap;
-                  align-items: baseline;
-                "
-              >
-                <h3>InnovationM</h3>
-                <span class="card-sub">Sep 2018 – Jan 2021</span>
-              </div>
-              <p style="color: var(--primary)">Software Engineer</p>
-              <ul class="feature-list">
-                <li>
-                  Full-stack development and QA automation for client
-                  deliverables.
-                </li>
-              </ul>
-            </div>
+        <div class="card">
+          <div class="job-header">
+            <div class="company">Commercial Bank of Qatar (Linnk Group)</div>
+            <div class="duration">06/2023 - Present</div>
           </div>
+          <h4>Software Application Developer</h4>
+          <ul class="job-list">
+            <li>
+              Leading the Corporate Trade Portal frontend delivery from scratch.
+            </li>
+            <li>Managing a team of 10+ Developers for CTP Delivery.</li>
+            <li>Implementing banking-grade security and Clean Architecture.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="job-header">
+            <div class="company">PyjamaHR</div>
+            <div class="duration">02/2021 - 06/2023</div>
+          </div>
+          <h4>Software Development Engineer</h4>
+          <ul class="job-list">
+            <li>Built the PyjamaHR App from scratch with Flutter.</li>
+            <li>
+              Implemented Google Identity services for NextJs application.
+            </li>
+            <li>Implemented the PyjamaHR Chrome Extension using ReactJS.</li>
+            <li>
+              Implemented Generic Event Tracking and Error Logging using
+              Mixpanel and Sentry.
+            </li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="job-header">
+            <div class="company">InnovationM Mobile and Web Technologies</div>
+            <div class="duration">09/2018 - 01/2021</div>
+          </div>
+          <h4>SDE</h4>
+          <ul class="job-list">
+            <li>Delivered POC for EzMall iOS Application</li>
+            <li>
+              Worked with Clients like OneAssist on their Automation Testing
+              suite with Selenium and Python.
+            </li>
+            <li>
+              Worked with British Council team for delivering the IELTS Prep
+              Application
+            </li>
+          </ul>
         </div>
       </section>
 
-      <section id="contact">
-        <div class="container">
-          <h2 class="reveal">Let's Connect</h2>
-          <div class="contact-links reveal">
-            <a href="mailto:krishnanag1996@gmail.com" class="contact-item">
-              <svg
-                class="icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path
-                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                />
-                <polyline points="22,6 12,13 2,6" />
-              </svg>
-              Email
-            </a>
-            <a href="https://wa.me/+918130233807" class="contact-item">
-              <svg
-                class="icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path
-                  d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
-                />
-              </svg>
-              WhatsApp
-            </a>
-            <a href="tel:+97471743533" class="contact-item">
-              <span>🇶🇦</span> +974 71743533
-            </a>
-            <a href="tel:+918130233807" class="contact-item">
-              <span>🇮🇳</span> +91 8130233807
-            </a>
-          </div>
+      <section id="contact" style="padding-bottom: 4rem">
+        <h2 class="section-title">Let's Connect</h2>
+        <div
+          style="
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+          "
+        >
+          <a
+            href="tel:+97471743533"
+            class="card"
+            style="
+              text-decoration: none;
+              min-width: 250px;
+              text-align: center;
+              display: block;
+            "
+          >
+            <i
+              data-feather="phone"
+              style="color: var(--primary); margin-bottom: 0.5rem"
+            ></i>
+            <h4 style="color: var(--text-main)">Call Me</h4>
+            <p style="font-size: 0.9rem; color: var(--text-mute)">
+              +974 71743533
+            </p>
+          </a>
+          <a
+            href="mailto:krishnanag1996@gmail.com"
+            class="card"
+            style="
+              text-decoration: none;
+              min-width: 250px;
+              text-align: center;
+              display: block;
+            "
+          >
+            <i
+              data-feather="mail"
+              style="color: var(--primary); margin-bottom: 0.5rem"
+            ></i>
+            <h4 style="color: var(--text-main)">Email Me</h4>
+            <p style="font-size: 0.9rem; color: var(--text-mute)">
+              krishnanag1996@gmail.com
+            </p>
+          </a>
+
+          <a
+            href="tel:+918130233807"
+            class="card"
+            style="
+              text-decoration: none;
+              min-width: 250px;
+              text-align: center;
+              display: block;
+            "
+          >
+            <i
+              data-feather="phone"
+              style="color: var(--primary); margin-bottom: 0.5rem"
+            ></i>
+            <h4 style="color: var(--text-main)">Call Me</h4>
+            <p style="font-size: 0.9rem; color: var(--text-mute)">
+              +91 8130233807
+            </p>
+          </a>
         </div>
       </section>
     </main>
 
-    <footer>
-      <div class="container">
-        <div class="socials">
-          <a
-            href="https://www.linkedin.com/in/akashgkrishnan"
-            aria-label="LinkedIn"
-          >
-            <svg viewBox="0 0 24 24">
-              <path
-                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-              />
-              <rect x="2" y="9" width="4" height="12" />
-              <circle cx="4" cy="4" r="2" />
-            </svg>
-          </a>
-          <a href="https://github.com/akashgk" aria-label="GitHub">
-            <svg viewBox="0 0 24 24">
-              <path
-                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
-              />
-            </svg>
-          </a>
-        </div>
-        <p style="font-size: 0.875rem; color: var(--text-light)">
-          &copy; <span id="year"></span> Akash G Krishnan. Built for Speed.
-        </p>
-      </div>
-    </footer>
-
-    <div class="mobile-cta">
-      <a href="mailto:krishnanag1996@gmail.com" class="btn btn-primary"
-        >Email Me</a
-      >
-      <a href="/AKASH_G_KRISHNAN_RESUME.pdf" class="btn btn-outline" download
-        >Resume</a
-      >
+    <div class="mobile-sticky-bar">
+      <a href="/AKASH_G_KRISHNAN_RESUME.pdf" class="btn btn-primary" download>
+        <i data-feather="download" width="18"></i> Resume
+      </a>
+      <a href="mailto:krishnanag1996@gmail.com" class="btn btn-outline">
+        <i data-feather="mail" width="18"></i> Contact
+      </a>
     </div>
 
     <script>
-      // 1. Theme Toggle Logic (Immediate Execution)
-      const themeBtn = document.getElementById("themeToggle");
+      // 1. Initialize Icons
+      feather.replace();
+
+      // 2. Theme Toggle Logic (Fix)
+      const themeBtn = document.getElementById("themeBtn");
       const body = document.body;
-      const icon = themeBtn.querySelector("svg");
 
-      const sunPath =
-        "M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42";
-      const moonPath = "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z";
+      // SVG Strings for Icons (Since we replace innerHTML)
+      const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+      const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
 
-      // Load saved theme or default
+      // Load saved theme
       const savedTheme = localStorage.getItem("theme") || "dark";
       body.setAttribute("data-theme", savedTheme);
-      updateIcon(savedTheme);
+      updateBtn(savedTheme);
 
       themeBtn.addEventListener("click", () => {
         const current = body.getAttribute("data-theme");
-        const next = current === "light" ? "dark" : "light";
+        const next = current === "dark" ? "light" : "dark";
+
         body.setAttribute("data-theme", next);
         localStorage.setItem("theme", next);
-        updateIcon(next);
+        updateBtn(next);
       });
 
-      function updateIcon(theme) {
-        if (theme === "dark") {
-          icon.innerHTML = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
-          icon.setAttribute("stroke", "#fbbf24"); // sun color
-        } else {
-          icon.innerHTML = `<path d="${moonPath}"/>`;
-          icon.setAttribute("stroke", "currentColor");
+      function updateBtn(theme) {
+        themeBtn.innerHTML = theme === "dark" ? sunIcon : moonIcon;
+      }
+
+      // 3. Canvas Grid Animation
+      const canvas = document.getElementById("grid-canvas");
+      const ctx = canvas.getContext("2d");
+      let width, height;
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resize);
+      resize();
+
+      let offset = 0;
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+        const isDark = body.getAttribute("data-theme") === "dark";
+        ctx.strokeStyle = isDark
+          ? "rgba(0, 242, 234, 0.1)"
+          : "rgba(0, 0, 0, 0.05)";
+
+        offset += 0.5;
+        if (offset > 50) offset = 0;
+
+        ctx.beginPath();
+        for (let x = 0; x <= width; x += 50) {
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, height);
         }
+        for (let y = offset; y <= height; y += 50) {
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+        }
+        ctx.stroke();
+        requestAnimationFrame(animate);
       }
-
-      // 2. Intersection Observer for Scroll Reveal (Performance Optimized)
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("active");
-              observer.unobserve(entry.target); // Only animate once
-            }
-          });
-        },
-        { threshold: 0.1 }
-      );
-
-      document
-        .querySelectorAll(".reveal")
-        .forEach((el) => observer.observe(el));
-
-      // 3. Lightweight 3D Tilt Effect (Vanilla JS - No Library)
-      // Only attaches listener on desktop to save battery on mobile
-      if (window.matchMedia("(min-width: 768px)").matches) {
-        document.querySelectorAll(".js-tilt").forEach((card) => {
-          card.addEventListener("mousemove", (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-
-            // Calculate rotation (max 10deg)
-            const rotateX = ((y - centerY) / centerY) * -8;
-            const rotateY = ((x - centerX) / centerX) * 8;
-
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-          });
-
-          card.addEventListener("mouseleave", () => {
-            card.style.transform =
-              "perspective(1000px) rotateX(0) rotateY(0) scale(1)";
-          });
-        });
-      }
-
+      animate();
       document.getElementById("year").textContent = new Date().getFullYear();
 
       // 4. Defer Analytics (PageSpeed Improvement)
