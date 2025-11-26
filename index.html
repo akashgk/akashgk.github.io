@@ -5,14 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Akash G Krishnan - Senior Flutter Developer based in Qatar."
+      content="Akash G Krishnan - Senior Flutter Developer based in Qatar. Expert in Banking Apps, Clean Architecture, and Digital Transformation."
     />
     <title>Akash G Krishnan | Senior Flutter Developer</title>
 
-    <meta
-      name="description"
-      content="Senior Flutter Developer & Application Architect with 7+ years experience. Expert in Banking Apps, Clean Architecture, and Digital Transformation at Commercial Bank of Qatar."
-    />
     <meta
       name="keywords"
       content="Akash G Krishnan, Flutter Developer Qatar, Senior Software Engineer Doha, Dart Expert, Commercial Bank of Qatar, FinTech Developer, Mobile App Architect, PyjamaHR, InnovationM"
@@ -21,6 +17,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://akashgk.com" />
 
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="profile" />
     <meta
       property="og:title"
@@ -35,6 +32,8 @@
       property="og:image"
       content="https://akashgk.com/images/og-banner.jpeg"
     />
+
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Akash G Krishnan | Flutter Architect" />
     <meta
@@ -46,326 +45,21 @@
       content="https://akashgk.com/images/og-banner.jpeg"
     />
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Space+Grotesk:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Akash G Krishnan",
-        "jobTitle": "Senior Flutter Developer",
-        "url": "https://akashgk.com",
-        "sameAs": [
-          "https://www.linkedin.com/in/akashgkrishnan",
-          "https://github.com/akashgk",
-          "https://pub.dev/publishers/akashgk.com/packages"
-        ],
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Doha",
-          "addressCountry": "Qatar"
-        },
-        "worksFor": {
-          "@type": "Organization",
-          "name": "Commercial Bank of Qatar"
-        }
-      }
-    </script>
 
-    <style>
-      :root {
-        /* Dark Mode (Default) */
-        --bg: #050a14;
-        --card-bg: rgba(15, 23, 42, 0.6);
-        --primary: #00f2ea;
-        --secondary: #ff0055;
-        --text-main: #f1f5f9;
-        --text-mute: #94a3b8;
-        --border: rgba(255, 255, 255, 0.1);
-        --shadow: 0 10px 30px -10px rgba(0, 242, 234, 0.1);
-        --font-head: "Space Grotesk", sans-serif;
-        --font-body: "Outfit", sans-serif;
-      }
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css" />
 
-      [data-theme="light"] {
-        --bg: #f8fafc;
-        --card-bg: #ffffff;
-        --primary: #0284c7;
-        --secondary: #e11d48;
-        --text-main: #0f172a;
-        --text-mute: #64748b;
-        --border: #e2e8f0;
-        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      }
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      html {
-        scroll-behavior: smooth;
-      }
-      body {
-        background-color: var(--bg);
-        color: var(--text-main);
-        font-family: var(--font-body);
-        line-height: 1.6;
-        transition: background-color 0.3s, color 0.3s;
-        padding-bottom: 80px; /* Space for sticky footer */
-      }
-
-      /* Canvas Background */
-      #grid-canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        opacity: 0.4;
-        pointer-events: none;
-      }
-
-      .container {
-        width: 100%;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 1.5rem;
-      }
-      section {
-        padding: 4rem 0;
-      }
-
-      h1,
-      h2,
-      h3,
-      h4 {
-        font-family: var(--font-head);
-        font-weight: 700;
-      }
-      h1 {
-        font-size: clamp(2.5rem, 6vw, 4.5rem);
-        margin-bottom: 0.5rem;
-      }
-
-      /* Section Titles */
-      .section-title {
-        font-size: clamp(2rem, 4vw, 3rem);
-        margin-bottom: 3rem;
-        text-align: center;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      .section-title::after {
-        content: "";
-        width: 60px;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary), var(--secondary));
-        margin-top: 10px;
-        border-radius: 2px;
-      }
-
-      /* Header */
-      header {
-        min-height: 85vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-      }
-      .hero-content {
-        animation: fadeIn 1s ease-out;
-      }
-
-      .pill-container {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        margin: 1.5rem 0;
-      }
-      .pill {
-        padding: 0.5rem 1rem;
-        border: 1px solid var(--primary);
-        border-radius: 50px;
-        font-size: 0.9rem;
-        color: var(--primary);
-        background: rgba(0, 242, 234, 0.05);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      /* Cards */
-      .card {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        padding: 2rem;
-        border-radius: 16px;
-        margin-bottom: 1.5rem;
-        backdrop-filter: blur(10px);
-        transition: 0.3s;
-      }
-      .card:hover {
-        border-color: var(--primary);
-        transform: translateY(-3px);
-        box-shadow: var(--shadow);
-      }
-
-      /* Skills */
-      .grid-skills {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 1rem;
-      }
-      .skill-item {
-        text-align: center;
-        padding: 1.5rem;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.03);
-      }
-      .skill-item:hover {
-        border-color: var(--secondary);
-        color: var(--secondary);
-      }
-
-      /* Experience Timeline */
-      .job-header {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        margin-bottom: 0.5rem;
-      }
-      .company {
-        color: var(--primary);
-        font-size: 1.2rem;
-        font-weight: 700;
-      }
-      .duration {
-        font-size: 0.85rem;
-        padding: 0.2rem 0.6rem;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-        height: fit-content;
-      }
-
-      .job-list {
-        list-style: none;
-        margin-top: 1rem;
-      }
-      .job-list li {
-        position: relative;
-        padding-left: 1.5rem;
-        margin-bottom: 0.5rem;
-        color: var(--text-mute);
-        font-size: 0.95rem;
-      }
-      .job-list li::before {
-        content: "▹";
-        position: absolute;
-        left: 0;
-        color: var(--secondary);
-      }
-
-      /* Buttons */
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        padding: 0.8rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: 0.3s;
-        font-family: var(--font-head);
-        cursor: pointer;
-      }
-      .btn-primary {
-        background: var(--primary);
-        color: #000;
-        border: 1px solid var(--primary);
-      }
-      .btn-primary:hover {
-        background: transparent;
-        color: var(--primary);
-      }
-      .btn-outline {
-        border: 1px solid var(--border);
-        color: var(--text-main);
-        background: transparent;
-      }
-      .btn-outline:hover {
-        border-color: var(--text-main);
-        background: rgba(255, 255, 255, 0.05);
-      }
-
-      /* Theme Toggle */
-      .theme-toggle {
-        position: fixed;
-        top: 1.5rem;
-        right: 1.5rem;
-        z-index: 100;
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        color: var(--text-main);
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      /* Mobile Sticky Footer */
-      .mobile-sticky-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--card-bg);
-        border-top: 1px solid var(--border);
-        padding: 1rem;
-        z-index: 999;
-        display: flex;
-        gap: 1rem;
-        backdrop-filter: blur(15px);
-        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
-      }
-      .mobile-sticky-bar .btn {
-        flex: 1;
-        padding: 0.9rem;
-        font-size: 1rem;
-      }
-
-      @media (min-width: 768px) {
-        .mobile-sticky-bar {
-          display: none;
-        } /* Hide on Desktop */
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    </style>
+    <!-- Structured Data -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -391,479 +85,462 @@
             "name": "Commercial Bank of Qatar",
             "sameAs": "https://www.cbq.qa"
           }
-        ],
-        "alumniOf": {
-          "@type": "CollegeOrUniversity",
-          "name": "College of Engineering, Aranmula"
-        },
-        "knowsAbout": [
-          "Flutter Development",
-          "Dart Programming",
-          "Mobile Application Architecture",
-          "FinTech Security",
-          "Clean Architecture",
-          "Python",
-          "ReactJS"
         ]
       }
     </script>
   </head>
-  <body data-theme="dark">
-    <button
-      class="theme-toggle"
-      id="themeBtn"
-      aria-label="Toggle Theme"
-    ></button>
-
+  <body>
+    <div class="bg-glow"></div>
     <canvas id="grid-canvas"></canvas>
 
-    <header>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <a href="#" class="nav-logo"
+        >AGK<span style="color: var(--primary)">.</span></a
+      >
+      <div class="nav-links">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#skills" class="nav-link">Skills</a>
+        <a href="#experience" class="nav-link">Experience</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </div>
+      <button
+        id="themeBtn"
+        class="theme-toggle"
+        aria-label="Toggle Theme"
+      ></button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
       <div class="container hero-content">
-        <p
-          style="
-            color: var(--secondary);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 600;
-          "
-        >
-          Hello, I am
-        </p>
-        <h1>Akash G Krishnan</h1>
-        <p style="font-size: 1.25rem; color: var(--text-mute)">
-          Senior Flutter Developer & Application Architect
-        </p>
-
-        <div class="pill-container">
-          <div class="pill">
-            <i data-feather="briefcase" width="16"></i> 7+ Years Experience
-          </div>
-          <div class="pill">
-            <i data-feather="map-pin" width="16"></i> Doha, Qatar
-          </div>
-          <div class="pill">
-            <i data-feather="briefcase" width="16"></i> 5+ Years in Flutter
-          </div>
+        <div class="hero-badge">
+          <i data-feather="terminal" width="16"></i>
+          <span>Senior Flutter Developer</span>
         </div>
-
-        <div
-          style="
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-          "
-        >
-          <a href="#contact" class="btn btn-primary">Contact Me</a>
+        <h1 class="hero-title">
+          Hi, I am <span class="gradient-text">Akash G Krishnan</span>
+        </h1>
+        <p class="hero-subtitle">
+          Building Digital Masterpieces. I architect high-performance banking
+          applications and secure fintech solutions. Currently leading mobile
+          innovation at Commercial Bank of Qatar.
+        </p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-primary">
+            Let's Talk <i data-feather="arrow-right" width="18"></i>
+          </a>
           <a
             href="/AKASH_G_KRISHNAN_RESUME.pdf"
             class="btn btn-outline"
             download
           >
-            <i data-feather="download"></i> Download Resume
+            <i data-feather="download" width="18"></i> Resume
           </a>
-          <a href="#about" class="btn btn-primary">About Me</a>
         </div>
       </div>
-    </header>
+    </section>
 
-    <main class="container">
-      <section id="about">
-        <h2 class="section-title">About Me</h2>
-        <div
-          class="card"
-          style="text-align: center; max-width: 800px; margin: 0 auto"
-        >
-          <p style="font-size: 1.1rem; line-height: 1.8">
-            As a <strong>Senior Flutter Developer</strong> based in
-            <strong>Doha, Qatar</strong>, I specialize in building secure,
-            high-performance <strong>FinTech applications</strong>. Currently, I
-            lead the mobile architecture for the
-            <strong>Commercial Bank of Qatar</strong>, ensuring banking-grade
-            security and seamless user experiences. My expertise spans
-            <strong>Dart</strong>, <strong>Python</strong>, and
-            <strong>ReactJS</strong>, allowing me to bridge the gap between
-            complex backends and beautiful mobile UIs.
-          </p>
-          <p>
-            I specialize in rolling out Android and iOS apps from scratch to
-            production. Beyond coding, I mentor junior engineers and maintain
-            open-source repositories. Currently exploring advanced Flutter
-            concepts and architecture patterns to build scalable applications.
-          </p>
-        </div>
-      </section>
+    <!-- Bento Grid Section (About & Skills) -->
+    <section id="about" class="container">
+      <h2 class="section-title reveal">
+        The <span class="gradient-text">Arsenal</span>
+      </h2>
 
-      <section id="skills">
-        <h2 class="section-title">Technical Arsenal</h2>
-        <div class="grid-skills">
-          <div class="skill-item">
-            <i
-              data-feather="smartphone"
-              width="32"
-              style="margin-bottom: 1rem"
-            ></i>
-            <h4>Mobile</h4>
-            <p style="font-size: 0.9rem; color: var(--text-mute)">
-              Flutter, Dart, iOS, Android, Swift
-            </p>
-          </div>
-          <div class="skill-item">
-            <i data-feather="globe" width="32" style="margin-bottom: 1rem"></i>
-            <h4>Web</h4>
-            <p style="font-size: 0.9rem; color: var(--text-mute)">
-              ReactJS, NextJS, JS
-            </p>
-          </div>
-          <div class="skill-item">
-            <i data-feather="server" width="32" style="margin-bottom: 1rem"></i>
-            <h4>Backend</h4>
-            <p style="font-size: 0.9rem; color: var(--text-mute)">
-              Python, Firebase, Node.js
-            </p>
-          </div>
-          <div class="skill-item">
-            <i data-feather="layers" width="32" style="margin-bottom: 1rem"></i>
-            <h4>Architecture</h4>
-            <p style="font-size: 0.9rem; color: var(--text-mute)">
-              Clean Architecture, MVVM, SOLID
-            </p>
-          </div>
-        </div>
-
-        <div style="margin-top: 2rem; text-align: center">
-          <a
-            href="https://pub.dev/publishers/akashgk.com/packages"
-            target="_blank"
-            class="card"
+      <div class="bento-grid">
+        <!-- About Card (Large) -->
+        <div class="bento-card bento-span-2 reveal">
+          <div class="card-icon"><i data-feather="user"></i></div>
+          <h3>About Me</h3>
+          <p
             style="
-              display: inline-flex;
-              align-items: center;
-              gap: 1rem;
-              text-decoration: none;
-              border: 1px solid var(--secondary);
-              padding: 1.5rem;
+              color: var(--text-mute);
+              margin-top: 1rem;
+              font-size: 1.05rem;
             "
           >
-            <i data-feather="package" style="color: var(--secondary)"></i>
-            <div style="text-align: left">
-              <h4 style="color: var(--text-main); margin-bottom: 0">
-                My Dart Packages
-              </h4>
-              <p style="font-size: 0.85rem; color: var(--text-mute); margin: 0">
-                View contributions on pub.dev
-              </p>
+            Based in <strong>Doha, Qatar</strong>, I am Senior Flutter Developer
+            working currently on High-Security
+            <strong>FinTech applications</strong>. With over 7 years of
+            experience in Software Development, and 5+ in
+            <strong>Flutter</strong> <strong>Dart</strong>, Im also proficient
+            in
+            <strong>Python</strong
+            >,<strong>JavaScript</strong>,<strong>ReactJS</strong>, and willing
+            to learn any tech that comes my way.
+          </p>
+        </div>
+
+        <!-- Location Card -->
+        <div class="bento-card reveal">
+          <div class="card-icon"><i data-feather="map-pin"></i></div>
+          <h3>Location</h3>
+          <p style="color: var(--text-mute); margin-top: 0.5rem">Doha, Qatar</p>
+          <div style="margin-top: auto; font-size: 3rem; opacity: 0.2">🇶🇦</div>
+        </div>
+
+        <!-- Mobile Skill -->
+        <div class="bento-card reveal">
+          <div class="card-icon"><i data-feather="smartphone"></i></div>
+          <h3>Mobile</h3>
+          <p style="color: var(--text-mute); margin-top: 0.5rem">
+            Flutter, Dart, iOS, Android, Swift
+          </p>
+        </div>
+
+        <!-- Web Skill -->
+        <div class="bento-card reveal">
+          <div class="card-icon"><i data-feather="globe"></i></div>
+          <h3>Web</h3>
+          <p style="color: var(--text-mute); margin-top: 0.5rem">
+            ReactJS, NextJS, JS
+          </p>
+        </div>
+
+        <!-- Backend Skill -->
+        <div class="bento-card reveal">
+          <div class="card-icon"><i data-feather="server"></i></div>
+          <h3>Backend</h3>
+          <p style="color: var(--text-mute); margin-top: 0.5rem">
+            Python, Firebase, Node.js
+          </p>
+        </div>
+
+        <!-- Architecture Skill -->
+        <div class="bento-card reveal">
+          <div class="card-icon"><i data-feather="layers"></i></div>
+          <h3>Architecture</h3>
+          <p style="color: var(--text-mute); margin-top: 0.5rem">
+            Clean Arch, MVVM, SOLID
+          </p>
+        </div>
+
+        <!-- Packages Link -->
+        <a
+          href="https://pub.dev/publishers/akashgk.com/packages"
+          target="_blank"
+          class="bento-card bento-span-2 reveal"
+          style="text-decoration: none; color: inherit"
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              width: 100%;
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 1rem">
+              <div class="card-icon" style="margin-bottom: 0">
+                <i data-feather="package"></i>
+              </div>
+              <div>
+                <h3>My Dart Packages</h3>
+                <p style="color: var(--text-mute); font-size: 0.9rem">
+                  View contributions on pub.dev
+                </p>
+              </div>
             </div>
-            <i data-feather="external-link" width="16"></i>
-          </a>
-        </div>
-      </section>
-
-      <section id="experience">
-        <h2 class="section-title">Experience</h2>
-
-        <div class="card">
-          <div class="job-header">
-            <div class="company">Commercial Bank of Qatar (Linnk Group)</div>
-            <div class="duration">06/2023 - Present</div>
+            <i data-feather="external-link"></i>
           </div>
-          <h4>Software Application Developer</h4>
-          <ul class="job-list">
-            <li>
-              Leading the Corporate Trade Portal frontend delivery from scratch.
-            </li>
-            <li>Managing a team of 10+ Developers for CTP Delivery.</li>
-            <li>Implementing banking-grade security and Clean Architecture.</li>
-          </ul>
-        </div>
+        </a>
+      </div>
+    </section>
 
-        <div class="card">
-          <div class="job-header">
-            <div class="company">PyjamaHR</div>
-            <div class="duration">02/2021 - 06/2023</div>
+    <!-- Experience Section -->
+    <section id="experience" class="container">
+      <h2 class="section-title reveal">
+        My <span class="gradient-text">Journey</span>
+      </h2>
+
+      <div class="timeline">
+        <!-- Job 1 -->
+        <div class="timeline-item reveal">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                margin-bottom: 0.5rem;
+              "
+            >
+              <h3 style="color: var(--primary)">Commercial Bank of Qatar</h3>
+              <span
+                style="
+                  font-size: 0.85rem;
+                  padding: 0.2rem 0.8rem;
+                  background: rgba(255, 255, 255, 0.1);
+                  border-radius: 20px;
+                "
+                >06/2023 - Present</span
+              >
+            </div>
+            <h4 style="margin-bottom: 1rem">Software Application Developer</h4>
+            <ul style="list-style: none; color: var(--text-mute)">
+              <li style="margin-bottom: 0.5rem">
+                ▹ Leading the Corporate Trade Portal frontend delivery from
+                scratch.
+              </li>
+              <li style="margin-bottom: 0.5rem">
+                ▹ Managing a team of 10+ Developers for CTP Delivery.
+              </li>
+              <li>
+                ▹ Implementing banking-grade security and Clean Architecture.
+              </li>
+            </ul>
           </div>
-          <h4>Software Development Engineer</h4>
-          <ul class="job-list">
-            <li>Built the PyjamaHR App from scratch with Flutter.</li>
-            <li>
-              Implemented Google Identity services for NextJs application.
-            </li>
-            <li>Implemented the PyjamaHR Chrome Extension using ReactJS.</li>
-            <li>
-              Implemented Generic Event Tracking and Error Logging using
-              Mixpanel and Sentry.
-            </li>
-          </ul>
         </div>
 
-        <div class="card">
-          <div class="job-header">
-            <div class="company">InnovationM Mobile and Web Technologies</div>
-            <div class="duration">09/2018 - 01/2021</div>
+        <!-- Job 2 -->
+        <div class="timeline-item reveal">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                margin-bottom: 0.5rem;
+              "
+            >
+              <h3 style="color: var(--primary)">PyjamaHR</h3>
+              <span
+                style="
+                  font-size: 0.85rem;
+                  padding: 0.2rem 0.8rem;
+                  background: rgba(255, 255, 255, 0.1);
+                  border-radius: 20px;
+                "
+                >02/2021 - 06/2023</span
+              >
+            </div>
+            <h4 style="margin-bottom: 1rem">Software Development Engineer</h4>
+            <ul style="list-style: none; color: var(--text-mute)">
+              <li style="margin-bottom: 0.5rem">
+                ▹ Built the PyjamaHR App from scratch with Flutter.
+              </li>
+              <li style="margin-bottom: 0.5rem">
+                ▹ Implemented Google Identity services for NextJs application.
+              </li>
+              <li>
+                ▹ Implemented Generic Event Tracking and Error Logging using
+                Mixpanel and Sentry.
+              </li>
+            </ul>
           </div>
-          <h4>SDE</h4>
-          <ul class="job-list">
-            <li>Delivered POC for EzMall iOS Application</li>
-            <li>
-              Worked with Clients like OneAssist on their Automation Testing
-              suite with Selenium and Python.
-            </li>
-            <li>
-              Worked with British Council team for delivering the IELTS Prep
-              Application
-            </li>
-          </ul>
         </div>
-      </section>
 
-      <section id="contact" style="padding-bottom: 4rem">
-        <h2 class="section-title">Let's Connect</h2>
-        <div
+        <!-- Job 3 -->
+        <div class="timeline-item reveal">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                margin-bottom: 0.5rem;
+              "
+            >
+              <h3 style="color: var(--primary)">InnovationM</h3>
+              <span
+                style="
+                  font-size: 0.85rem;
+                  padding: 0.2rem 0.8rem;
+                  background: rgba(255, 255, 255, 0.1);
+                  border-radius: 20px;
+                "
+                >09/2018 - 01/2021</span
+              >
+            </div>
+            <h4 style="margin-bottom: 1rem">SDE</h4>
+            <ul style="list-style: none; color: var(--text-mute)">
+              <li style="margin-bottom: 0.5rem">
+                ▹ Delivered POC for EzMall iOS Application.
+              </li>
+              <li style="margin-bottom: 0.5rem">
+                ▹ Worked with Clients like OneAssist on their Automation Testing
+                suite.
+              </li>
+              <li>
+                ▹ Worked with British Council team for delivering the IELTS Prep
+                Application.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="container" style="padding-bottom: 6rem">
+      <h2 class="section-title reveal">
+        Let's <span class="gradient-text">Connect</span>
+      </h2>
+
+      <div class="bento-grid">
+        <!-- Email (Span 2) -->
+        <a
+          href="mailto:krishnanag1996@gmail.com"
+          class="bento-card bento-span-2 reveal"
           style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
             gap: 1.5rem;
-            max-width: 900px;
-            margin: 0 auto;
           "
         >
-          <a
-            href="mailto:krishnanag1996@gmail.com"
-            class="card"
-            style="
-              text-decoration: none;
-              text-align: center;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              padding: 2rem;
-            "
-          >
-            <i
-              data-feather="mail"
-              style="
-                color: var(--primary);
-                margin-bottom: 0.75rem;
-                width: 32px;
-                height: 32px;
-              "
-            ></i>
-            <h4 style="color: var(--text-main); margin-bottom: 0.25rem">
-              Email Me
-            </h4>
-            <p style="font-size: 0.9rem; color: var(--text-mute)">
+          <div class="card-icon" style="margin-bottom: 0">
+            <i data-feather="mail"></i>
+          </div>
+          <div>
+            <h3>Email Me</h3>
+            <p style="color: var(--text-mute); margin-top: 0.25rem">
               krishnanag1996@gmail.com
             </p>
-          </a>
+          </div>
+          <i
+            data-feather="arrow-right"
+            style="margin-left: auto; opacity: 0.5"
+          ></i>
+        </a>
 
-          <a
-            href="https://www.linkedin.com/in/akashgkrishnan"
-            target="_blank"
-            class="card"
+        <!-- Qatar Call -->
+        <a
+          href="tel:+97471743533"
+          class="bento-card reveal"
+          style="
+            text-decoration: none;
+            color: inherit;
+            align-items: center;
+            text-align: center;
+          "
+        >
+          <div style="font-size: 3rem; margin-bottom: 1rem">🇶🇦</div>
+          <div
+            class="card-icon"
             style="
-              text-decoration: none;
-              text-align: center;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              padding: 2rem;
+              color: var(--primary);
+              margin-bottom: 0.5rem;
+              width: 40px;
+              height: 40px;
             "
           >
-            <i
-              data-feather="linkedin"
-              style="
-                color: #0a66c2;
-                margin-bottom: 0.75rem;
-                width: 32px;
-                height: 32px;
-              "
-            ></i>
-            <h4 style="color: var(--text-main); margin-bottom: 0.25rem">
-              LinkedIn
-            </h4>
-            <p style="font-size: 0.9rem; color: var(--text-mute)">
-              Connect professionally
-            </p>
-          </a>
+            <i data-feather="phone"></i>
+          </div>
+          <p style="color: var(--text-main); font-weight: 600">+974 71743533</p>
+        </a>
 
-          <a
-            href="https://github.com/akashgk"
-            target="_blank"
-            class="card"
+        <!-- India Call -->
+        <a
+          href="tel:+918130233807"
+          class="bento-card reveal"
+          style="
+            text-decoration: none;
+            color: inherit;
+            align-items: center;
+            text-align: center;
+          "
+        >
+          <div style="font-size: 3rem; margin-bottom: 1rem">🇮🇳</div>
+          <div
+            class="card-icon"
             style="
-              text-decoration: none;
-              text-align: center;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              padding: 2rem;
+              color: var(--primary);
+              margin-bottom: 0.5rem;
+              width: 40px;
+              height: 40px;
             "
           >
-            <i
-              data-feather="github"
-              style="
-                color: var(--text-main);
-                margin-bottom: 0.75rem;
-                width: 32px;
-                height: 32px;
-              "
-            ></i>
-            <h4 style="color: var(--text-main); margin-bottom: 0.25rem">
-              GitHub
-            </h4>
-            <p style="font-size: 0.9rem; color: var(--text-mute)">
-              View my code
-            </p>
-          </a>
+            <i data-feather="phone"></i>
+          </div>
+          <p style="color: var(--text-main); font-weight: 600">
+            +91 8130233807
+          </p>
+        </a>
 
-          <a
-            href="tel:+97471743533"
-            class="card"
+        <!-- LinkedIn -->
+        <a
+          href="https://www.linkedin.com/in/akashgkrishnan"
+          target="_blank"
+          class="bento-card reveal"
+          style="
+            text-decoration: none;
+            color: inherit;
+            align-items: center;
+            text-align: center;
+          "
+        >
+          <div class="card-icon" style="color: #0a66c2">
+            <i data-feather="linkedin"></i>
+          </div>
+          <h3>LinkedIn</h3>
+          <p
             style="
-              text-decoration: none;
-              text-align: center;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              padding: 2rem;
+              color: var(--text-mute);
+              margin-top: 0.5rem;
+              font-size: 0.9rem;
             "
           >
-            <span style="font-size: 2rem; margin-bottom: 0.5rem; display: block"
-              >🇶🇦</span
-            >
-            <h4 style="color: var(--text-main); margin-bottom: 0.25rem">
-              Qatar
-            </h4>
-            <p style="font-size: 0.9rem; color: var(--text-mute)">
-              +974 71743533
-            </p>
-          </a>
+            Connect professionally
+          </p>
+        </a>
 
-          <a
-            href="tel:+918130233807"
-            class="card"
+        <!-- GitHub -->
+        <a
+          href="https://github.com/akashgk"
+          target="_blank"
+          class="bento-card reveal"
+          style="
+            text-decoration: none;
+            color: inherit;
+            align-items: center;
+            text-align: center;
+          "
+        >
+          <div class="card-icon"><i data-feather="github"></i></div>
+          <h3>GitHub</h3>
+          <p
             style="
-              text-decoration: none;
-              text-align: center;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              padding: 2rem;
+              color: var(--text-mute);
+              margin-top: 0.5rem;
+              font-size: 0.9rem;
             "
           >
-            <span style="font-size: 2rem; margin-bottom: 0.5rem; display: block"
-              >🇮🇳</span
-            >
-            <h4 style="color: var(--text-main); margin-bottom: 0.25rem">
-              India
-            </h4>
-            <p style="font-size: 0.9rem; color: var(--text-mute)">
-              +91 8130233807
-            </p>
-          </a>
-        </div>
-      </section>
-    </main>
+            View my code
+          </p>
+        </a>
+      </div>
+    </section>
 
+    <footer>
+      <p style="color: var(--text-mute); font-size: 0.9rem">
+        &copy; <span id="year"></span> Akash G Krishnan. All rights reserved.
+      </p>
+    </footer>
+
+    <!-- Sticky Footer for Mobile -->
     <div class="mobile-sticky-bar">
-      <a href="/AKASH_G_KRISHNAN_RESUME.pdf" class="btn btn-primary" download>
-        <i data-feather="download" width="18"></i> Resume
+      <a
+        href="mailto:krishnanag1996@gmail.com"
+        class="btn btn-outline"
+        aria-label="Email Me"
+      >
+        <i data-feather="mail" width="18"></i> Email
       </a>
-      <a href="mailto:krishnanag1996@gmail.com" class="btn btn-outline">
-        <i data-feather="mail" width="18"></i> Contact
+      <a
+        href="https://wa.me/+97471743533"
+        class="btn btn-primary"
+        aria-label="WhatsApp Me"
+      >
+        <i data-feather="message-circle" width="18"></i> WhatsApp
       </a>
     </div>
 
-    <script>
-      // 1. Initialize Icons
-      feather.replace();
-
-      // 2. Theme Toggle Logic (Fix)
-      const themeBtn = document.getElementById("themeBtn");
-      const body = document.body;
-
-      // SVG Strings for Icons (Since we replace innerHTML)
-      const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-      const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-
-      // Load saved theme
-      const savedTheme = localStorage.getItem("theme") || "dark";
-      body.setAttribute("data-theme", savedTheme);
-      updateBtn(savedTheme);
-
-      themeBtn.addEventListener("click", () => {
-        const current = body.getAttribute("data-theme");
-        const next = current === "dark" ? "light" : "dark";
-
-        body.setAttribute("data-theme", next);
-        localStorage.setItem("theme", next);
-        updateBtn(next);
-      });
-
-      function updateBtn(theme) {
-        themeBtn.innerHTML = theme === "dark" ? sunIcon : moonIcon;
-      }
-
-      // 3. Canvas Grid Animation
-      const canvas = document.getElementById("grid-canvas");
-      const ctx = canvas.getContext("2d");
-      let width, height;
-
-      function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-      }
-      window.addEventListener("resize", resize);
-      resize();
-
-      let offset = 0;
-      function animate() {
-        ctx.clearRect(0, 0, width, height);
-        const isDark = body.getAttribute("data-theme") === "dark";
-        ctx.strokeStyle = isDark
-          ? "rgba(0, 242, 234, 0.1)"
-          : "rgba(0, 0, 0, 0.05)";
-
-        offset += 0.5;
-        if (offset > 50) offset = 0;
-
-        ctx.beginPath();
-        for (let x = 0; x <= width; x += 50) {
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, height);
-        }
-        for (let y = offset; y <= height; y += 50) {
-          ctx.moveTo(0, y);
-          ctx.lineTo(width, y);
-        }
-        ctx.stroke();
-        requestAnimationFrame(animate);
-      }
-      animate();
-      document.getElementById("year").textContent = new Date().getFullYear();
-
-      // 4. Defer Analytics (PageSpeed Improvement)
-      window.addEventListener("load", () => {
-        setTimeout(() => {
-          const script = document.createElement("script");
-          script.src =
-            "https://www.googletagmanager.com/gtag/js?id=G-SKBCVDV7G0";
-          script.async = true;
-          document.body.appendChild(script);
-          window.dataLayer = window.dataLayer || [];
-          function gtag() {
-            dataLayer.push(arguments);
-          }
-          gtag("js", new Date());
-          gtag("config", "G-SKBCVDV7G0");
-        }, 3000); // Wait 3 seconds before loading analytics
-      });
-    </script>
+    <script src="script.js"></script>
   </body>
 </html>
