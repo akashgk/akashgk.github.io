@@ -13,3 +13,4 @@ Crawl-delay: 1
 # Sitemaps
 Sitemap: https://akashgk.com/sitemap.xml
 Host: https://akashgk.com
+Disallow: /valentines.html
