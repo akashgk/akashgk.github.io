@@ -1,32 +1,59 @@
-// 1. Initialize Icons
+// Initialize Icons
 feather.replace();
 
-// 2. Theme Toggle Logic
-const themeBtn = document.getElementById("themeBtn");
-const body = document.body;
-const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+// Set Year
+document.getElementById("year").textContent = new Date().getFullYear();
 
-const savedTheme = localStorage.getItem("theme") || "dark";
-body.setAttribute("data-theme", savedTheme);
-updateBtn(savedTheme);
+// Initialize Scroll Observer
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: "0px 0px -50px 0px"
+};
 
-themeBtn.addEventListener("click", () => {
-  const current = body.getAttribute("data-theme");
-  const next = current === "dark" ? "light" : "dark";
-  body.setAttribute("data-theme", next);
-  localStorage.setItem("theme", next);
-  updateBtn(next);
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+      // Optional: Stop observing once visible to prevent re-triggering
+      // observer.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll(".fade-up").forEach((el) => {
+  observer.observe(el);
 });
 
-function updateBtn(theme) {
-  themeBtn.innerHTML = theme === "dark" ? sunIcon : moonIcon;
+// Mobile Menu Toggle
+const mobileToggle = document.querySelector(".mobile-toggle");
+const navLinks = document.querySelector(".nav-links");
+const links = document.querySelectorAll(".nav-link");
+
+if (mobileToggle) {
+  mobileToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+    const icon = navLinks.classList.contains("active") ? "x" : "menu";
+    mobileToggle.innerHTML = `<i data-feather="${icon}"></i>`;
+    feather.replace();
+  });
+
+  links.forEach(link => {
+    link.addEventListener("click", () => {
+      navLinks.classList.remove("active");
+      mobileToggle.innerHTML = `<i data-feather="menu"></i>`;
+      feather.replace();
+    });
+  });
 }
 
-// 3. Canvas Grid Animation (Improved)
-const canvas = document.getElementById("grid-canvas");
+// Particle Network Animation (Canvas)
+const canvas = document.getElementById("hero-canvas");
 const ctx = canvas.getContext("2d");
+
 let width, height;
+let particles = [];
+const particleCount = 60; // Adjust for density
+const connectionDistance = 150;
 
 function resize() {
   width = canvas.width = window.innerWidth;
@@ -35,149 +62,68 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
-let offset = 0;
-function animateCanvas() {
-  ctx.clearRect(0, 0, width, height);
-  const isDark = body.getAttribute("data-theme") === "dark";
-  
-  // Subtle gradient lines
-  const gradient = ctx.createLinearGradient(0, 0, width, height);
-  if (isDark) {
-    gradient.addColorStop(0, "rgba(0, 242, 234, 0.05)");
-    gradient.addColorStop(1, "rgba(168, 85, 247, 0.05)");
-  } else {
-    gradient.addColorStop(0, "rgba(0, 0, 0, 0.03)");
-    gradient.addColorStop(1, "rgba(0, 0, 0, 0.03)");
+class Particle {
+  constructor() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * height;
+    this.vx = (Math.random() - 0.5) * 0.5;
+    this.vy = (Math.random() - 0.5) * 0.5;
+    this.size = Math.random() * 2;
   }
-  
-  ctx.strokeStyle = gradient;
-  ctx.lineWidth = 1;
 
-  offset += 0.2;
-  if (offset > 40) offset = 0;
-
-  ctx.beginPath();
-  // Vertical lines
-  for (let x = 0; x <= width; x += 40) {
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, height);
-  }
-  // Horizontal lines (moving)
-  for (let y = offset; y <= height; y += 40) {
-    ctx.moveTo(0, y);
-    ctx.lineTo(width, y);
-  }
-  ctx.stroke();
-  requestAnimationFrame(animateCanvas);
-}
-animateCanvas();
-
-// 4. Spotlight Effect (Mouse Follower)
-document.addEventListener("mousemove", (e) => {
-  const cards = document.querySelectorAll(".bento-card");
-  cards.forEach((card) => {
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    card.style.setProperty("--mouse-x", `${x}px`);
-    card.style.setProperty("--mouse-y", `${y}px`);
-  });
-});
-
-// 5. Scroll Reveal Animation
-const revealElements = document.querySelectorAll(".reveal");
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("active");
-    }
-  });
-}, { threshold: 0.1 });
-
-revealElements.forEach((el) => revealObserver.observe(el));
-
-// 6. Text Scramble Effect for Hero Title
-class TextScramble {
-  constructor(el) {
-    this.el = el;
-    this.chars = '!<>-_\\/[]{}—=+*^?#________';
-    this.update = this.update.bind(this);
-  }
-  setText(newText) {
-    const oldText = this.el.innerText;
-    const length = Math.max(oldText.length, newText.length);
-    const promise = new Promise((resolve) => this.resolve = resolve);
-    this.queue = [];
-    for (let i = 0; i < length; i++) {
-      const from = oldText[i] || '';
-      const to = newText[i] || '';
-      const start = Math.floor(Math.random() * 40);
-      const end = start + Math.floor(Math.random() * 40);
-      this.queue.push({ from, to, start, end });
-    }
-    cancelAnimationFrame(this.frameRequest);
-    this.frame = 0;
-    this.update();
-    return promise;
-  }
   update() {
-    let output = '';
-    let complete = 0;
-    for (let i = 0, n = this.queue.length; i < n; i++) {
-      let { from, to, start, end, char } = this.queue[i];
-      if (this.frame >= end) {
-        complete++;
-        output += to;
-      } else if (this.frame >= start) {
-        if (!char || Math.random() < 0.28) {
-          char = this.randomChar();
-          this.queue[i].char = char;
-        }
-        output += `<span class="dud">${char}</span>`;
-      } else {
-        output += from;
+    this.x += this.vx;
+    this.y += this.vy;
+
+    // Bounce off edges
+    if (this.x < 0 || this.x > width) this.vx *= -1;
+    if (this.y < 0 || this.y > height) this.vy *= -1;
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0, 242, 234, 0.5)"; // Cyan
+    ctx.fill();
+  }
+}
+
+// Initialize Particles
+for (let i = 0; i < particleCount; i++) {
+  particles.push(new Particle());
+}
+
+// Animation Loop
+function animate() {
+  ctx.clearRect(0, 0, width, height);
+
+  // Update and draw particles
+  particles.forEach((p, index) => {
+    p.update();
+    p.draw();
+
+    // Draw connections
+    for (let j = index + 1; j < particles.length; j++) {
+      const p2 = particles[j];
+      const dx = p.x - p2.x;
+      const dy = p.y - p2.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < connectionDistance) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(0, 242, 234, ${1 - dist / connectionDistance * 0.8})`; // Fade based on distance
+        ctx.lineWidth = 0.5;
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
       }
     }
-    this.el.innerHTML = output;
-    if (complete === this.queue.length) {
-      this.resolve();
-    } else {
-      this.frameRequest = requestAnimationFrame(this.update);
-      this.frame++;
-    }
-  }
-  randomChar() {
-    return this.chars[Math.floor(Math.random() * this.chars.length)];
-  }
+  });
+
+  requestAnimationFrame(animate);
 }
 
-// Initialize Text Scramble
-const el = document.querySelector('.hero-title');
-if (el) {
-  const fx = new TextScramble(el);
-  // Optional: Scramble on load or hover. For now, just let it be static or simple fade in.
-  // To use: fx.setText('Akash G Krishnan');
+// Only run animation if device is powerful enough / prefs
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  animate();
 }
-
-// 7. Defer Analytics
-const loadAnalytics = () => {
-  const script = document.createElement("script");
-  script.src = "https://www.googletagmanager.com/gtag/js?id=G-SKBCVDV7G0";
-  script.async = true;
-  document.body.appendChild(script);
-  window.dataLayer = window.dataLayer || [];
-  function gtag() {
-    dataLayer.push(arguments);
-  }
-  gtag("js", new Date());
-  gtag("config", "G-SKBCVDV7G0");
-};
-
-if ('requestIdleCallback' in window) {
-  requestIdleCallback(() => setTimeout(loadAnalytics, 2000));
-} else {
-  window.addEventListener("load", () => setTimeout(loadAnalytics, 3000));
-}
-
-// Set Year
-document.getElementById("year").textContent = new Date().getFullYear();
