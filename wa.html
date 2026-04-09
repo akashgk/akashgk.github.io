@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WA Quick</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–bg: #0a0f0a;
+–surface: #111811;
+–border: #1f2e1f;
+–green: #25d366;
+–green-dim: #1a9e4a;
+–green-glow: rgba(37,211,102,0.15);
+–text: #e8f5e8;
+–muted: #5a7a5a;
+–font-display: ‘Syne’, sans-serif;
+–font-mono: ‘Space Mono’, monospace;
+}
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: var(–font-mono);
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 24px;
+overflow: hidden;
+}
+
+/* Background grid */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image:
+linear-gradient(rgba(37,211,102,0.04) 1px, transparent 1px),
+linear-gradient(90deg, rgba(37,211,102,0.04) 1px, transparent 1px);
+background-size: 40px 40px;
+pointer-events: none;
+z-index: 0;
+}
+
+.card {
+position: relative;
+z-index: 1;
+width: 100%;
+max-width: 420px;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 4px;
+padding: 40px 36px 36px;
+box-shadow: 0 0 60px rgba(37,211,102,0.07), 0 0 0 1px var(–border);
+animation: fadeUp 0.5s ease both;
+}
+
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(16px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+.logo {
+display: flex;
+align-items: center;
+gap: 10px;
+margin-bottom: 32px;
+}
+
+.logo-icon {
+width: 36px;
+height: 36px;
+flex-shrink: 0;
+}
+
+.logo-text {
+font-family: var(–font-display);
+font-size: 22px;
+font-weight: 800;
+letter-spacing: -0.5px;
+color: var(–green);
+}
+
+.logo-text span {
+color: var(–muted);
+font-weight: 700;
+}
+
+label {
+display: block;
+font-size: 10px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–muted);
+margin-bottom: 10px;
+}
+
+.input-row {
+display: flex;
+gap: 0;
+border: 1px solid var(–border);
+border-radius: 3px;
+overflow: hidden;
+transition: border-color 0.2s, box-shadow 0.2s;
+background: #0d140d;
+}
+
+.input-row:focus-within {
+border-color: var(–green-dim);
+box-shadow: 0 0 0 3px var(–green-glow);
+}
+
+.country-select {
+background: transparent;
+border: none;
+border-right: 1px solid var(–border);
+color: var(–green);
+font-family: var(–font-mono);
+font-size: 13px;
+padding: 0 10px 0 12px;
+cursor: pointer;
+outline: none;
+width: 90px;
+flex-shrink: 0;
+-webkit-appearance: none;
+appearance: none;
+background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘10’ height=‘6’%3E%3Cpath d=‘M0 0l5 6 5-6z’ fill=’%235a7a5a’/%3E%3C/svg%3E”);
+background-repeat: no-repeat;
+background-position: right 8px center;
+}
+
+.country-select option {
+background: #0d140d;
+color: var(–text);
+}
+
+.phone-input {
+flex: 1;
+background: transparent;
+border: none;
+color: var(–text);
+font-family: var(–font-mono);
+font-size: 15px;
+padding: 14px 14px;
+outline: none;
+letter-spacing: 1px;
+width: 100%;
+}
+
+.phone-input::placeholder {
+color: #2e4a2e;
+letter-spacing: 0;
+}
+
+/* Remove number spinners */
+.phone-input::-webkit-outer-spin-button,
+.phone-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.phone-input[type=number] { -moz-appearance: textfield; }
+
+.hint {
+font-size: 10px;
+color: var(–muted);
+margin-top: 8px;
+letter-spacing: 0.5px;
+}
+
+.btn {
+margin-top: 24px;
+width: 100%;
+padding: 15px;
+background: var(–green);
+color: #021005;
+border: none;
+border-radius: 3px;
+font-family: var(–font-display);
+font-size: 15px;
+font-weight: 800;
+letter-spacing: 0.5px;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+transition: background 0.15s, transform 0.1s, box-shadow 0.2s;
+box-shadow: 0 4px 20px rgba(37,211,102,0.25);
+}
+
+.btn:hover {
+background: #2df578;
+box-shadow: 0 6px 28px rgba(37,211,102,0.4);
+}
+
+.btn:active {
+transform: scale(0.98);
+}
+
+.btn svg {
+width: 18px;
+height: 18px;
+flex-shrink: 0;
+}
+
+.error {
+margin-top: 10px;
+font-size: 11px;
+color: #ff6b6b;
+letter-spacing: 0.5px;
+min-height: 16px;
+display: none;
+}
+
+.error.show { display: block; }
+
+.footer {
+margin-top: 28px;
+padding-top: 20px;
+border-top: 1px solid var(–border);
+font-size: 10px;
+color: #2e4a2e;
+letter-spacing: 1px;
+text-align: center;
+text-transform: uppercase;
+}
+</style>
+
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">
+    <!-- WhatsApp icon -->
+    <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="18" cy="18" r="18" fill="#25d366"/>
+      <path d="M18 8C12.477 8 8 12.477 8 18c0 1.82.49 3.527 1.344 5.003L8 28l5.133-1.319A9.94 9.94 0 0018 28c5.523 0 10-4.477 10-10S23.523 8 18 8zm5.08 13.744c-.213.598-1.252 1.14-1.72 1.213-.44.067-1 .095-1.61-.1-.37-.12-.848-.28-1.455-.548-2.562-1.106-4.233-3.688-4.36-3.86-.126-.173-1.028-1.365-1.028-2.604s.651-1.848.882-2.1c.23-.25.502-.313.67-.313l.482.009c.154.007.362-.059.567.432.213.508.722 1.76.785 1.888.063.128.105.278.021.449-.083.172-.126.278-.248.43l-.374.433c-.124.124-.253.258-.109.507.144.25.641 1.057 1.376 1.712.946.842 1.744 1.102 1.993 1.225.25.123.395.103.54-.062.146-.165.624-.728.79-.977.165-.25.33-.208.558-.125.228.083 1.447.682 1.695.806.249.124.414.186.475.29.063.103.063.597-.15 1.194z" fill="white"/>
+    </svg>
+    <div class="logo-text">WA<span>quick</span></div>
+  </div>
+
+<label for="phone">Mobile number</label>
+
+  <div class="input-row">
+    <select class="country-select" id="countryCode" title="Country code">
+      <option value="971">🇦🇪 +971</option>
+      <option value="974">🇶🇦 +974</option>
+      <option value="91" selected>🇮🇳 +91</option>
+      <option value="1">🇺🇸 +1</option>
+      <option value="44">🇬🇧 +44</option>
+      <option value="966">🇸🇦 +966</option>
+      <option value="965">🇰🇼 +965</option>
+      <option value="968">🇴🇲 +968</option>
+      <option value="973">🇧🇭 +973</option>
+      <option value="49">🇩🇪 +49</option>
+      <option value="33">🇫🇷 +33</option>
+      <option value="61">🇦🇺 +61</option>
+      <option value="65">🇸🇬 +65</option>
+      <option value="60">🇲🇾 +60</option>
+      <option value="92">🇵🇰 +92</option>
+      <option value="880">🇧🇩 +880</option>
+      <option value="94">🇱🇰 +94</option>
+      <option value="977">🇳🇵 +977</option>
+    </select>
+    <input
+      class="phone-input"
+      id="phone"
+      type="number"
+      inputmode="numeric"
+      placeholder="98765 43210"
+      autofocus
+    />
+  </div>
+  <div class="hint">No dashes or spaces needed</div>
+  <div class="error" id="error">Please enter a valid phone number.</div>
+
+  <button class="btn" onclick="openWhatsApp()">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+    Open in WhatsApp
+  </button>
+
+  <div class="footer">No numbers stored · No tracking</div>
+</div>
+
+<script>
+  const phoneInput = document.getElementById('phone');
+  const errorEl   = document.getElementById('error');
+
+  // Allow Enter key
+  phoneInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') openWhatsApp();
+  });
+
+  // Clear error on type
+  phoneInput.addEventListener('input', () => {
+    errorEl.classList.remove('show');
+  });
+
+  function openWhatsApp() {
+    const code   = document.getElementById('countryCode').value;
+    const number = phoneInput.value.trim().replace(/\D/g, '');
+
+    if (!number || number.length < 5) {
+      errorEl.classList.add('show');
+      phoneInput.focus();
+      return;
+    }
+
+    const full = code + number;
+    window.open(`https://wa.me/${full}`, '_blank');
+  }
+</script>
+
+</body>
+</html>
