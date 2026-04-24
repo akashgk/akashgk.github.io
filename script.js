@@ -2,6 +2,16 @@
 feather.replace();
 document.getElementById("year").textContent = new Date().getFullYear();
 
+// Scroll progress bar
+const progressBar = document.getElementById("progress-bar");
+if (progressBar) {
+  window.addEventListener("scroll", () => {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.transform = `scaleX(${total > 0 ? scrolled / total : 0})`;
+  }, { passive: true });
+}
+
 // Navbar scroll state
 const navbar = document.querySelector(".navbar");
 window.addEventListener("scroll", () => {
@@ -82,6 +92,100 @@ if (window.matchMedia("(pointer: fine)").matches) {
   document.querySelectorAll("a, button, .bento-cell, .pkg-card").forEach((el) => {
     el.addEventListener("mouseenter", () => ring.classList.add("hovered"));
     el.addEventListener("mouseleave", () => ring.classList.remove("hovered"));
+  });
+}
+
+// Typed role cycling
+(function () {
+  const el = document.getElementById("typed-role");
+  if (!el) return;
+  const roles = ["Senior Flutter Developer", "Mobile Architect", "Fintech Engineer", "Open Source Author"];
+  let ri = 0, ci = 0, deleting = false;
+
+  function tick() {
+    const word = roles[ri];
+    el.textContent = deleting ? word.slice(0, --ci) : word.slice(0, ++ci);
+
+    if (!deleting && ci === word.length) {
+      deleting = true;
+      setTimeout(tick, 2000);
+      return;
+    }
+    if (deleting && ci === 0) {
+      deleting = false;
+      ri = (ri + 1) % roles.length;
+    }
+    setTimeout(tick, deleting ? 45 : 85);
+  }
+  tick();
+})();
+
+// Hero orb mouse parallax
+(function () {
+  const hero = document.querySelector(".hero");
+  const layer = document.querySelector(".orb-layer");
+  if (!hero || !layer || window.matchMedia("(pointer: coarse)").matches) return;
+
+  hero.addEventListener("mousemove", (e) => {
+    const { left, top, width, height } = hero.getBoundingClientRect();
+    const x = ((e.clientX - left) / width  - 0.5) * 38;
+    const y = ((e.clientY - top)  / height - 0.5) * 28;
+    layer.style.transform = `translate(${x}px, ${y}px)`;
+  }, { passive: true });
+
+  hero.addEventListener("mouseleave", () => {
+    layer.style.transform = "";
+  });
+})();
+
+// Button click ripple
+document.querySelectorAll(".btn").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    const r = btn.getBoundingClientRect();
+    const size = Math.max(r.width, r.height);
+    const rip = document.createElement("span");
+    rip.className = "ripple";
+    rip.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-r.left-size/2}px;top:${e.clientY-r.top-size/2}px`;
+    btn.appendChild(rip);
+    rip.addEventListener("animationend", () => rip.remove());
+  });
+});
+
+// 3D tilt on cards — desktop pointer only
+if (window.matchMedia("(pointer: fine)").matches &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+
+  function addTilt(selector, maxDeg) {
+    document.querySelectorAll(selector).forEach((card) => {
+      card.addEventListener("mouseenter", () => card.classList.add("tilt-active"));
+      card.addEventListener("mousemove", (e) => {
+        const r = card.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width  - 0.5) * 2;
+        const y = ((e.clientY - r.top)  / r.height - 0.5) * 2;
+        card.style.transform =
+          `perspective(900px) rotateY(${x * maxDeg}deg) rotateX(${-y * maxDeg}deg) translateY(-5px)`;
+      });
+      card.addEventListener("mouseleave", () => {
+        card.classList.remove("tilt-active");
+        card.style.transform = "";
+      });
+    });
+  }
+
+  addTilt(".bento-cell", 7);
+  addTilt(".pkg-card", 6);
+  addTilt(".contact-link", 5);
+  addTilt(".os-github-card", 6);
+
+  // Magnetic pull on primary/ghost buttons
+  document.querySelectorAll(".btn").forEach((btn) => {
+    btn.addEventListener("mousemove", (e) => {
+      const r = btn.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width  - 0.5) * 14;
+      const y = ((e.clientY - r.top)  / r.height - 0.5) * 14;
+      btn.style.transform = `translate(${x}px, ${y}px) translateY(-2px)`;
+    });
+    btn.addEventListener("mouseleave", () => { btn.style.transform = ""; });
   });
 }
 

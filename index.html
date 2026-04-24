@@ -44,15 +44,16 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
 
     <link rel="stylesheet" href="styles.css" />
-    <script src="https://unpkg.com/feather-icons"></script>
   </head>
   <body>
+    <div id="progress-bar" aria-hidden="true"></div>
     <!-- Navbar -->
     <nav class="navbar">
       <a href="#" class="nav-logo">AGK<span class="nav-logo-dot">.</span></a>
@@ -70,9 +71,11 @@
     <!-- Hero -->
     <section class="hero">
       <div class="hero-orbs" aria-hidden="true">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+        <div class="orb-layer">
+          <div class="orb orb-1"></div>
+          <div class="orb orb-2"></div>
+          <div class="orb orb-3"></div>
+        </div>
       </div>
       <div class="container hero-content">
         <span class="hero-badge fade-up">
@@ -88,7 +91,7 @@
             >&nbsp;Doha, Qatar</span
           >
           <span class="hero-meta-sep">·</span>
-          <span>Senior Flutter Developer</span>
+          <span id="typed-role"></span>
           <span class="hero-meta-sep">·</span>
           <span>7+ Years</span>
         </p>
@@ -563,6 +566,7 @@
       </div>
     </footer>
 
+    <script src="https://unpkg.com/feather-icons"></script>
     <script src="script.js"></script>
 
     <!-- Defer Analytics -->
