@@ -229,7 +229,7 @@ if (statsBar) {
   const highscoreVal = document.getElementById("game-highscore");
   const livesContainer = document.getElementById("game-lives");
   const soundBtn = document.getElementById("sound-btn");
-  const soundIcon = document.getElementById("sound-icon");
+  let soundIcon = document.getElementById("sound-icon");
   const island = document.getElementById("game-island");
   const islandNotif = document.getElementById("island-notif");
   const unlockedCount = document.getElementById("unlocked-count");
@@ -350,7 +350,9 @@ if (statsBar) {
     soundIcon.setAttribute("data-feather", soundEnabled ? "volume-2" : "volume-x");
     soundBtn.querySelector("span").textContent = soundEnabled ? "Sound FX On" : "Sound FX Off";
     feather.replace();
-    
+    // Re-query because feather.replace() swaps the element in the DOM
+    soundIcon = document.getElementById("sound-icon");
+
     // Init Audio context on click to avoid browser restrictions
     if (soundEnabled && !audioCtx) {
       initAudio();
@@ -546,8 +548,8 @@ if (statsBar) {
   let leftPressed = false;
   let rightPressed = false;
   document.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft") leftPressed = true;
-    if (e.key === "ArrowRight") rightPressed = true;
+    if (e.key === "ArrowLeft") { leftPressed = true; if (isRunning) e.preventDefault(); }
+    if (e.key === "ArrowRight") { rightPressed = true; if (isRunning) e.preventDefault(); }
   });
   document.addEventListener("keyup", (e) => {
     if (e.key === "ArrowLeft") leftPressed = false;
@@ -631,12 +633,14 @@ if (statsBar) {
   function resetGame() {
     score = 0;
     lives = 3;
+    activeMilestoneIndex = 0;
     scoreVal.textContent = "0";
     updateLivesUI();
     resetBall();
     particles = [];
     tokens = [];
     pointPopups = [];
+    clearTimeout(islandExpandTimer);
     shrinkIsland();
   }
 
@@ -722,7 +726,7 @@ if (statsBar) {
       const speedCap = 7;
       const speedMult = 1.02;
       ball.vy = Math.min(speedCap, ball.vy * speedMult);
-      ball.vx = ball.vx * speedMult;
+      ball.vx = Math.sign(ball.vx) * Math.min(speedCap, Math.abs(ball.vx) * speedMult);
 
       // Trigger achievement expand
       const ms = milestones[activeMilestoneIndex];
@@ -760,9 +764,10 @@ if (statsBar) {
       ball.vy = -Math.abs(ball.vy);
       ball.y = paddle.y - ball.radius;
 
-      // Influence angle based on hit location
+      // Influence angle based on hit location; enforce minimum so ball never goes dead vertical
       const hitSpot = (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
       ball.vx = hitSpot * 4.5;
+      if (Math.abs(ball.vx) < 0.8) ball.vx = ball.vx >= 0 ? 0.8 : -0.8;
 
       playSound("paddle");
 

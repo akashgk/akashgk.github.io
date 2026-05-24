@@ -1296,6 +1296,7 @@ section { padding: 110px 0; position: relative; }
   border-radius: 38px;
   background: transparent;
   z-index: 5;
+  touch-action: none;
 }
 
 .game-hud {
