@@ -36,32 +36,184 @@ document.getElementById("year").textContent = new Date().getFullYear();
   setInterval(tick, 30000);
 })();
 
+const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+
 // =====================================================
-// Single rAF-throttled scroll handler:
-// navbar state + active nav link + hero scale/fade-away
+// Confetti — Apple-colored micro-celebration
+// =====================================================
+const CONFETTI_COLORS = ["#0894ff", "#c959dd", "#ff2e54", "#ff9004", "#30d158"];
+function confettiBurst(x, y, count = 90) {
+  if (reducedMotion) return;
+  const cv = document.createElement("canvas");
+  cv.className = "confetti-canvas";
+  cv.width = window.innerWidth;
+  cv.height = window.innerHeight;
+  document.body.appendChild(cv);
+  const c = cv.getContext("2d");
+  const parts = Array.from({ length: count }, () => ({
+    x, y,
+    vx: (Math.random() - 0.5) * 11,
+    vy: -(3 + Math.random() * 8),
+    w: 4 + Math.random() * 4,
+    h: 2.5 + Math.random() * 3,
+    rot: Math.random() * Math.PI,
+    vr: (Math.random() - 0.5) * 0.3,
+    color: CONFETTI_COLORS[(Math.random() * CONFETTI_COLORS.length) | 0],
+  }));
+  const start = performance.now();
+  const DUR = 1700;
+  (function frame(now) {
+    const t = now - start;
+    c.clearRect(0, 0, cv.width, cv.height);
+    c.globalAlpha = clamp(t > DUR - 400 ? (DUR - t) / 400 : 1, 0, 1);
+    parts.forEach((p) => {
+      p.vy += 0.18; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      c.save();
+      c.translate(p.x, p.y);
+      c.rotate(p.rot);
+      c.fillStyle = p.color;
+      c.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      c.restore();
+    });
+    if (t < DUR) requestAnimationFrame(frame);
+    else cv.remove();
+  })(start);
+}
+
+// Logo click: confetti + glide home
+document.getElementById("nav-logo").addEventListener("click", (e) => {
+  e.preventDefault();
+  confettiBurst(e.clientX || window.innerWidth / 2, e.clientY || 60, 70);
+  window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+});
+
+// Console easter egg for fellow developers
+console.log(
+  "%cAGK%c Designed in Doha. Built with vanilla everything — no frameworks, no fonts, no fluff.\n%c→ github.com/akashgk",
+  "font-weight:700;font-size:13px;background:linear-gradient(90deg,#0894ff,#ff2e54);color:#fff;padding:3px 9px;border-radius:6px",
+  "color:#86868b;font-size:12px",
+  "color:#2997ff;font-size:12px"
+);
+
+// =====================================================
+// Scroll choreography engine — one rAF handler drives:
+// navbar state · sliding nav indicator · pinned hero scrub
+// · statement word lighting · experience deck stacking
+// · iPhone 3D entrance
 // =====================================================
 const navbar = document.querySelector(".navbar");
+const navIndicator = document.querySelector(".nav-indicator");
 const links = document.querySelectorAll(".nav-link");
 const sections = document.querySelectorAll("section[id]");
-const heroContent = document.querySelector(".hero-content");
+const heroStage = document.getElementById("hero-stage");
 const heroGlow = document.querySelector(".hero-glow");
+const statementSection = document.getElementById("statement");
+const xpCards = Array.from(document.querySelectorAll(".xp-stack .xp-card"));
+const deviceScene = document.getElementById("device-scene");
+const iphone = document.getElementById("iphone-device");
+
+if (heroGlow) heroGlow.classList.add("settled");
+
+// Wrap every word of the statement in a span so scroll can light them up
+let statementWords = [];
+if (statementSection && !reducedMotion) {
+  statementSection.querySelectorAll(".statement").forEach((p) => {
+    const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+    textNodes.forEach((node) => {
+      const frag = document.createDocumentFragment();
+      node.textContent.split(/(\s+)/).forEach((tok) => {
+        if (!tok) return;
+        if (/^\s+$/.test(tok)) {
+          frag.appendChild(document.createTextNode(tok));
+        } else {
+          const s = document.createElement("span");
+          s.className = "w";
+          s.textContent = tok;
+          frag.appendChild(s);
+        }
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+  });
+  statementWords = Array.from(statementSection.querySelectorAll(".w"));
+}
+
+// iPhone 3D pose = scroll entrance (rise + un-tilt) ∘ pointer tilt
+const devicePose = { scrub: 1, tiltX: 0, tiltY: 0 };
+function applyDevicePose() {
+  if (!iphone) return;
+  const lift = 1 - devicePose.scrub;
+  iphone.style.transform =
+    `translateY(${(lift * 70).toFixed(2)}px) ` +
+    `scale(${(0.9 + devicePose.scrub * 0.1).toFixed(4)}) ` +
+    `rotateX(${(lift * 16 + devicePose.tiltX).toFixed(2)}deg) ` +
+    `rotateY(${devicePose.tiltY.toFixed(2)}deg)`;
+}
+
+let activeLink = null;
+function moveNavIndicator() {
+  if (!navIndicator || window.innerWidth <= 768) return;
+  if (!activeLink) {
+    navIndicator.style.opacity = "0";
+    return;
+  }
+  navIndicator.style.opacity = "1";
+  navIndicator.style.width = `${activeLink.offsetWidth}px`;
+  navIndicator.style.transform = `translateX(${activeLink.offsetLeft}px) translateY(-50%)`;
+}
+
+const deviceScrubEnabled = () => !reducedMotion && window.innerWidth > 350;
 
 let scrollScheduled = false;
 function onScrollFrame() {
   scrollScheduled = false;
   const y = window.scrollY;
+  const vh = window.innerHeight;
 
   navbar.classList.toggle("scrolled", y > 40);
 
-  // Apple-style hero recede: scales down and dissolves as you scroll past
-  if (heroContent && !reducedMotion) {
-    const p = Math.min(Math.max(y / (window.innerHeight * 0.85), 0), 1);
-    heroContent.style.opacity = String(Math.max(0, 1 - p * 1.15));
-    heroContent.style.transform = `translateY(${p * -46}px) scale(${1 - p * 0.07})`;
-    if (heroGlow) heroGlow.style.opacity = String(Math.max(0, 1 - p));
+  // 1. Pinned hero scrub — one CSS var drives all parallax layers
+  if (heroStage && !reducedMotion) {
+    const span = heroStage.offsetHeight - vh;
+    heroStage.style.setProperty("--hp", clamp(span > 0 ? y / span : 0, 0, 1).toFixed(4));
   }
 
-  const scrollPos = y + window.innerHeight / 3;
+  // 2. Statement words light up progressively
+  if (statementWords.length) {
+    const r = statementSection.getBoundingClientRect();
+    if (r.bottom > -50 && r.top < vh + 50) {
+      const p = clamp((vh * 0.85 - r.top) / (r.height + vh * 0.2), 0, 1);
+      const thr = p * (statementWords.length + 3);
+      for (let i = 0; i < statementWords.length; i++) {
+        statementWords[i].style.opacity = clamp(0.16 + (thr - i) * 0.84, 0.16, 1).toFixed(3);
+      }
+    }
+  }
+
+  // 3. Experience deck: earlier cards shrink & dim as the next slides over
+  if (xpCards.length && !reducedMotion) {
+    for (let i = 0; i < xpCards.length - 1; i++) {
+      const card = xpCards[i];
+      if (!card.classList.contains("settled")) continue;
+      const next = xpCards[i + 1].getBoundingClientRect();
+      const cover = clamp((vh * 0.9 - next.top) / (vh * 0.55), 0, 1);
+      card.style.transform = `translateY(${(cover * -14).toFixed(2)}px) scale(${(1 - cover * 0.06).toFixed(4)})`;
+      card.style.opacity = (1 - cover * 0.5).toFixed(3);
+    }
+  }
+
+  // 4. iPhone rises and un-tilts into view
+  if (deviceScene && deviceScrubEnabled()) {
+    const r = deviceScene.getBoundingClientRect();
+    const t = clamp((vh * 0.92 - r.top) / (vh * 0.6), 0, 1);
+    devicePose.scrub = t * t * (3 - 2 * t); // smoothstep
+    applyDevicePose();
+  }
+
+  // 5. Active section → nav link + sliding indicator
+  const scrollPos = y + vh / 3;
   let currentId = null;
   sections.forEach((section) => {
     if (
@@ -71,9 +223,16 @@ function onScrollFrame() {
       currentId = section.id;
     }
   });
-  links.forEach((l) =>
-    l.classList.toggle("active", currentId !== null && l.getAttribute("href") === `#${currentId}`)
-  );
+  let newActive = null;
+  links.forEach((l) => {
+    const match = currentId !== null && l.getAttribute("href") === `#${currentId}`;
+    l.classList.toggle("active", match);
+    if (match) newActive = l;
+  });
+  if (newActive !== activeLink) {
+    activeLink = newActive;
+    moveNavIndicator();
+  }
 }
 window.addEventListener("scroll", () => {
   if (!scrollScheduled) {
@@ -81,16 +240,42 @@ window.addEventListener("scroll", () => {
     requestAnimationFrame(onScrollFrame);
   }
 }, { passive: true });
+window.addEventListener("resize", () => {
+  moveNavIndicator();
+  onScrollFrame();
+}, { passive: true });
 onScrollFrame();
 
+// Pointer tilt on the iPhone (desktop only)
+if (deviceScene && window.matchMedia("(pointer: fine)").matches && !reducedMotion) {
+  deviceScene.addEventListener("mousemove", (e) => {
+    if (!deviceScrubEnabled()) return;
+    const r = deviceScene.getBoundingClientRect();
+    devicePose.tiltY = ((e.clientX - r.left) / r.width - 0.5) * 10;
+    devicePose.tiltX = -((e.clientY - r.top) / r.height - 0.5) * 8;
+    applyDevicePose();
+  }, { passive: true });
+  deviceScene.addEventListener("mouseleave", () => {
+    devicePose.tiltX = 0;
+    devicePose.tiltY = 0;
+    applyDevicePose();
+  });
+}
+
 // =====================================================
-// Blur-up reveal on scroll
+// Blur-up reveal on scroll.
+// Scrub targets get .settled afterwards, which switches them
+// from transition-driven (entrance) to scroll-driven (scrub).
 // =====================================================
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
-      entry.target.classList.add("visible");
-      observer.unobserve(entry.target);
+      const el = entry.target;
+      el.classList.add("visible");
+      if (el.closest(".hero") || el.classList.contains("xp-card")) {
+        setTimeout(() => el.classList.add("settled"), 1400);
+      }
+      observer.unobserve(el);
     }
   });
 }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
@@ -165,6 +350,8 @@ if (statsBar) {
       if (entry.isIntersecting) {
         entry.target.querySelectorAll("[data-count]").forEach((el) => {
           countUp(el, parseInt(el.dataset.count, 10), 1500);
+          const num = el.closest(".stat-number");
+          if (num) num.classList.add("pop");
         });
         statsObserver.unobserve(entry.target);
       }
@@ -549,6 +736,13 @@ if (statsBar) {
 
       // Chime for new unlock
       setTimeout(() => playSound("unlock"), 150);
+
+      // All 5 milestones — celebrate properly
+      if (unlockedMilestones.size === 5) {
+        setTimeout(() => {
+          confettiBurst(window.innerWidth / 2, window.innerHeight * 0.35, 150);
+        }, 300);
+      }
     }
 
     clearTimeout(islandExpandTimer);

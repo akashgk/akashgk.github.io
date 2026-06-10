@@ -44,12 +44,18 @@
 
     <link rel="stylesheet" href="styles.css" />
     <script src="script.js" defer></script>
+    <noscript>
+      <style>
+        .reveal { opacity: 1 !important; transform: none !important; filter: none !important; }
+      </style>
+    </noscript>
   </head>
   <body>
-    <!-- Navbar -->
+    <!-- Floating glass pill navbar -->
     <nav class="navbar">
-      <a href="#" class="nav-logo">AGK<span class="nav-logo-dot">.</span></a>
-      <div class="nav-links">
+      <a href="#" class="nav-logo" id="nav-logo">AGK<span class="nav-logo-dot">.</span></a>
+      <div class="nav-links" id="nav-links">
+        <span class="nav-indicator" aria-hidden="true"></span>
         <a href="#about" class="nav-link">About</a>
         <a href="#experience" class="nav-link">Experience</a>
         <a href="#skills" class="nav-link">Stack</a>
@@ -58,53 +64,55 @@
         <a href="#contact" class="nav-link">Contact</a>
       </div>
       <button class="mobile-toggle" aria-label="Menu" aria-expanded="false">
-        <svg class="icon icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
-        <svg class="icon icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg class="icon icon-menu" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+        <svg class="icon icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </nav>
 
-    <!-- Hero -->
-    <section class="hero">
-      <div class="hero-glow" aria-hidden="true">
-        <div class="glow-blob blob-1"></div>
-        <div class="glow-blob blob-2"></div>
-        <div class="glow-blob blob-3"></div>
-      </div>
-      <div class="hero-content">
-        <span class="hero-badge reveal">
-          <span class="badge-dot"></span>
-          Open to Opportunities
-          <span class="badge-time" id="doha-time"></span>
-        </span>
-        <p class="hero-eyebrow reveal" style="transition-delay: 60ms">
-          Akash G Krishnan — Doha, Qatar
-        </p>
-        <h1 class="reveal" style="transition-delay: 140ms">
-          Engineering
-          <span class="gradient-text">Secure &amp; Scalable</span><br />
-          Mobile Experiences.
-        </h1>
-        <p class="hero-meta reveal" style="transition-delay: 240ms">
-          <span id="typed-role"></span>
-          <span class="hero-meta-sep">·</span>
-          <span>8 Years</span>
-        </p>
-        <p class="hero-desc reveal" style="transition-delay: 320ms">
-          Currently leading mobile architecture at
-          <strong>Commercial Bank of Qatar</strong>, building high-performance
-          fintech solutions that serve millions.
-        </p>
-        <div class="hero-cta reveal" style="transition-delay: 400ms">
-          <a href="#contact" class="btn-pill">Start Collaboration</a>
-          <a href="/AKASH_G_KRISHNAN_RESUME.pdf" class="link-arrow" download
-            >Download Résumé <span class="chevron">›</span></a
-          >
+    <!-- Hero — pinned scrollytelling stage -->
+    <div class="hero-stage" id="hero-stage">
+      <section class="hero">
+        <div class="hero-glow" aria-hidden="true">
+          <div class="glow-blob blob-1"></div>
+          <div class="glow-blob blob-2"></div>
+          <div class="glow-blob blob-3"></div>
         </div>
-      </div>
-      <div class="scroll-cue" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-    </section>
+        <div class="hero-content">
+          <span class="hero-badge reveal">
+            <span class="badge-dot"></span>
+            Open to Opportunities
+            <span class="badge-time" id="doha-time"></span>
+          </span>
+          <p class="hero-eyebrow reveal" style="transition-delay: 60ms">
+            Akash G Krishnan — Doha, Qatar
+          </p>
+          <h1 class="reveal" style="transition-delay: 140ms">
+            Engineering
+            <span class="gradient-text gradient-animate">Secure &amp; Scalable</span><br />
+            Mobile Experiences.
+          </h1>
+          <p class="hero-meta reveal" style="transition-delay: 240ms">
+            <span id="typed-role"></span>
+            <span class="hero-meta-sep">·</span>
+            <span>8 Years</span>
+          </p>
+          <p class="hero-desc reveal" style="transition-delay: 320ms">
+            Currently leading mobile architecture at
+            <strong>Commercial Bank of Qatar</strong>, building high-performance
+            fintech solutions that serve millions.
+          </p>
+          <div class="hero-cta reveal" style="transition-delay: 400ms">
+            <a href="#contact" class="btn-pill">Start Collaboration</a>
+            <a href="/AKASH_G_KRISHNAN_RESUME.pdf" class="link-arrow" download
+              >Download Résumé <span class="chevron">›</span></a
+            >
+          </div>
+        </div>
+        <div class="scroll-cue" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </section>
+    </div>
 
     <!-- Marquee -->
     <div class="marquee-strip" aria-hidden="true">
@@ -173,66 +181,68 @@
       </div>
     </div>
 
+    <!-- Statement — Apple-style scroll-lit paragraph -->
+    <section class="statement-section" id="statement" aria-label="About statement">
+      <div class="container">
+        <p class="statement">
+          With over <strong>8 years</strong> of experience in software
+          development, I bridge the gap between complex backend logic and
+          fluid user interfaces. My focus is on
+          <strong>Scalability</strong>, <strong>Security</strong>, and
+          <strong>Performance</strong>.
+        </p>
+        <p class="statement">
+          I specialize in <strong>Flutter &amp; Dart</strong>, building
+          robust fintech solutions that serve millions of users. I believe
+          great software is invisible — it just works.
+        </p>
+      </div>
+    </section>
+
     <!-- About — light section -->
     <section id="about" class="section-light">
       <div class="container">
-        <div class="section-header reveal">
+        <div class="section-header section-header-center reveal">
           <span class="eyebrow">About</span>
           <h2>Engineering pixel-perfect experiences.</h2>
         </div>
-        <div class="about-grid">
-          <div class="about-text reveal">
-            <p>
-              With over <strong>8 years</strong> of experience in software
-              development, I bridge the gap between complex backend logic and
-              fluid user interfaces. My focus is on
-              <strong>Scalability</strong>, <strong>Security</strong>, and
-              <strong>Performance</strong>.
-            </p>
-            <p>
-              I specialize in <strong>Flutter &amp; Dart</strong>, building
-              robust fintech solutions that serve millions of users. I believe
-              great software is invisible — it just works.
-            </p>
+        <div class="facts-card card reveal" style="transition-delay: 120ms">
+          <div class="fact-row">
+            <span class="fact-label">Current Role</span>
+            <span class="fact-value">Senior Flutter Developer</span>
+            <span class="fact-sub">Commercial Bank of Qatar</span>
           </div>
-          <div class="facts-card card reveal" style="transition-delay: 120ms">
-            <div class="fact-row">
-              <span class="fact-label">Current Role</span>
-              <span class="fact-value">Senior Flutter Developer</span>
-              <span class="fact-sub">Commercial Bank of Qatar</span>
-            </div>
-            <div class="fact-row">
-              <span class="fact-label">Location</span>
-              <span class="fact-value">Doha, Qatar 🇶🇦</span>
-            </div>
-            <div class="fact-row">
-              <span class="fact-label">Nationality</span>
-              <span class="fact-value">Indian 🇮🇳</span>
-            </div>
-            <div class="fact-row">
-              <span class="fact-label">Education</span>
-              <span class="fact-value">B.Tech in Computer Science</span>
-            </div>
-            <div class="fact-row">
-              <span class="fact-label">Status</span>
-              <span class="fact-value fact-status">
-                <span class="status-dot"></span>
-                Open to Opportunities
-              </span>
-            </div>
+          <div class="fact-row">
+            <span class="fact-label">Location</span>
+            <span class="fact-value">Doha, Qatar 🇶🇦</span>
+          </div>
+          <div class="fact-row">
+            <span class="fact-label">Nationality</span>
+            <span class="fact-value">Indian 🇮🇳</span>
+          </div>
+          <div class="fact-row">
+            <span class="fact-label">Education</span>
+            <span class="fact-value">B.Tech in Computer Science</span>
+          </div>
+          <div class="fact-row">
+            <span class="fact-label">Status</span>
+            <span class="fact-value fact-status">
+              <span class="status-dot"></span>
+              Open to Opportunities
+            </span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Experience — dark section -->
+    <!-- Experience — dark section, sticky stacking deck -->
     <section id="experience">
       <div class="container">
         <div class="section-header reveal">
           <span class="eyebrow">Experience</span>
           <h2>Professional journey.</h2>
         </div>
-        <div class="xp-list">
+        <div class="xp-stack" id="xp-stack">
           <article class="xp-card card reveal">
             <div class="xp-top">
               <span class="xp-date">Jun 2023 — Present</span>
@@ -248,7 +258,7 @@
             </p>
           </article>
 
-          <article class="xp-card card reveal" style="transition-delay: 80ms">
+          <article class="xp-card card reveal">
             <div class="xp-top">
               <span class="xp-date">Feb 2021 — Jun 2023</span>
             </div>
@@ -259,7 +269,7 @@
             </p>
           </article>
 
-          <article class="xp-card card reveal" style="transition-delay: 160ms">
+          <article class="xp-card card reveal">
             <div class="xp-top">
               <span class="xp-date">Sep 2018 — Jan 2021</span>
             </div>
@@ -284,7 +294,7 @@
           <!-- Flutter — featured (dark card on light, Apple bento style) -->
           <div class="bento-cell bento-featured card reveal">
             <span class="bento-label">Primary Stack</span>
-            <h3 class="gradient-text">Flutter &amp; Dart</h3>
+            <h3 class="gradient-text gradient-animate">Flutter &amp; Dart</h3>
             <p>
               Building pixel-perfect, high-performance cross-platform apps with
               clean architecture and state management patterns.
@@ -471,75 +481,77 @@
         </p>
 
         <div class="game-wrapper reveal" style="transition-delay: 100ms">
-          <!-- iOS-style Game Console -->
-          <div class="iphone-device">
-            <div class="iphone-bezel">
-              <div class="iphone-screen">
-                <!-- Status Bar -->
-                <div class="iphone-status-bar">
-                  <span class="status-time">9:41</span>
-                  <div class="status-icons">
-                    <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
-                    <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate(90deg) scaleX(-1)"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>
-                  </div>
-                </div>
-
-                <!-- Dynamic Island Capsule (morphs dynamically) -->
-                <div class="dynamic-island" id="game-island">
-                  <div class="island-capsule">
-                    <span class="island-dot"></span>
-                    <span class="island-camera"></span>
-                  </div>
-                  <!-- Morphing notification contents -->
-                  <div class="island-notification" id="island-notif">
-                    <div class="notif-header">
-                      <div class="notif-icon-wrap" id="notif-icon-wrap">
-                        <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                      </div>
-                      <div class="notif-title-wrap">
-                        <h4 id="notif-title">System Alert</h4>
-                        <p id="notif-subtitle">Dynamic Island Active</p>
-                      </div>
+          <!-- iOS-style Game Console — rises & un-tilts into view -->
+          <div class="device-scene" id="device-scene">
+            <div class="iphone-device" id="iphone-device">
+              <div class="iphone-bezel">
+                <div class="iphone-screen">
+                  <!-- Status Bar -->
+                  <div class="iphone-status-bar">
+                    <span class="status-time" title="Always 9:41 — like every Apple keynote.">9:41</span>
+                    <div class="status-icons">
+                      <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                      <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate(90deg) scaleX(-1)"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>
                     </div>
-                    <div class="notif-badge" id="notif-badge">Flutter</div>
                   </div>
+
+                  <!-- Dynamic Island Capsule (morphs dynamically) -->
+                  <div class="dynamic-island" id="game-island">
+                    <div class="island-capsule">
+                      <span class="island-dot"></span>
+                      <span class="island-camera"></span>
+                    </div>
+                    <!-- Morphing notification contents -->
+                    <div class="island-notification" id="island-notif">
+                      <div class="notif-header">
+                        <div class="notif-icon-wrap" id="notif-icon-wrap">
+                          <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                        </div>
+                        <div class="notif-title-wrap">
+                          <h4 id="notif-title">System Alert</h4>
+                          <p id="notif-subtitle">Dynamic Island Active</p>
+                        </div>
+                      </div>
+                      <div class="notif-badge" id="notif-badge">Flutter</div>
+                    </div>
+                  </div>
+
+                  <!-- Game Canvas -->
+                  <canvas id="game-canvas"></canvas>
+
+                  <!-- HUD Info Overlay -->
+                  <div class="game-hud">
+                    <div class="hud-item">
+                      <span class="hud-label">SCORE</span>
+                      <span class="hud-value" id="game-score">0</span>
+                    </div>
+                    <div class="hud-lives" id="game-lives">
+                      <span class="live-dot"></span>
+                      <span class="live-dot"></span>
+                      <span class="live-dot"></span>
+                    </div>
+                    <div class="hud-item text-right">
+                      <span class="hud-label">BEST</span>
+                      <span class="hud-value" id="game-highscore">0</span>
+                    </div>
+                  </div>
+
+                  <!-- Start / Game Over Overlays -->
+                  <div class="game-overlay active" id="game-overlay">
+                    <div class="overlay-content">
+                      <h3 id="overlay-title">DYNAMIC BOUNCE</h3>
+                      <p id="overlay-desc">Bounce the ball to compile code and reveal career achievements.</p>
+                      <button class="btn-pill" id="start-btn">Start Compilation</button>
+                    </div>
+                  </div>
+
+                  <!-- iOS Home Indicator -->
+                  <div class="iphone-home-indicator"></div>
                 </div>
-
-                <!-- Game Canvas -->
-                <canvas id="game-canvas"></canvas>
-
-                <!-- HUD Info Overlay -->
-                <div class="game-hud">
-                  <div class="hud-item">
-                    <span class="hud-label">SCORE</span>
-                    <span class="hud-value" id="game-score">0</span>
-                  </div>
-                  <div class="hud-lives" id="game-lives">
-                    <span class="live-dot"></span>
-                    <span class="live-dot"></span>
-                    <span class="live-dot"></span>
-                  </div>
-                  <div class="hud-item text-right">
-                    <span class="hud-label">BEST</span>
-                    <span class="hud-value" id="game-highscore">0</span>
-                  </div>
-                </div>
-
-                <!-- Start / Game Over Overlays -->
-                <div class="game-overlay active" id="game-overlay">
-                  <div class="overlay-content">
-                    <h3 id="overlay-title">DYNAMIC BOUNCE</h3>
-                    <p id="overlay-desc">Bounce the ball to compile code and reveal career achievements.</p>
-                    <button class="btn-pill" id="start-btn">Start Compilation</button>
-                  </div>
-                </div>
-
-                <!-- iOS Home Indicator -->
-                <div class="iphone-home-indicator"></div>
               </div>
+              <!-- Interactive Shadows & Reflections -->
+              <div class="iphone-glare"></div>
             </div>
-            <!-- Interactive Shadows & Reflections -->
-            <div class="iphone-glare"></div>
           </div>
 
           <!-- Game Controls & Achievements List -->
