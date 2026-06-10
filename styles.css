@@ -225,41 +225,53 @@ section {
 .mobile-toggle.open .icon-menu { display: none; }
 .mobile-toggle.open .icon-close { display: block; }
 
+/* ── Mobile drawer (separate fixed layer, never clipped by the pill) ── */
+.mobile-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 990;
+  background: rgba(0, 0, 0, 0.94);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 2.5rem;
+  gap: 1.7rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-soft);
+}
+.drawer-link {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-on-dark);
+  transform: translateY(16px);
+  opacity: 0;
+  transition: transform 0.55s var(--ease-out), opacity 0.55s var(--ease-out);
+}
+.drawer-link:active { color: var(--blue); }
+.mobile-drawer.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-drawer.open .drawer-link { transform: translateY(0); opacity: 1; }
+.mobile-drawer.open .drawer-link:nth-of-type(1) { transition-delay: 0.06s; }
+.mobile-drawer.open .drawer-link:nth-of-type(2) { transition-delay: 0.1s; }
+.mobile-drawer.open .drawer-link:nth-of-type(3) { transition-delay: 0.14s; }
+.mobile-drawer.open .drawer-link:nth-of-type(4) { transition-delay: 0.18s; }
+.mobile-drawer.open .drawer-link:nth-of-type(5) { transition-delay: 0.22s; }
+.mobile-drawer.open .drawer-link:nth-of-type(6) { transition-delay: 0.26s; }
+body.drawer-locked { overflow: hidden; }
+
 @media (max-width: 768px) {
-  .nav-links {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.92);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 0 2.5rem;
-    gap: 1.6rem;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s var(--ease-soft);
-  }
-  .nav-links.active { opacity: 1; pointer-events: auto; }
-  .nav-indicator { display: none; }
-  .nav-link {
-    font-size: 1.7rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    padding: 0;
-    transform: translateY(14px);
-    opacity: 0;
-    transition: transform 0.55s var(--ease-out), opacity 0.55s var(--ease-out);
-  }
-  .nav-links.active .nav-link { transform: translateY(0); opacity: 1; }
-  .nav-links.active .nav-link:nth-of-type(1) { transition-delay: 0.06s; }
-  .nav-links.active .nav-link:nth-of-type(2) { transition-delay: 0.1s; }
-  .nav-links.active .nav-link:nth-of-type(3) { transition-delay: 0.14s; }
-  .nav-links.active .nav-link:nth-of-type(4) { transition-delay: 0.18s; }
-  .nav-links.active .nav-link:nth-of-type(5) { transition-delay: 0.22s; }
-  .nav-links.active .nav-link:nth-of-type(6) { transition-delay: 0.26s; }
+  .navbar { gap: 0.8rem; padding: 7px 9px 7px 16px; }
+  .nav-links { display: none; }
   .mobile-toggle { display: block; }
+  .mobile-drawer { display: flex; }
 }
 
 /* ── Buttons & links — Apple pill + chevron link ── */
