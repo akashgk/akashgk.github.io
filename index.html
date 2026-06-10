@@ -40,17 +40,10 @@
     <meta name="author" content="Akash G Krishnan" />
     <link rel="canonical" href="https://akashgk.com" />
     <meta name="robots" content="index, follow" />
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://unpkg.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <meta name="theme-color" content="#070709" />
 
     <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
   </head>
   <body>
     <div id="progress-bar" aria-hidden="true"></div>
@@ -64,8 +57,9 @@
         <a href="#playground" class="nav-link" data-num="04">Playground</a>
         <a href="#contact" class="nav-link" data-num="05">Contact</a>
       </div>
-      <button class="mobile-toggle" aria-label="Menu">
-        <i data-feather="menu"></i>
+      <button class="mobile-toggle" aria-label="Menu" aria-expanded="false">
+        <svg class="icon icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg class="icon icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </nav>
 
@@ -78,17 +72,19 @@
           <div class="orb orb-3"></div>
         </div>
       </div>
+      <div class="hero-spotlight" aria-hidden="true"></div>
       <div class="container hero-content">
         <span class="hero-badge fade-up">
           <span class="badge-dot"></span>
           Open to Opportunities
+          <span class="badge-time" id="doha-time"></span>
         </span>
         <h1 class="fade-up" style="transition-delay: 100ms">
           Engineering <span class="highlight">Secure</span> &amp; Scalable Mobile Experiences.
         </h1>
         <p class="hero-meta fade-up" style="transition-delay: 180ms">
           <span
-            ><i data-feather="map-pin" style="width: 13px; height: 13px"></i
+            ><svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg
             >&nbsp;Doha, Qatar</span
           >
           <span class="hero-meta-sep">·</span>
@@ -103,10 +99,12 @@
         </p>
         <div class="hero-cta fade-up" style="transition-delay: 300ms">
           <a href="#contact" class="btn btn-primary">
-            Start Collaboration <i data-feather="arrow-right"></i>
+            Start Collaboration
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </a>
           <a href="/AKASH_G_KRISHNAN_RESUME.pdf" class="btn btn-ghost" download>
-            Resume <i data-feather="download"></i>
+            Resume
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </a>
         </div>
       </div>
@@ -255,10 +253,7 @@
             <div class="timeline-body">
               <h3>Mobile Application Developer</h3>
               <p class="timeline-company">
-                <i
-                  data-feather="briefcase"
-                  style="width: 13px; height: 13px"
-                ></i>
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                 Commercial Bank of Qatar <span class="timeline-via" style="font-size: 0.8rem; opacity: 0.65; margin-left: 0.5rem;">(via Linnk Group)</span>
               </p>
               <p class="timeline-desc">
@@ -274,10 +269,7 @@
             <div class="timeline-body">
               <h3>Software Development Engineer</h3>
               <p class="timeline-company">
-                <i
-                  data-feather="briefcase"
-                  style="width: 13px; height: 13px"
-                ></i>
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                 PyjamaHR
               </p>
               <p class="timeline-desc">
@@ -293,10 +285,7 @@
             <div class="timeline-body">
               <h3>Software Engineer</h3>
               <p class="timeline-company">
-                <i
-                  data-feather="briefcase"
-                  style="width: 13px; height: 13px"
-                ></i>
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                 InnovationM
               </p>
               <p class="timeline-desc">
@@ -318,7 +307,7 @@
         </div>
         <div class="bento-grid">
           <!-- Flutter — featured -->
-          <div class="bento-cell bento-featured fade-up">
+          <div class="bento-cell bento-featured glow fade-up">
             <span class="bento-icon">⚡</span>
             <span class="bento-label">Primary Stack</span>
             <h3>Flutter &amp; Dart</h3>
@@ -336,7 +325,7 @@
           </div>
 
           <!-- Mobile Native -->
-          <div class="bento-cell fade-up" style="transition-delay: 80ms">
+          <div class="bento-cell glow fade-up" style="transition-delay: 80ms">
             <span class="bento-label">Mobile Native</span>
             <h3>iOS &amp; Android</h3>
             <div class="bento-tags">
@@ -348,7 +337,7 @@
           </div>
 
           <!-- Web -->
-          <div class="bento-cell fade-up" style="transition-delay: 120ms">
+          <div class="bento-cell glow fade-up" style="transition-delay: 120ms">
             <span class="bento-label">Web Frontend</span>
             <h3>React &amp; Next</h3>
             <div class="bento-tags">
@@ -360,7 +349,7 @@
           </div>
 
           <!-- Backend -->
-          <div class="bento-cell fade-up" style="transition-delay: 160ms">
+          <div class="bento-cell glow fade-up" style="transition-delay: 160ms">
             <span class="bento-label">Backend &amp; Cloud</span>
             <h3>Server-side</h3>
             <div class="bento-tags">
@@ -373,7 +362,7 @@
           </div>
 
           <!-- DevOps -->
-          <div class="bento-cell fade-up" style="transition-delay: 200ms">
+          <div class="bento-cell glow fade-up" style="transition-delay: 200ms">
             <span class="bento-label">DevOps &amp; Tools</span>
             <h3>Infrastructure</h3>
             <div class="bento-tags">
@@ -388,7 +377,7 @@
           </div>
 
           <!-- AI Productivity & LLM Tooling -->
-          <div class="bento-cell bento-full fade-up" style="transition-delay: 240ms">
+          <div class="bento-cell bento-full glow fade-up" style="transition-delay: 240ms">
             <span class="bento-label">AI Productivity &amp; Workflows</span>
             <h3>AI-Augmented Engineering</h3>
             <p>
@@ -419,13 +408,10 @@
             <a
               href="https://github.com/akashgk"
               target="_blank"
-              class="os-github-card fade-up"
+              class="os-github-card glow fade-up"
             >
               <div class="os-github-header">
-                <i
-                  data-feather="github"
-                  class="os-card-icon"
-                ></i>
+                <svg class="icon os-card-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
                 <h3>akashgk</h3>
               </div>
               <p>
@@ -436,13 +422,14 @@
                 class="btn btn-primary"
                 style="align-self: flex-start; margin-top: auto"
               >
-                View Profile <i data-feather="external-link"></i>
+                View Profile
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               </span>
             </a>
 
-            <div class="os-algorithms-card fade-up" style="transition-delay: 50ms">
+            <div class="os-algorithms-card glow fade-up" style="transition-delay: 50ms">
               <div class="os-algorithms-header">
-                <i data-feather="git-branch" class="os-card-icon"></i>
+                <svg class="icon os-card-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
                 <h3>The Algorithms</h3>
               </div>
               <span class="os-badge">Maintainer &amp; Contributor</span>
@@ -450,7 +437,8 @@
                 Core contributor and maintainer of the Dart repository for the largest open-source organization on GitHub dedicated to explaining data structures and algorithm implementations.
               </p>
               <a href="https://github.com/TheAlgorithms/Dart" target="_blank" class="os-card-link">
-                Explore Repository <i data-feather="external-link"></i>
+                Explore Repository
+                <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               </a>
             </div>
           </div>
@@ -464,17 +452,14 @@
                 class="os-pubdev-link"
               >
                 pub.dev
-                <i
-                  data-feather="external-link"
-                  style="width: 11px; height: 11px"
-                ></i>
+                <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               </a>
             </div>
             <div class="pkg-grid">
               <a
                 href="https://pub.dev/packages/dartapi"
                 target="_blank"
-                class="pkg-card"
+                class="pkg-card glow"
               >
                 <span class="pkg-name">dartapi</span>
                 <span class="pkg-desc">Dart API CLI</span>
@@ -482,7 +467,7 @@
               <a
                 href="https://pub.dev/packages/dartapi_db"
                 target="_blank"
-                class="pkg-card"
+                class="pkg-card glow"
               >
                 <span class="pkg-name">dartapi_db</span>
                 <span class="pkg-desc">Database Layer</span>
@@ -490,7 +475,7 @@
               <a
                 href="https://pub.dev/packages/dartapi_auth"
                 target="_blank"
-                class="pkg-card"
+                class="pkg-card glow"
               >
                 <span class="pkg-name">dartapi_auth</span>
                 <span class="pkg-desc">Auth Utilities</span>
@@ -498,7 +483,7 @@
               <a
                 href="https://pub.dev/packages/dartapi_core"
                 target="_blank"
-                class="pkg-card"
+                class="pkg-card glow"
               >
                 <span class="pkg-name">dartapi_core</span>
                 <span class="pkg-desc">Core Logic</span>
@@ -524,7 +509,7 @@
           >
           <h2>Dynamic Island Bounce</h2>
         </div>
-        
+
         <p class="playground-desc fade-up" style="text-align: center; max-width: 600px; margin: 0 auto 3rem auto; color: var(--text-2);">
           An interactive, Apple-inspired experience. Bounce the notification ball off the Dynamic Island to trigger animations, unlock career milestones, and catch falling skills!
         </p>
@@ -538,8 +523,8 @@
                 <div class="iphone-status-bar">
                   <span class="status-time">9:41</span>
                   <div class="status-icons">
-                    <i data-feather="wifi" style="width: 12px; height: 12px;"></i>
-                    <i data-feather="battery" style="width: 14px; height: 14px; transform: rotate(90deg) scaleX(-1);"></i>
+                    <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                    <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate(90deg) scaleX(-1)"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>
                   </div>
                 </div>
 
@@ -553,7 +538,7 @@
                   <div class="island-notification" id="island-notif">
                     <div class="notif-header">
                       <div class="notif-icon-wrap" id="notif-icon-wrap">
-                        <i data-feather="briefcase"></i>
+                        <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                       </div>
                       <div class="notif-title-wrap">
                         <h4 id="notif-title">System Alert</h4>
@@ -590,7 +575,8 @@
                     <h3 id="overlay-title">DYNAMIC BOUNCE</h3>
                     <p id="overlay-desc">Bounce the ball to compile code and reveal career achievements.</p>
                     <button class="btn btn-primary" id="start-btn">
-                      Start Compilation <i data-feather="play"></i>
+                      Start Compilation
+                      <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                     </button>
                   </div>
                 </div>
@@ -608,7 +594,7 @@
             <div class="info-card">
               <h3>Arcade Console</h3>
               <p>Control the paddle to keep the ball in play. Hit the Dynamic Island to display achievements.</p>
-              
+
               <div class="control-hints">
                 <div class="control-hint">
                   <span class="hint-key">Mouse</span> Move horizontally
@@ -624,7 +610,7 @@
               <!-- Audio & Mute Toggle -->
               <div class="game-controls-row">
                 <button class="btn-game-toggle" id="sound-btn" title="Toggle Sound">
-                  <i data-feather="volume-2" id="sound-icon"></i>
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" id="sound-icon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
                   <span>Sound FX On</span>
                 </button>
               </div>
@@ -699,8 +685,10 @@
             my inbox is always open.
           </p>
           <div class="contact-links fade-up" style="transition-delay: 100ms">
-            <a href="mailto:krishnanag1996@gmail.com" class="contact-link">
-              <span class="contact-link-icon"><i data-feather="mail"></i></span>
+            <a href="mailto:krishnanag1996@gmail.com" class="contact-link glow">
+              <span class="contact-link-icon">
+                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </span>
               <span class="contact-link-text">
                 <h4>Email</h4>
                 <span>krishnanag1996@gmail.com</span>
@@ -709,29 +697,29 @@
             <a
               href="https://www.linkedin.com/in/akashgkrishnan"
               target="_blank"
-              class="contact-link"
+              class="contact-link glow"
             >
-              <span class="contact-link-icon"
-                ><i data-feather="linkedin"></i
-              ></span>
+              <span class="contact-link-icon">
+                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              </span>
               <span class="contact-link-text">
                 <h4>LinkedIn</h4>
                 <span>akashgkrishnan</span>
               </span>
             </a>
-            <a href="tel:+97471743533" class="contact-link">
-              <span class="contact-link-icon"
-                ><i data-feather="phone"></i
-              ></span>
+            <a href="tel:+97471743533" class="contact-link glow">
+              <span class="contact-link-icon">
+                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </span>
               <span class="contact-link-text">
                 <h4>Qatar</h4>
                 <span>+974 7174 3533</span>
               </span>
             </a>
-            <a href="tel:+918130233807" class="contact-link">
-              <span class="contact-link-icon"
-                ><i data-feather="phone"></i
-              ></span>
+            <a href="tel:+918130233807" class="contact-link glow">
+              <span class="contact-link-icon">
+                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </span>
               <span class="contact-link-text">
                 <h4>India</h4>
                 <span>+91 8130 233807</span>
@@ -765,9 +753,6 @@
         </div>
       </div>
     </footer>
-
-    <script src="https://unpkg.com/feather-icons"></script>
-    <script src="script.js"></script>
 
     <!-- Defer Analytics -->
     <script>

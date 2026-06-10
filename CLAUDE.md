@@ -31,23 +31,25 @@ npx serve .
 
 ## Architecture
 
-**Main page (`index.html` + `styles.css` + `script.js`)** is a single-page portfolio with these sections (in order): Hero → Marquee strip → Stats Bar → About → Experience → Skills (bento grid) → Open Source → Contact → Footer.
+**Main page (`index.html` + `styles.css` + `script.js`)** is a single-page portfolio with these sections (in order): Hero → Marquee strip → Stats Bar → About → Experience → Skills (bento grid) → Open Source → Playground (canvas arcade game) → Contact → Footer.
 
 **Design system** (defined in `styles.css` `:root`):
-- Color palette: Midnight navy (`--bg: #07080f`), indigo/violet (`--violet`, `--violet-light`), amber (`--amber`)
-- Fonts: Syne (display/headings), Inter (body), Space Mono (mono)
+- Color palette: Space black (`--bg: #070709`), titanium tones (`--titanium-natural`, `--titanium-silver`); legacy `--violet`/`--amber` variables alias the titanium palette
+- Fonts: System font stacks only (SF Pro / Segoe UI / Roboto for display & body, `ui-monospace` for mono) — no webfonts are loaded, by design, for performance
 - CSS variables control all colors, spacing, and easing curves
 
-**JS features** (`script.js`):
-- Feather Icons initialization (`feather.replace()`)
-- Navbar scroll state (`scrolled` class after 60px)
-- `IntersectionObserver`-based `.fade-up` animations
-- Mobile menu toggle
-- Active nav link tracking on scroll
-- Custom cursor (desktop only, `pointer: fine` media query)
+**JS features** (`script.js`, loaded with `defer`):
+- Single rAF-throttled scroll handler (progress bar, navbar `scrolled` state, active nav link)
+- `IntersectionObserver`-based `.fade-up` animations + text-scramble decode on `.section-tag`
+- Mobile menu toggle (CSS class swap on `.mobile-toggle`, no DOM rebuilding)
+- Custom cursor (desktop only, `pointer: fine` media query, transform-based)
+- Hero cursor spotlight + orb parallax (`--sx`/`--sy` CSS variables on `.hero`)
+- Cursor-tracking glow on `.glow` cards (`--mx`/`--my` CSS variables)
+- Live "time in Doha" clock in the hero badge (`#doha-time`)
 - Stats counter animation with easing (`data-count` attribute on `<span>` elements)
+- Canvas arcade game ("Dynamic Bounce") in the Playground section
 
-**Icons**: [Feather Icons](https://feathericons.com/) loaded from unpkg CDN — add icons using `<i data-feather="icon-name"></i>` and they render after `feather.replace()`.
+**Icons**: Inline SVGs using Feather icon paths (stroke-based, `class="icon"`). Static icons are inlined directly in `index.html`; icons set dynamically by JS come from the `ICONS` map at the top of `script.js`. No icon CDN — the page makes zero third-party requests on the critical path.
 
 **Analytics**: Google Analytics (`G-SKBCVDV7G0`) is deferred by 3 seconds to avoid blocking initial render.
 
