@@ -1,5 +1,5 @@
 // =====================================================
-// Inline SVG icons (replaces the feather-icons CDN)
+// Inline SVG icons (no icon CDN)
 // =====================================================
 const ICONS = {
   briefcase: '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
@@ -8,13 +8,14 @@ const ICONS = {
   shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
   cpu: '<rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>',
   "volume-2": '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>',
-  "volume-x": '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>',
-  "refresh-cw": '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>'
+  "volume-x": '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>'
 };
 
 function iconSvg(name, size = 16, strokeWidth = 2) {
   return `<svg class="icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
 }
+
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // Footer year
 document.getElementById("year").textContent = new Date().getFullYear();
@@ -37,24 +38,28 @@ document.getElementById("year").textContent = new Date().getFullYear();
 
 // =====================================================
 // Single rAF-throttled scroll handler:
-// progress bar + navbar state + active nav link
+// navbar state + active nav link + hero scale/fade-away
 // =====================================================
-const progressBar = document.getElementById("progress-bar");
 const navbar = document.querySelector(".navbar");
 const links = document.querySelectorAll(".nav-link");
 const sections = document.querySelectorAll("section[id]");
+const heroContent = document.querySelector(".hero-content");
+const heroGlow = document.querySelector(".hero-glow");
 
 let scrollScheduled = false;
 function onScrollFrame() {
   scrollScheduled = false;
   const y = window.scrollY;
 
-  if (progressBar) {
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    progressBar.style.transform = `scaleX(${total > 0 ? y / total : 0})`;
-  }
+  navbar.classList.toggle("scrolled", y > 40);
 
-  navbar.classList.toggle("scrolled", y > 60);
+  // Apple-style hero recede: scales down and dissolves as you scroll past
+  if (heroContent && !reducedMotion) {
+    const p = Math.min(Math.max(y / (window.innerHeight * 0.85), 0), 1);
+    heroContent.style.opacity = String(Math.max(0, 1 - p * 1.15));
+    heroContent.style.transform = `translateY(${p * -46}px) scale(${1 - p * 0.07})`;
+    if (heroGlow) heroGlow.style.opacity = String(Math.max(0, 1 - p));
+  }
 
   const scrollPos = y + window.innerHeight / 3;
   let currentId = null;
@@ -66,11 +71,9 @@ function onScrollFrame() {
       currentId = section.id;
     }
   });
-  if (currentId) {
-    links.forEach((l) =>
-      l.classList.toggle("active", l.getAttribute("href") === `#${currentId}`)
-    );
-  }
+  links.forEach((l) =>
+    l.classList.toggle("active", currentId !== null && l.getAttribute("href") === `#${currentId}`)
+  );
 }
 window.addEventListener("scroll", () => {
   if (!scrollScheduled) {
@@ -81,46 +84,21 @@ window.addEventListener("scroll", () => {
 onScrollFrame();
 
 // =====================================================
-// Scroll reveal + decode effect on section tags
+// Blur-up reveal on scroll
 // =====================================================
-function scrambleText(el) {
-  if (el.dataset.scrambled) return;
-  el.dataset.scrambled = "1";
-  const text = el.textContent;
-  const glyphs = "!<>-_\\/[]{}=+*^?#";
-  const total = 20;
-  let frame = 0;
-  (function step() {
-    frame++;
-    const progress = frame / total;
-    el.textContent = text
-      .split("")
-      .map((c, i) =>
-        c === " " || i < progress * text.length
-          ? c
-          : glyphs[(Math.random() * glyphs.length) | 0]
-      )
-      .join("");
-    if (frame < total) requestAnimationFrame(step);
-    else el.textContent = text;
-  })();
-}
-
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
       entry.target.classList.add("visible");
-      const tag = entry.target.querySelector(".section-tag");
-      if (tag) scrambleText(tag);
       observer.unobserve(entry.target);
     }
   });
-}, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+}, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
 
-document.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
 // =====================================================
-// Mobile menu (pure class toggle — no DOM rebuilding)
+// Mobile menu
 // =====================================================
 const mobileToggle = document.querySelector(".mobile-toggle");
 const navLinks = document.querySelector(".nav-links");
@@ -141,44 +119,6 @@ if (mobileToggle) {
 }
 
 // =====================================================
-// Custom cursor — desktop only, transform-based (no layout)
-// =====================================================
-if (window.matchMedia("(pointer: fine)").matches) {
-  const dot = document.createElement("div");
-  const ring = document.createElement("div");
-  dot.className = "cursor-dot";
-  ring.className = "cursor-ring";
-  document.body.appendChild(dot);
-  document.body.appendChild(ring);
-
-  let mx = 0, my = 0, rx = 0, ry = 0, seen = false;
-
-  document.addEventListener("mousemove", (e) => {
-    mx = e.clientX;
-    my = e.clientY;
-    if (!seen) {
-      seen = true;
-      rx = mx; ry = my;
-      dot.style.opacity = "1";
-      ring.style.opacity = "1";
-    }
-    dot.style.transform = `translate3d(${mx}px,${my}px,0) translate(-50%,-50%)`;
-  }, { passive: true });
-
-  (function animateRing() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ring.style.transform = `translate3d(${rx}px,${ry}px,0) translate(-50%,-50%)`;
-    requestAnimationFrame(animateRing);
-  })();
-
-  document.querySelectorAll("a, button, .bento-cell, .pkg-card").forEach((el) => {
-    el.addEventListener("mouseenter", () => ring.classList.add("hovered"));
-    el.addEventListener("mouseleave", () => ring.classList.remove("hovered"));
-  });
-}
-
-// =====================================================
 // Typed role cycling
 // =====================================================
 (function () {
@@ -193,109 +133,17 @@ if (window.matchMedia("(pointer: fine)").matches) {
 
     if (!deleting && ci === word.length) {
       deleting = true;
-      setTimeout(tick, 2000);
+      setTimeout(tick, 2200);
       return;
     }
     if (deleting && ci === 0) {
       deleting = false;
       ri = (ri + 1) % roles.length;
     }
-    setTimeout(tick, deleting ? 45 : 85);
+    setTimeout(tick, deleting ? 40 : 80);
   }
   tick();
 })();
-
-// =====================================================
-// Hero — orb parallax + cursor spotlight
-// =====================================================
-(function () {
-  const hero = document.querySelector(".hero");
-  const layer = document.querySelector(".orb-layer");
-  if (!hero || !layer || window.matchMedia("(pointer: coarse)").matches) return;
-
-  hero.addEventListener("mousemove", (e) => {
-    const { left, top, width, height } = hero.getBoundingClientRect();
-    const px = e.clientX - left;
-    const py = e.clientY - top;
-    const x = (px / width - 0.5) * 38;
-    const y = (py / height - 0.5) * 28;
-    layer.style.transform = `translate(${x}px, ${y}px)`;
-    hero.style.setProperty("--sx", `${px}px`);
-    hero.style.setProperty("--sy", `${py}px`);
-  }, { passive: true });
-
-  hero.addEventListener("mouseleave", () => {
-    layer.style.transform = "";
-  });
-})();
-
-// =====================================================
-// Card glow — border light tracks the cursor
-// =====================================================
-if (window.matchMedia("(pointer: fine)").matches) {
-  document.querySelectorAll(".glow").forEach((card) => {
-    card.addEventListener("mousemove", (e) => {
-      const r = card.getBoundingClientRect();
-      card.style.setProperty("--mx", `${e.clientX - r.left}px`);
-      card.style.setProperty("--my", `${e.clientY - r.top}px`);
-    }, { passive: true });
-  });
-}
-
-// =====================================================
-// Button click ripple
-// =====================================================
-document.querySelectorAll(".btn").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    const r = btn.getBoundingClientRect();
-    const size = Math.max(r.width, r.height);
-    const rip = document.createElement("span");
-    rip.className = "ripple";
-    rip.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-r.left-size/2}px;top:${e.clientY-r.top-size/2}px`;
-    btn.appendChild(rip);
-    rip.addEventListener("animationend", () => rip.remove());
-  });
-});
-
-// =====================================================
-// 3D tilt on cards — desktop pointer only
-// =====================================================
-if (window.matchMedia("(pointer: fine)").matches &&
-    !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-
-  function addTilt(selector, maxDeg) {
-    document.querySelectorAll(selector).forEach((card) => {
-      card.addEventListener("mouseenter", () => card.classList.add("tilt-active"));
-      card.addEventListener("mousemove", (e) => {
-        const r = card.getBoundingClientRect();
-        const x = ((e.clientX - r.left) / r.width  - 0.5) * 2;
-        const y = ((e.clientY - r.top)  / r.height - 0.5) * 2;
-        card.style.transform =
-          `perspective(900px) rotateY(${x * maxDeg}deg) rotateX(${-y * maxDeg}deg) translateY(-5px)`;
-      }, { passive: true });
-      card.addEventListener("mouseleave", () => {
-        card.classList.remove("tilt-active");
-        card.style.transform = "";
-      });
-    });
-  }
-
-  addTilt(".bento-cell", 7);
-  addTilt(".pkg-card", 6);
-  addTilt(".contact-link", 5);
-  addTilt(".os-github-card", 6);
-
-  // Magnetic pull on primary/ghost buttons
-  document.querySelectorAll(".btn").forEach((btn) => {
-    btn.addEventListener("mousemove", (e) => {
-      const r = btn.getBoundingClientRect();
-      const x = ((e.clientX - r.left) / r.width  - 0.5) * 14;
-      const y = ((e.clientY - r.top)  / r.height - 0.5) * 14;
-      btn.style.transform = `translate(${x}px, ${y}px) translateY(-2px)`;
-    }, { passive: true });
-    btn.addEventListener("mouseleave", () => { btn.style.transform = ""; });
-  });
-}
 
 // =====================================================
 // Stats counter animation
@@ -316,7 +164,7 @@ if (statsBar) {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.querySelectorAll("[data-count]").forEach((el) => {
-          countUp(el, parseInt(el.dataset.count, 10), 1400);
+          countUp(el, parseInt(el.dataset.count, 10), 1500);
         });
         statsObserver.unobserve(entry.target);
       }
@@ -361,13 +209,13 @@ if (statsBar) {
   let highscore = parseInt(localStorage.getItem("db-highscore") || "0", 10);
   highscoreVal.textContent = highscore;
 
-  // Career milestones
+  // Career milestones — Apple system colors
   const milestones = [
-    { id: "cbq", title: "CBQ Portal Live", subtitle: "Mobile Architecture Lead (8+ Devs)", badge: "Architect", icon: "briefcase", color: "#a1a1aa" },
-    { id: "pyjama", title: "PyjamaHR Mobile", subtitle: "App Built from Scratch (Flutter)", badge: "Flutter", icon: "smartphone", color: "#bfbba9" },
-    { id: "packages", title: "dartapi CLI", subtitle: "+50k Pub Downloads globally", badge: "Packages", icon: "package", color: "#d4d4d8" },
-    { id: "qatar", title: "Fintech Architect", subtitle: "Secure Clean Code in Qatar", badge: "FinTech", icon: "shield", color: "#ebd9be" },
-    { id: "developer", title: "Expert Flutter SDE", subtitle: "BLoC & Riverpod Stack Lead", badge: "Dart/Swift", icon: "cpu", color: "#c5bfa4" }
+    { id: "cbq", title: "CBQ Portal Live", subtitle: "Mobile Architecture Lead (8+ Devs)", badge: "Architect", icon: "briefcase", color: "#2997ff" },
+    { id: "pyjama", title: "PyjamaHR Mobile", subtitle: "App Built from Scratch (Flutter)", badge: "Flutter", icon: "smartphone", color: "#30d158" },
+    { id: "packages", title: "dartapi CLI", subtitle: "+50k Pub Downloads globally", badge: "Packages", icon: "package", color: "#ff9f0a" },
+    { id: "qatar", title: "Fintech Architect", subtitle: "Secure Clean Code in Qatar", badge: "FinTech", icon: "shield", color: "#bf5af2" },
+    { id: "developer", title: "Expert Flutter SDE", subtitle: "BLoC & Riverpod Stack Lead", badge: "Dart/Swift", icon: "cpu", color: "#ff375f" }
   ];
   let unlockedMilestones = new Set();
 
@@ -500,7 +348,7 @@ if (statsBar) {
     vx: 2.2,
     vy: -4.5,
     radius: 6,
-    color: "#ebd9be",
+    color: "#2997ff",
     draw() {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -519,14 +367,14 @@ if (statsBar) {
     width: 76,
     height: 8,
     radius: 4,
-    color: "#c5bfa4",
+    color: "#f5f5f7",
     hapticHeight: 8,
     draw() {
       ctx.beginPath();
       ctx.roundRect(this.x, this.y + (this.height - this.hapticHeight), this.width, this.hapticHeight, this.radius);
       ctx.fillStyle = this.color;
       ctx.shadowBlur = 10;
-      ctx.shadowColor = "rgba(197, 191, 180, 0.4)";
+      ctx.shadowColor = "rgba(245, 245, 247, 0.4)";
       ctx.fill();
       ctx.shadowBlur = 0;
     }
@@ -608,7 +456,7 @@ if (statsBar) {
     draw() {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(7, 8, 15, 0.9)";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
       ctx.strokeStyle = this.color;
       ctx.lineWidth = 1.5;
       ctx.shadowBlur = 6;
@@ -774,7 +622,7 @@ if (statsBar) {
 
     document.getElementById("overlay-title").textContent = "COMPILATION FAIL";
     document.getElementById("overlay-desc").textContent = `Build crashed. Score: ${score}. Best Build: ${highscore}. Unlock all 5 milestones!`;
-    startBtn.innerHTML = `Recompile ${iconSvg("refresh-cw", 16)}`;
+    startBtn.textContent = "Recompile";
     overlay.classList.add("active");
   }
 
