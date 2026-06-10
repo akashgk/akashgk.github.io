@@ -40,77 +40,69 @@
     <meta name="author" content="Akash G Krishnan" />
     <link rel="canonical" href="https://akashgk.com" />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#070709" />
+    <meta name="theme-color" content="#000000" />
 
     <link rel="stylesheet" href="styles.css" />
     <script src="script.js" defer></script>
   </head>
   <body>
-    <div id="progress-bar" aria-hidden="true"></div>
     <!-- Navbar -->
     <nav class="navbar">
       <a href="#" class="nav-logo">AGK<span class="nav-logo-dot">.</span></a>
       <div class="nav-links">
-        <a href="#about" class="nav-link" data-num="01">About</a>
-        <a href="#experience" class="nav-link" data-num="02">Experience</a>
-        <a href="#skills" class="nav-link" data-num="03">Stack</a>
-        <a href="#playground" class="nav-link" data-num="04">Playground</a>
-        <a href="#contact" class="nav-link" data-num="05">Contact</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#experience" class="nav-link">Experience</a>
+        <a href="#skills" class="nav-link">Stack</a>
+        <a href="#opensource" class="nav-link">Open Source</a>
+        <a href="#playground" class="nav-link">Playground</a>
+        <a href="#contact" class="nav-link">Contact</a>
       </div>
       <button class="mobile-toggle" aria-label="Menu" aria-expanded="false">
-        <svg class="icon icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        <svg class="icon icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg class="icon icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+        <svg class="icon icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </nav>
 
     <!-- Hero -->
     <section class="hero">
-      <div class="hero-orbs" aria-hidden="true">
-        <div class="orb-layer">
-          <div class="orb orb-1"></div>
-          <div class="orb orb-2"></div>
-          <div class="orb orb-3"></div>
-        </div>
+      <div class="hero-glow" aria-hidden="true">
+        <div class="glow-blob blob-1"></div>
+        <div class="glow-blob blob-2"></div>
+        <div class="glow-blob blob-3"></div>
       </div>
-      <div class="hero-spotlight" aria-hidden="true"></div>
-      <div class="container hero-content">
-        <span class="hero-badge fade-up">
+      <div class="hero-content">
+        <span class="hero-badge reveal">
           <span class="badge-dot"></span>
           Open to Opportunities
           <span class="badge-time" id="doha-time"></span>
         </span>
-        <h1 class="fade-up" style="transition-delay: 100ms">
-          Engineering <span class="highlight">Secure</span> &amp; Scalable Mobile Experiences.
+        <p class="hero-eyebrow reveal" style="transition-delay: 60ms">
+          Akash G Krishnan — Doha, Qatar
+        </p>
+        <h1 class="reveal" style="transition-delay: 140ms">
+          Engineering
+          <span class="gradient-text">Secure &amp; Scalable</span><br />
+          Mobile Experiences.
         </h1>
-        <p class="hero-meta fade-up" style="transition-delay: 180ms">
-          <span
-            ><svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg
-            >&nbsp;Doha, Qatar</span
-          >
-          <span class="hero-meta-sep">·</span>
+        <p class="hero-meta reveal" style="transition-delay: 240ms">
           <span id="typed-role"></span>
           <span class="hero-meta-sep">·</span>
           <span>8 Years</span>
         </p>
-        <p class="hero-desc fade-up" style="transition-delay: 240ms">
+        <p class="hero-desc reveal" style="transition-delay: 320ms">
           Currently leading mobile architecture at
           <strong>Commercial Bank of Qatar</strong>, building high-performance
           fintech solutions that serve millions.
         </p>
-        <div class="hero-cta fade-up" style="transition-delay: 300ms">
-          <a href="#contact" class="btn btn-primary">
-            Start Collaboration
-            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </a>
-          <a href="/AKASH_G_KRISHNAN_RESUME.pdf" class="btn btn-ghost" download>
-            Resume
-            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </a>
+        <div class="hero-cta reveal" style="transition-delay: 400ms">
+          <a href="#contact" class="btn-pill">Start Collaboration</a>
+          <a href="/AKASH_G_KRISHNAN_RESUME.pdf" class="link-arrow" download
+            >Download Résumé <span class="chevron">›</span></a
+          >
         </div>
       </div>
-      <div class="scroll-indicator" aria-hidden="true">
-        <div class="scroll-line"></div>
-        <span>Scroll</span>
+      <div class="scroll-cue" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
     </section>
 
@@ -153,25 +145,25 @@
     <div class="stats-bar">
       <div class="container">
         <div class="stats-grid">
-          <div class="stat-item fade-up">
+          <div class="stat-item reveal">
             <div class="stat-number">
               <span data-count="8">0</span><span class="suffix">+</span>
             </div>
             <div class="stat-label">Years Experience</div>
           </div>
-          <div class="stat-item fade-up" style="transition-delay: 80ms">
+          <div class="stat-item reveal" style="transition-delay: 80ms">
             <div class="stat-number">
               <span data-count="8">0</span><span class="suffix">+</span>
             </div>
             <div class="stat-label">Engineers Led</div>
           </div>
-          <div class="stat-item fade-up" style="transition-delay: 160ms">
+          <div class="stat-item reveal" style="transition-delay: 160ms">
             <div class="stat-number">
               <span data-count="3">0</span><span class="suffix"></span>
             </div>
             <div class="stat-label">Companies</div>
           </div>
-          <div class="stat-item fade-up" style="transition-delay: 240ms">
+          <div class="stat-item reveal" style="transition-delay: 240ms">
             <div class="stat-number">
               <span data-count="4">0</span><span class="suffix"></span>
             </div>
@@ -181,16 +173,15 @@
       </div>
     </div>
 
-    <!-- About -->
-    <section id="about">
+    <!-- About — light section -->
+    <section id="about" class="section-light">
       <div class="container">
-        <div class="section-header fade-up">
-          <span class="section-num" aria-hidden="true">01</span>
-          <span class="section-tag">About</span>
-          <h2>Engineering Pixel-Perfect Experiences.</h2>
+        <div class="section-header reveal">
+          <span class="eyebrow">About</span>
+          <h2>Engineering pixel-perfect experiences.</h2>
         </div>
         <div class="about-grid">
-          <div class="about-text fade-up">
+          <div class="about-text reveal">
             <p>
               With over <strong>8 years</strong> of experience in software
               development, I bridge the gap between complex backend logic and
@@ -204,113 +195,96 @@
               great software is invisible — it just works.
             </p>
           </div>
-          <div class="about-card fade-up" style="transition-delay: 150ms">
-            <div class="about-rows">
-              <div class="about-row">
-                <span class="row-label">Current Role</span>
-                <span class="row-value">Senior Flutter Developer</span>
-                <span class="row-sub">Commercial Bank of Qatar</span>
-              </div>
-              <div class="about-row">
-                <span class="row-label">Location</span>
-                <span class="row-value">Doha, Qatar 🇶🇦</span>
-              </div>
-              <div class="about-row">
-                <span class="row-label">Nationality</span>
-                <span class="row-value">Indian 🇮🇳</span>
-              </div>
-              <div class="about-row">
-                <span class="row-label">Education</span>
-                <span class="row-value">B.Tech in Computer Science</span>
-              </div>
-              <div class="about-row">
-                <span class="row-label">Status</span>
-                <span class="row-value" style="color: #22c55e">
-                  <span class="status-dot"></span>
-                  Open to Opportunities
-                </span>
-              </div>
+          <div class="facts-card card reveal" style="transition-delay: 120ms">
+            <div class="fact-row">
+              <span class="fact-label">Current Role</span>
+              <span class="fact-value">Senior Flutter Developer</span>
+              <span class="fact-sub">Commercial Bank of Qatar</span>
+            </div>
+            <div class="fact-row">
+              <span class="fact-label">Location</span>
+              <span class="fact-value">Doha, Qatar 🇶🇦</span>
+            </div>
+            <div class="fact-row">
+              <span class="fact-label">Nationality</span>
+              <span class="fact-value">Indian 🇮🇳</span>
+            </div>
+            <div class="fact-row">
+              <span class="fact-label">Education</span>
+              <span class="fact-value">B.Tech in Computer Science</span>
+            </div>
+            <div class="fact-row">
+              <span class="fact-label">Status</span>
+              <span class="fact-value fact-status">
+                <span class="status-dot"></span>
+                Open to Opportunities
+              </span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Experience -->
+    <!-- Experience — dark section -->
     <section id="experience">
       <div class="container">
-        <div class="section-header fade-up">
-          <span class="section-num" aria-hidden="true">02</span>
-          <span class="section-tag">Experience</span>
-          <h2>Professional Journey.</h2>
+        <div class="section-header reveal">
+          <span class="eyebrow">Experience</span>
+          <h2>Professional journey.</h2>
         </div>
-        <div class="timeline fade-up" style="transition-delay: 100ms">
-          <div class="timeline-item">
-            <div class="timeline-meta">
-              <span class="timeline-date">Jun 2023<br />Present</span>
-              <span class="timeline-badge">Current</span>
+        <div class="xp-list">
+          <article class="xp-card card reveal">
+            <div class="xp-top">
+              <span class="xp-date">Jun 2023 — Present</span>
+              <span class="xp-chip">Current</span>
             </div>
-            <div class="timeline-body">
-              <h3>Mobile Application Developer</h3>
-              <p class="timeline-company">
-                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                Commercial Bank of Qatar <span class="timeline-via" style="font-size: 0.8rem; opacity: 0.65; margin-left: 0.5rem;">(via Linnk Group)</span>
-              </p>
-              <p class="timeline-desc">
-                End-to-end delivery of the Corporate Trade Portal (CTP), working with a cross-functional team of 8+ developers. Designed scalable Fintech solutions using Flutter and Dart for high-value banking products. Spearheaded transition to Clean Architecture, improving code maintainability and reducing technical debt.
-              </p>
-            </div>
-          </div>
+            <h3>Mobile Application Developer</h3>
+            <p class="xp-company">
+              Commercial Bank of Qatar
+              <span class="xp-via">(via Linnk Group)</span>
+            </p>
+            <p class="xp-desc">
+              End-to-end delivery of the Corporate Trade Portal (CTP), working with a cross-functional team of 8+ developers. Designed scalable Fintech solutions using Flutter and Dart for high-value banking products. Spearheaded transition to Clean Architecture, improving code maintainability and reducing technical debt.
+            </p>
+          </article>
 
-          <div class="timeline-item">
-            <div class="timeline-meta">
-              <span class="timeline-date">Feb 2021<br />Jun 2023</span>
+          <article class="xp-card card reveal" style="transition-delay: 80ms">
+            <div class="xp-top">
+              <span class="xp-date">Feb 2021 — Jun 2023</span>
             </div>
-            <div class="timeline-body">
-              <h3>Software Development Engineer</h3>
-              <p class="timeline-company">
-                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                PyjamaHR
-              </p>
-              <p class="timeline-desc">
-                Engineered the first version of the PyjamaHR mobile app from scratch, handling the full lifecycle from requirements to Store release. Developed a ReactJS Chrome Extension that increased recruiter productivity by enabling direct sourcing from multiple job boards. Optimized sign-up workflows using Google Identity Service, significantly reducing user dropout rates.
-              </p>
-            </div>
-          </div>
+            <h3>Software Development Engineer</h3>
+            <p class="xp-company">PyjamaHR</p>
+            <p class="xp-desc">
+              Engineered the first version of the PyjamaHR mobile app from scratch, handling the full lifecycle from requirements to Store release. Developed a ReactJS Chrome Extension that increased recruiter productivity by enabling direct sourcing from multiple job boards. Optimized sign-up workflows using Google Identity Service, significantly reducing user dropout rates.
+            </p>
+          </article>
 
-          <div class="timeline-item">
-            <div class="timeline-meta">
-              <span class="timeline-date">Sep 2018<br />Jan 2021</span>
+          <article class="xp-card card reveal" style="transition-delay: 160ms">
+            <div class="xp-top">
+              <span class="xp-date">Sep 2018 — Jan 2021</span>
             </div>
-            <div class="timeline-body">
-              <h3>Software Engineer</h3>
-              <p class="timeline-company">
-                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                InnovationM
-              </p>
-              <p class="timeline-desc">
-                Delivered high-impact mobile solutions for clients including OneAssist, EZMall, and British Council (IELTS Prep). Built an automated testing framework that increased code coverage and reduced production defect rates. Developed a Proof of Concept (POC) for an audio social media app using Agora SDK and Flutter.
-              </p>
-            </div>
-          </div>
+            <h3>Software Engineer</h3>
+            <p class="xp-company">InnovationM</p>
+            <p class="xp-desc">
+              Delivered high-impact mobile solutions for clients including OneAssist, EZMall, and British Council (IELTS Prep). Built an automated testing framework that increased code coverage and reduced production defect rates. Developed a Proof of Concept (POC) for an audio social media app using Agora SDK and Flutter.
+            </p>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- Skills -->
-    <section id="skills">
+    <!-- Skills — light section, Apple-style bento -->
+    <section id="skills" class="section-light">
       <div class="container">
-        <div class="section-header fade-up">
-          <span class="section-num" aria-hidden="true">03</span>
-          <span class="section-tag">Stack</span>
-          <h2>Tools of the Trade.</h2>
+        <div class="section-header reveal">
+          <span class="eyebrow">Stack</span>
+          <h2>Tools of the trade.</h2>
         </div>
         <div class="bento-grid">
-          <!-- Flutter — featured -->
-          <div class="bento-cell bento-featured glow fade-up">
-            <span class="bento-icon">⚡</span>
+          <!-- Flutter — featured (dark card on light, Apple bento style) -->
+          <div class="bento-cell bento-featured card reveal">
             <span class="bento-label">Primary Stack</span>
-            <h3>Flutter &amp; Dart</h3>
+            <h3 class="gradient-text">Flutter &amp; Dart</h3>
             <p>
               Building pixel-perfect, high-performance cross-platform apps with
               clean architecture and state management patterns.
@@ -325,7 +299,7 @@
           </div>
 
           <!-- Mobile Native -->
-          <div class="bento-cell glow fade-up" style="transition-delay: 80ms">
+          <div class="bento-cell card reveal" style="transition-delay: 80ms">
             <span class="bento-label">Mobile Native</span>
             <h3>iOS &amp; Android</h3>
             <div class="bento-tags">
@@ -337,7 +311,7 @@
           </div>
 
           <!-- Web -->
-          <div class="bento-cell glow fade-up" style="transition-delay: 120ms">
+          <div class="bento-cell card reveal" style="transition-delay: 120ms">
             <span class="bento-label">Web Frontend</span>
             <h3>React &amp; Next</h3>
             <div class="bento-tags">
@@ -349,7 +323,7 @@
           </div>
 
           <!-- Backend -->
-          <div class="bento-cell glow fade-up" style="transition-delay: 160ms">
+          <div class="bento-cell card reveal" style="transition-delay: 160ms">
             <span class="bento-label">Backend &amp; Cloud</span>
             <h3>Server-side</h3>
             <div class="bento-tags">
@@ -362,7 +336,7 @@
           </div>
 
           <!-- DevOps -->
-          <div class="bento-cell glow fade-up" style="transition-delay: 200ms">
+          <div class="bento-cell card reveal" style="transition-delay: 200ms">
             <span class="bento-label">DevOps &amp; Tools</span>
             <h3>Infrastructure</h3>
             <div class="bento-tags">
@@ -377,7 +351,7 @@
           </div>
 
           <!-- AI Productivity & LLM Tooling -->
-          <div class="bento-cell bento-full glow fade-up" style="transition-delay: 240ms">
+          <div class="bento-cell bento-full card reveal" style="transition-delay: 240ms">
             <span class="bento-label">AI Productivity &amp; Workflows</span>
             <h3>AI-Augmented Engineering</h3>
             <p>
@@ -395,71 +369,61 @@
       </div>
     </section>
 
-    <!-- Open Source -->
+    <!-- Open Source — dark section -->
     <section id="opensource">
       <div class="container">
-        <div class="section-header fade-up">
-          <span class="section-num" aria-hidden="true">04</span>
-          <span class="section-tag">Open Source</span>
-          <h2>Building in Public.</h2>
+        <div class="section-header reveal">
+          <span class="eyebrow">Open Source</span>
+          <h2>Building in public.</h2>
         </div>
         <div class="os-layout">
           <div class="os-left-col">
             <a
               href="https://github.com/akashgk"
               target="_blank"
-              class="os-github-card glow fade-up"
+              class="os-card card reveal"
             >
-              <div class="os-github-header">
-                <svg class="icon os-card-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              <div class="os-card-header">
+                <svg class="icon os-card-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
                 <h3>akashgk</h3>
               </div>
               <p>
                 Browse my repositories, experiments, and open source contributions
                 on GitHub.
               </p>
-              <span
-                class="btn btn-primary"
-                style="align-self: flex-start; margin-top: auto"
-              >
-                View Profile
-                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              </span>
+              <span class="link-arrow">View Profile <span class="chevron">›</span></span>
             </a>
 
-            <div class="os-algorithms-card glow fade-up" style="transition-delay: 50ms">
-              <div class="os-algorithms-header">
-                <svg class="icon os-card-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+            <div class="os-card card reveal" style="transition-delay: 60ms">
+              <div class="os-card-header">
+                <svg class="icon os-card-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
                 <h3>The Algorithms</h3>
               </div>
               <span class="os-badge">Maintainer &amp; Contributor</span>
               <p>
                 Core contributor and maintainer of the Dart repository for the largest open-source organization on GitHub dedicated to explaining data structures and algorithm implementations.
               </p>
-              <a href="https://github.com/TheAlgorithms/Dart" target="_blank" class="os-card-link">
-                Explore Repository
-                <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              <a href="https://github.com/TheAlgorithms/Dart" target="_blank" class="link-arrow">
+                Explore Repository <span class="chevron">›</span>
               </a>
             </div>
           </div>
 
-          <div class="fade-up" style="transition-delay: 100ms">
+          <div class="reveal" style="transition-delay: 120ms">
             <div class="os-packages-header">
               <h3>Published Packages</h3>
               <a
                 href="https://pub.dev/publishers/akashgk.com/packages"
                 target="_blank"
-                class="os-pubdev-link"
+                class="link-arrow"
+                >pub.dev <span class="chevron">›</span></a
               >
-                pub.dev
-                <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              </a>
             </div>
             <div class="pkg-grid">
               <a
                 href="https://pub.dev/packages/dartapi"
                 target="_blank"
-                class="pkg-card glow"
+                class="pkg-card card"
               >
                 <span class="pkg-name">dartapi</span>
                 <span class="pkg-desc">Dart API CLI</span>
@@ -467,7 +431,7 @@
               <a
                 href="https://pub.dev/packages/dartapi_db"
                 target="_blank"
-                class="pkg-card glow"
+                class="pkg-card card"
               >
                 <span class="pkg-name">dartapi_db</span>
                 <span class="pkg-desc">Database Layer</span>
@@ -475,7 +439,7 @@
               <a
                 href="https://pub.dev/packages/dartapi_auth"
                 target="_blank"
-                class="pkg-card glow"
+                class="pkg-card card"
               >
                 <span class="pkg-name">dartapi_auth</span>
                 <span class="pkg-desc">Auth Utilities</span>
@@ -483,7 +447,7 @@
               <a
                 href="https://pub.dev/packages/dartapi_core"
                 target="_blank"
-                class="pkg-card glow"
+                class="pkg-card card"
               >
                 <span class="pkg-name">dartapi_core</span>
                 <span class="pkg-desc">Core Logic</span>
@@ -494,27 +458,19 @@
       </div>
     </section>
 
-    <!-- Playground (Arcade) -->
+    <!-- Playground (Arcade) — dark section -->
     <section id="playground">
       <div class="container">
-        <div class="section-header fade-up" style="text-align: center">
-          <span
-            class="section-num"
-            aria-hidden="true"
-            style="display: block; text-align: center"
-            >05</span
-          >
-          <span class="section-tag" style="text-align: center; display: block"
-            >Arcade</span
-          >
-          <h2>Dynamic Island Bounce</h2>
+        <div class="section-header section-header-center reveal">
+          <span class="eyebrow">Arcade</span>
+          <h2>Dynamic Island Bounce.</h2>
         </div>
 
-        <p class="playground-desc fade-up" style="text-align: center; max-width: 600px; margin: 0 auto 3rem auto; color: var(--text-2);">
+        <p class="playground-desc reveal">
           An interactive, Apple-inspired experience. Bounce the notification ball off the Dynamic Island to trigger animations, unlock career milestones, and catch falling skills!
         </p>
 
-        <div class="game-wrapper fade-up" style="transition-delay: 100ms">
+        <div class="game-wrapper reveal" style="transition-delay: 100ms">
           <!-- iOS-style Game Console -->
           <div class="iphone-device">
             <div class="iphone-bezel">
@@ -574,10 +530,7 @@
                   <div class="overlay-content">
                     <h3 id="overlay-title">DYNAMIC BOUNCE</h3>
                     <p id="overlay-desc">Bounce the ball to compile code and reveal career achievements.</p>
-                    <button class="btn btn-primary" id="start-btn">
-                      Start Compilation
-                      <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    </button>
+                    <button class="btn-pill" id="start-btn">Start Compilation</button>
                   </div>
                 </div>
 
@@ -591,7 +544,7 @@
 
           <!-- Game Controls & Achievements List -->
           <div class="game-info-sidebar">
-            <div class="info-card">
+            <div class="info-card card">
               <h3>Arcade Console</h3>
               <p>Control the paddle to keep the ball in play. Hit the Dynamic Island to display achievements.</p>
 
@@ -616,7 +569,7 @@
               </div>
             </div>
 
-            <div class="info-card">
+            <div class="info-card card">
               <h3>Milestones Discovered</h3>
               <div class="milestones-list">
                 <div class="milestone-item-check locked" id="ms-cbq">
@@ -664,30 +617,22 @@
       </div>
     </section>
 
-    <!-- Contact -->
-    <section id="contact">
+    <!-- Contact — light section -->
+    <section id="contact" class="section-light">
       <div class="container">
         <div class="contact-wrapper">
-          <div class="section-header fade-up" style="text-align: center">
-            <span
-              class="section-num"
-              aria-hidden="true"
-              style="display: block; text-align: center"
-              >06</span
-            >
-            <span class="section-tag" style="text-align: center; display: block"
-              >Contact</span
-            >
-            <h2>Let's Build Something.</h2>
+          <div class="section-header section-header-center reveal">
+            <span class="eyebrow">Contact</span>
+            <h2>Let's build something.</h2>
           </div>
-          <p class="contact-sub fade-up">
+          <p class="contact-sub reveal">
             Whether you have a project, an idea, or just want to connect —<br />
             my inbox is always open.
           </p>
-          <div class="contact-links fade-up" style="transition-delay: 100ms">
-            <a href="mailto:krishnanag1996@gmail.com" class="contact-link glow">
+          <div class="contact-links reveal" style="transition-delay: 100ms">
+            <a href="mailto:krishnanag1996@gmail.com" class="contact-link card">
               <span class="contact-link-icon">
-                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               </span>
               <span class="contact-link-text">
                 <h4>Email</h4>
@@ -697,28 +642,28 @@
             <a
               href="https://www.linkedin.com/in/akashgkrishnan"
               target="_blank"
-              class="contact-link glow"
+              class="contact-link card"
             >
               <span class="contact-link-icon">
-                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
               </span>
               <span class="contact-link-text">
                 <h4>LinkedIn</h4>
                 <span>akashgkrishnan</span>
               </span>
             </a>
-            <a href="tel:+97471743533" class="contact-link glow">
+            <a href="tel:+97471743533" class="contact-link card">
               <span class="contact-link-icon">
-                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
               </span>
               <span class="contact-link-text">
                 <h4>Qatar</h4>
                 <span>+974 7174 3533</span>
               </span>
             </a>
-            <a href="tel:+918130233807" class="contact-link glow">
+            <a href="tel:+918130233807" class="contact-link card">
               <span class="contact-link-icon">
-                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
               </span>
               <span class="contact-link-text">
                 <h4>India</h4>
@@ -730,7 +675,7 @@
       </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Footer — Apple-style light gray -->
     <footer class="footer">
       <div class="container footer-inner">
         <p>&copy; <span id="year"></span> Akash G Krishnan. Built with care.</p>

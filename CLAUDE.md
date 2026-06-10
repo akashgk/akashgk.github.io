@@ -33,21 +33,22 @@ npx serve .
 
 **Main page (`index.html` + `styles.css` + `script.js`)** is a single-page portfolio with these sections (in order): Hero → Marquee strip → Stats Bar → About → Experience → Skills (bento grid) → Open Source → Playground (canvas arcade game) → Contact → Footer.
 
-**Design system** (defined in `styles.css` `:root`):
-- Color palette: Space black (`--bg: #070709`), titanium tones (`--titanium-natural`, `--titanium-silver`); legacy `--violet`/`--amber` variables alias the titanium palette
-- Fonts: System font stacks only (SF Pro / Segoe UI / Roboto for display & body, `ui-monospace` for mono) — no webfonts are loaded, by design, for performance
-- CSS variables control all colors, spacing, and easing curves
+**Design system** (Apple-inspired, defined in `styles.css` `:root`):
+- Alternating section rhythm like apple.com: dark sections (`#000`, cards `#1d1d1f`) and light sections (`.section-light`, `#f5f5f7`, white cards)
+- Accents: Apple blue (`--blue: #2997ff` on dark, `--blue-deep: #0066cc` on light), pill buttons (`.btn-pill`, `#0071e3`), chevron text links (`.link-arrow`)
+- Signature gradient (`--grad`, Apple Intelligence-style blue→purple→pink→orange) used for the hero headline span, eyebrows, stat numbers, and logo dot
+- Shared `.card` class: 28px radius, hover lift + scale with `--ease-out` (expo-out)
+- Fonts: System font stacks only (SF Pro / Segoe UI / Roboto, `ui-monospace` for mono) — no webfonts are loaded, by design, for performance
+- Motion: transform/opacity only; `.reveal` blur-up rise animation; glass navbar (`saturate(180%) blur(20px)`)
 
 **JS features** (`script.js`, loaded with `defer`):
-- Single rAF-throttled scroll handler (progress bar, navbar `scrolled` state, active nav link)
-- `IntersectionObserver`-based `.fade-up` animations + text-scramble decode on `.section-tag`
-- Mobile menu toggle (CSS class swap on `.mobile-toggle`, no DOM rebuilding)
-- Custom cursor (desktop only, `pointer: fine` media query, transform-based)
-- Hero cursor spotlight + orb parallax (`--sx`/`--sy` CSS variables on `.hero`)
-- Cursor-tracking glow on `.glow` cards (`--mx`/`--my` CSS variables)
+- Single rAF-throttled scroll handler (navbar state, active nav link, Apple-style hero recede — scales/fades `.hero-content` as you scroll past)
+- `IntersectionObserver`-based `.reveal` blur-up animations with inline `transition-delay` staggering
+- Mobile menu toggle (full-screen glass overlay with staggered link reveal)
+- Typed role cycling in the hero (`#typed-role`)
 - Live "time in Doha" clock in the hero badge (`#doha-time`)
 - Stats counter animation with easing (`data-count` attribute on `<span>` elements)
-- Canvas arcade game ("Dynamic Bounce") in the Playground section
+- Canvas arcade game ("Dynamic Bounce") in the Playground section, recolored to Apple system colors
 
 **Icons**: Inline SVGs using Feather icon paths (stroke-based, `class="icon"`). Static icons are inlined directly in `index.html`; icons set dynamically by JS come from the `ICONS` map at the top of `script.js`. No icon CDN — the page makes zero third-party requests on the critical path.
 
