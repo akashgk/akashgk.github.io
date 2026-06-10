@@ -41,14 +41,21 @@ npx serve .
 - Fonts: System font stacks only (SF Pro / Segoe UI / Roboto, `ui-monospace` for mono) — no webfonts are loaded, by design, for performance
 - Motion: transform/opacity only; `.reveal` blur-up rise animation; glass navbar (`saturate(180%) blur(20px)`)
 
-**JS features** (`script.js`, loaded with `defer`):
-- Single rAF-throttled scroll handler (navbar state, active nav link, Apple-style hero recede — scales/fades `.hero-content` as you scroll past)
+**Scroll choreography** (single rAF handler in `script.js` drives everything):
+- Pinned hero scrollytelling: `.hero-stage` (185vh) pins `.hero`; JS sets `--hp` (0→1) and CSS `calc()` rules parallax-dissolve each layer at different speeds. `.settled` class (added after the entry reveal finishes) switches elements from transition-driven to scroll-driven
+- Statement section (`#statement`): JS wraps every word in `.w` spans; words light up from 16% to full opacity as you scroll (Apple product-page style)
+- Experience deck (`.xp-stack`): sticky stacking cards — earlier cards shrink/dim as the next slides over
+- iPhone 3D entrance (`#device-scene`): rises, scales, and un-tilts into view (smoothstep), then follows the cursor on desktop
+- Floating glass pill navbar with a sliding active-section indicator (`.nav-indicator`, iOS segmented-control feel)
+
+**Other JS features** (`script.js`, loaded with `defer`):
 - `IntersectionObserver`-based `.reveal` blur-up animations with inline `transition-delay` staggering
+- Confetti bursts (`confettiBurst`) on logo click and on unlocking all 5 game milestones; styled console easter egg
 - Mobile menu toggle (full-screen glass overlay with staggered link reveal)
-- Typed role cycling in the hero (`#typed-role`)
-- Live "time in Doha" clock in the hero badge (`#doha-time`)
-- Stats counter animation with easing (`data-count` attribute on `<span>` elements)
+- Typed role cycling (`#typed-role`); live "time in Doha" clock (`#doha-time`)
+- Stats counter animation + springy `.pop` scale-in (`data-count` spans)
 - Canvas arcade game ("Dynamic Bounce") in the Playground section, recolored to Apple system colors
+- All scroll effects respect `prefers-reduced-motion` (pin, deck, and word-lighting all degrade to static layout)
 
 **Icons**: Inline SVGs using Feather icon paths (stroke-based, `class="icon"`). Static icons are inlined directly in `index.html`; icons set dynamically by JS come from the `ICONS` map at the top of `script.js`. No icon CDN — the page makes zero third-party requests on the critical path.
 

@@ -46,7 +46,7 @@
 html {
   font-size: 17px;
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--nav-h) + 12px);
+  scroll-padding-top: 90px;
 }
 body {
   background: var(--black);
@@ -89,6 +89,15 @@ h3 { font-size: 1.45rem; letter-spacing: -0.01em; }
   -webkit-text-fill-color: transparent;
   color: transparent;
 }
+/* Slow living shimmer across the gradient — Apple Intelligence style */
+.gradient-animate {
+  background-size: 220% 100%;
+  animation: gradPan 9s ease-in-out infinite alternate;
+}
+@keyframes gradPan {
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
+}
 
 /* ── Layout ── */
 .container {
@@ -130,34 +139,41 @@ section {
 }
 .section-header-center .eyebrow { margin-left: auto; margin-right: auto; }
 
-/* ── Navbar — apple.com glass bar ── */
+/* ── Navbar — floating glass pill (Dynamic Island vibes) ── */
 .navbar {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: var(--nav-h);
+  top: 14px;
+  left: 0; right: 0;
+  margin-inline: auto;
+  width: max-content;
+  max-width: calc(100vw - 24px);
   z-index: 1000;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 22px;
-  background: rgba(22, 22, 23, 0.6);
+  gap: 1.1rem;
+  padding: 7px 9px 7px 18px;
+  background: rgba(22, 22, 23, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-pill);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
-  transition: background 0.4s var(--ease-soft);
+  transition: background 0.4s var(--ease-soft), box-shadow 0.4s var(--ease-soft), top 0.4s var(--ease-out);
 }
-.navbar.scrolled { background: rgba(22, 22, 23, 0.85); }
+.navbar.scrolled {
+  top: 10px;
+  background: rgba(22, 22, 23, 0.85);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
 .nav-logo {
-  position: absolute;
-  left: 22px;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1rem;
   letter-spacing: -0.03em;
   color: var(--text-on-dark);
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, transform 0.4s var(--ease-out);
 }
-.nav-logo:hover { opacity: 0.7; }
+.nav-logo:hover { opacity: 0.8; transform: scale(1.06); }
+.nav-logo:active { transform: scale(0.94); }
 .nav-logo-dot {
   background: var(--grad);
   -webkit-background-clip: text;
@@ -165,29 +181,45 @@ section {
   -webkit-text-fill-color: transparent;
 }
 .nav-links {
+  position: relative;
   display: flex;
-  gap: 2.4rem;
+  gap: 2px;
   align-items: center;
 }
+/* Sliding active-segment indicator (iOS segmented-control feel) */
+.nav-indicator {
+  position: absolute;
+  left: 0; top: 50%;
+  height: 30px;
+  width: 0;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-pill);
+  opacity: 0;
+  transform: translateX(0) translateY(-50%);
+  transition: transform 0.55s var(--ease-out), width 0.55s var(--ease-out), opacity 0.35s;
+  pointer-events: none;
+}
 .nav-link {
+  position: relative;
+  z-index: 1;
+  padding: 7px 13px;
+  border-radius: var(--radius-pill);
   font-size: 0.74rem;
   font-weight: 400;
   letter-spacing: -0.01em;
-  color: rgba(245, 245, 247, 0.8);
-  transition: color 0.3s var(--ease-soft), opacity 0.3s;
+  color: rgba(245, 245, 247, 0.75);
+  transition: color 0.3s var(--ease-soft);
 }
 .nav-link:hover { color: #fff; }
 .nav-link.active { color: #fff; }
 .mobile-toggle {
   display: none;
-  position: absolute;
-  right: 16px;
   background: none;
   border: none;
   color: var(--text-on-dark);
   cursor: pointer;
   z-index: 1100;
-  padding: 8px;
+  padding: 6px;
 }
 .mobile-toggle .icon-close { display: none; }
 .mobile-toggle.open .icon-menu { display: none; }
@@ -210,21 +242,23 @@ section {
     transition: opacity 0.4s var(--ease-soft);
   }
   .nav-links.active { opacity: 1; pointer-events: auto; }
+  .nav-indicator { display: none; }
   .nav-link {
     font-size: 1.7rem;
     font-weight: 600;
     letter-spacing: -0.02em;
+    padding: 0;
     transform: translateY(14px);
     opacity: 0;
     transition: transform 0.55s var(--ease-out), opacity 0.55s var(--ease-out);
   }
   .nav-links.active .nav-link { transform: translateY(0); opacity: 1; }
-  .nav-links.active .nav-link:nth-child(1) { transition-delay: 0.06s; }
-  .nav-links.active .nav-link:nth-child(2) { transition-delay: 0.1s; }
-  .nav-links.active .nav-link:nth-child(3) { transition-delay: 0.14s; }
-  .nav-links.active .nav-link:nth-child(4) { transition-delay: 0.18s; }
-  .nav-links.active .nav-link:nth-child(5) { transition-delay: 0.22s; }
-  .nav-links.active .nav-link:nth-child(6) { transition-delay: 0.26s; }
+  .nav-links.active .nav-link:nth-of-type(1) { transition-delay: 0.06s; }
+  .nav-links.active .nav-link:nth-of-type(2) { transition-delay: 0.1s; }
+  .nav-links.active .nav-link:nth-of-type(3) { transition-delay: 0.14s; }
+  .nav-links.active .nav-link:nth-of-type(4) { transition-delay: 0.18s; }
+  .nav-links.active .nav-link:nth-of-type(5) { transition-delay: 0.22s; }
+  .nav-links.active .nav-link:nth-of-type(6) { transition-delay: 0.26s; }
   .mobile-toggle { display: block; }
 }
 
@@ -269,6 +303,8 @@ section {
 
 /* ── Cards — shared premium card treatment ── */
 .card {
+  position: relative;
+  overflow: hidden;
   border-radius: var(--radius-card);
   background: var(--card-darker);
   transition: transform 0.7s var(--ease-out), box-shadow 0.7s var(--ease-out);
@@ -278,25 +314,87 @@ section {
   transform: translateY(-4px) scale(1.012);
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
 }
+/* Light sweep sheen across cards on hover */
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+  transform: translateX(-180%) skewX(-14deg);
+  transition: transform 1s var(--ease-out);
+  pointer-events: none;
+}
+.card:hover::after { transform: translateX(300%) skewX(-14deg); }
 .section-light .card {
   background: var(--white);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+.section-light .card::after {
+  background: linear-gradient(105deg, transparent, rgba(0, 0, 0, 0.035), transparent);
 }
 .section-light .card:hover {
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.1);
 }
 
-/* ── Hero ── */
+/* ── Hero — pinned scrollytelling stage ──
+   .hero-stage is tall; .hero pins for the extra height while
+   --hp (0→1, set from JS) scrubs a layered parallax dissolve. */
+.hero-stage {
+  --hp: 0;
+  height: 185vh;
+}
 .hero {
-  min-height: 100vh;
-  min-height: 100svh;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: calc(var(--nav-h) + 40px) 22px 80px;
+  padding: 80px 22px;
   overflow: hidden;
 }
+/* Scroll-driven layers — applied only after entry reveal settles.
+   .hero-stage prefix keeps these above .reveal.visible in the cascade. */
+.hero-stage .hero-glow.settled {
+  transform: scale(calc(1 + var(--hp) * 0.3));
+  opacity: calc(1 - var(--hp) * 1.3);
+  transition: none;
+}
+.hero-stage .hero-badge.settled {
+  transform: translateY(calc(var(--hp) * -150px));
+  opacity: calc(1 - var(--hp) * 2.6);
+  transition: none;
+}
+.hero-stage .hero-eyebrow.settled {
+  transform: translateY(calc(var(--hp) * -120px));
+  opacity: calc(1 - var(--hp) * 2.3);
+  transition: none;
+}
+.hero-stage .hero h1.settled {
+  transform: translateY(calc(var(--hp) * -90px)) scale(calc(1 - var(--hp) * 0.1));
+  opacity: calc(1 - var(--hp) * 1.45);
+  transition: none;
+}
+.hero-stage .hero-meta.settled {
+  transform: translateY(calc(var(--hp) * -65px));
+  opacity: calc(1 - var(--hp) * 1.9);
+  transition: none;
+}
+.hero-stage .hero-desc.settled {
+  transform: translateY(calc(var(--hp) * -45px));
+  opacity: calc(1 - var(--hp) * 2.1);
+  transition: none;
+}
+.hero-stage .hero-cta.settled {
+  transform: translateY(calc(var(--hp) * -28px));
+  opacity: calc(1 - var(--hp) * 2.4);
+  transition: none;
+}
+.hero-stage .scroll-cue { opacity: calc(1 - var(--hp) * 7); }
 .hero-glow {
   position: absolute;
   inset: 0;
@@ -435,8 +533,8 @@ section {
   animation: cueFloat 2.4s ease-in-out infinite;
 }
 @keyframes cueFloat {
-  0%, 100% { transform: translate(-50%, 0); opacity: 0.7; }
-  50%      { transform: translate(-50%, 8px); opacity: 0.25; }
+  0%, 100% { transform: translate(-50%, 0); }
+  50%      { transform: translate(-50%, 9px); }
 }
 
 /* ── Marquee ── */
@@ -494,6 +592,13 @@ section {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+/* Springy pop when the counter kicks in */
+.stat-number.pop { animation: statPop 0.8s var(--ease-out) both; }
+@keyframes statPop {
+  0%   { transform: scale(0.6); }
+  55%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
 .stat-label {
   font-size: 0.85rem;
   font-weight: 500;
@@ -503,23 +608,41 @@ section {
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 2.6rem; }
 }
 
+/* ── Statement — words light up as you scroll (Apple product-page move) ── */
+.statement-section {
+  padding: 150px 0 170px;
+}
+.statement {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.6vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  max-width: 880px;
+  margin: 0 auto 2.2rem;
+  color: var(--text-on-dark);
+}
+.statement:last-child { margin-bottom: 0; }
+.statement strong {
+  font-weight: 600;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* .w spans injected by JS; dimmed until scroll lights them */
+.statement .w {
+  opacity: 1;
+  transition: opacity 0.3s linear;
+  will-change: opacity;
+}
+
 /* ── About ── */
-.about-grid {
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 4rem;
-  align-items: start;
+.facts-card {
+  padding: 2.4rem;
+  max-width: 580px;
+  margin: 0 auto;
 }
-.about-text p {
-  font-size: 1.3rem;
-  line-height: 1.5;
-  font-weight: 500;
-  letter-spacing: -0.015em;
-  color: var(--text2-on-light);
-  margin-bottom: 1.4rem;
-}
-.about-text strong { color: var(--text-on-light); font-weight: 600; }
-.facts-card { padding: 2.4rem; }
 .fact-row {
   padding: 1.1rem 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
@@ -553,17 +676,21 @@ section {
   flex-shrink: 0;
   animation: pulseDot 2.2s ease-in-out infinite;
 }
-@media (max-width: 900px) {
-  .about-grid { grid-template-columns: 1fr; gap: 2.4rem; }
-}
-
-/* ── Experience ── */
-.xp-list {
+/* ── Experience — sticky stacking deck ── */
+.xp-stack {
   display: flex;
   flex-direction: column;
-  gap: 1.4rem;
 }
-.xp-card { padding: 2.6rem 2.8rem; }
+.xp-card {
+  position: sticky;
+  top: 110px;
+  padding: 2.6rem 2.8rem;
+  margin-bottom: 16vh;
+  background: var(--card-dark);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transform-origin: top center;
+}
+.xp-card:last-child { margin-bottom: 0; }
 .xp-top {
   display: flex;
   align-items: center;
@@ -880,6 +1007,13 @@ section {
   align-items: start;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+/* 3D stage: the iPhone rises and un-tilts into view, then
+   follows the cursor (transform set from JS) */
+.device-scene {
+  perspective: 1400px;
+  flex-shrink: 0;
 }
 
 .iphone-device {
@@ -1378,6 +1512,14 @@ section {
   }
 }
 
+/* ── Confetti canvas (spawned by JS) ── */
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  pointer-events: none;
+}
+
 /* ── Reduced Motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -1387,4 +1529,8 @@ section {
   }
   .reveal { opacity: 1; transform: none; filter: none; }
   html { scroll-behavior: auto; }
+  .hero-stage { height: auto; }
+  .hero { position: relative; height: auto; min-height: 100vh; }
+  .xp-card { position: static; margin-bottom: 1.4rem; }
+  .statement .w { opacity: 1 !important; }
 }
