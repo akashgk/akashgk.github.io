@@ -140,10 +140,14 @@ if (statementSection && !reducedMotion) {
   statementWords = Array.from(statementSection.querySelectorAll(".w"));
 }
 
-// iPhone 3D pose = scroll entrance (rise + un-tilt) ∘ pointer tilt
+// iPhone 3D pose = scroll entrance (rise + un-tilt) ∘ pointer tilt.
+// Frozen flat while the arcade game runs so the canvas buffer and
+// touch input map 1:1 to screen pixels.
 const devicePose = { scrub: 1, tiltX: 0, tiltY: 0 };
+const devicePoseFrozen = () =>
+  deviceScene && deviceScene.classList.contains("playing");
 function applyDevicePose() {
-  if (!iphone) return;
+  if (!iphone || devicePoseFrozen()) return;
   const lift = 1 - devicePose.scrub;
   iphone.style.transform =
     `translateY(${(lift * 70).toFixed(2)}px) ` +
@@ -205,7 +209,7 @@ function onScrollFrame() {
   }
 
   // 4. iPhone rises and un-tilts into view
-  if (deviceScene && deviceScrubEnabled()) {
+  if (deviceScene && deviceScrubEnabled() && !devicePoseFrozen()) {
     const r = deviceScene.getBoundingClientRect();
     const t = clamp((vh * 0.92 - r.top) / (vh * 0.6), 0, 1);
     devicePose.scrub = t * t * (3 - 2 * t); // smoothstep
@@ -283,23 +287,23 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
 // =====================================================
-// Mobile menu
+// Mobile drawer menu
 // =====================================================
 const mobileToggle = document.querySelector(".mobile-toggle");
-const navLinks = document.querySelector(".nav-links");
+const mobileDrawer = document.getElementById("mobile-drawer");
 
-if (mobileToggle) {
+if (mobileToggle && mobileDrawer) {
+  const setDrawer = (open) => {
+    mobileDrawer.classList.toggle("open", open);
+    mobileToggle.classList.toggle("open", open);
+    mobileToggle.setAttribute("aria-expanded", String(open));
+    document.body.classList.toggle("drawer-locked", open);
+  };
   mobileToggle.addEventListener("click", () => {
-    const isOpen = navLinks.classList.toggle("active");
-    mobileToggle.classList.toggle("open", isOpen);
-    mobileToggle.setAttribute("aria-expanded", isOpen);
+    setDrawer(!mobileDrawer.classList.contains("open"));
   });
-  links.forEach((link) => {
-    link.addEventListener("click", () => {
-      navLinks.classList.remove("active");
-      mobileToggle.classList.remove("open");
-      mobileToggle.setAttribute("aria-expanded", "false");
-    });
+  mobileDrawer.querySelectorAll(".drawer-link").forEach((link) => {
+    link.addEventListener("click", () => setDrawer(false));
   });
 }
 
@@ -508,16 +512,33 @@ if (statsBar) {
     }
   }
 
-  // Handle high resolution canvas layout
+  // Handle high resolution canvas layout.
+  // offsetWidth/offsetHeight give the untransformed layout size —
+  // getBoundingClientRect would return the 3D-posed (scaled/tilted)
+  // projection and misalign the drawing buffer.
   function resize() {
     dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    if (!w || !h) return;
+    canvas.width = w * dpr;
+    // Map physics space (WIDTH×HEIGHT) onto the canvas size
+    const scale = (w / WIDTH) * dpr;
+    canvas.height = h * dpr;
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
   }
   window.addEventListener("resize", resize);
   resize();
+
+  // Freeze/unfreeze the 3D scroll pose while playing so pointer
+  // input and the canvas buffer map 1:1 to screen pixels
+  const scene = document.getElementById("device-scene");
+  const deviceEl = document.getElementById("iphone-device");
+  function freezeDevice(frozen) {
+    if (!scene || !deviceEl) return;
+    scene.classList.toggle("playing", frozen);
+    if (frozen) deviceEl.style.transform = "none";
+  }
 
   // Game state
   let isRunning = false;
@@ -795,6 +816,8 @@ if (statsBar) {
   // Start Compilation handler
   startBtn.addEventListener("click", () => {
     initAudio();
+    freezeDevice(true);
+    resize();
     overlay.classList.remove("active");
     resetGame();
     isRunning = true;
@@ -805,6 +828,7 @@ if (statsBar) {
   // Trigger game over state
   function gameOver() {
     isRunning = false;
+    freezeDevice(false);
     playSound("gameover");
 
     // Update high score
