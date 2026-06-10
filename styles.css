@@ -29,9 +29,9 @@
   --border: rgba(255, 255, 255, 0.08);
   --border-hover: rgba(197, 191, 180, 0.25);
 
-  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
-  --font-mono: "SF Mono", "Space Mono", monospace;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 
   --nav-h: 72px;
   --max-w: 1200px;
@@ -55,6 +55,7 @@ body {
 ::selection { background: var(--titanium-natural); color: #000; }
 a { text-decoration: none; color: inherit; }
 img { max-width: 100%; }
+svg.icon { flex-shrink: 0; vertical-align: middle; }
 
 /* ── Scroll Progress Bar ── */
 #progress-bar {
@@ -84,10 +85,12 @@ img { max-width: 100%; }
 .cursor-dot {
   width: 6px; height: 6px;
   background: var(--amber);
+  opacity: 0;
 }
 .cursor-ring {
   width: 32px; height: 32px;
   border: 1px solid rgba(167,139,250,0.5);
+  opacity: 0;
 }
 .cursor-ring.hovered {
   width: 48px; height: 48px;
@@ -102,8 +105,8 @@ h1,h2,h3,h4 {
   letter-spacing: -0.03em;
   color: var(--text);
 }
-h1 { font-size: clamp(2.4rem,7vw,5.5rem); }
-h2 { font-size: clamp(1.6rem,3.5vw,2.8rem); margin-bottom: 0; }
+h1 { font-size: clamp(2.4rem,7vw,5.5rem); text-wrap: balance; }
+h2 { font-size: clamp(1.6rem,3.5vw,2.8rem); margin-bottom: 0; text-wrap: balance; }
 h3 { font-size: 1.25rem; }
 
 .highlight {
@@ -225,6 +228,9 @@ section { padding: 110px 0; position: relative; }
   cursor: pointer;
   z-index: 1100;
 }
+.mobile-toggle .icon-close { display: none; }
+.mobile-toggle.open .icon-menu { display: none; }
+.mobile-toggle.open .icon-close { display: block; }
 @media (max-width: 768px) {
   .navbar { padding: 0 1.5rem; }
   .nav-links {
@@ -284,27 +290,28 @@ section { padding: 110px 0; position: relative; }
   transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   will-change: transform;
 }
+/* Orbs are pre-blurred via soft gradient stops — no filter: blur(),
+   which was forcing expensive GPU repaints on every animation frame */
 .orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(90px);
   will-change: transform;
 }
 .orb-1 {
   width: 550px; height: 550px;
-  background: radial-gradient(circle, rgba(197, 191, 180, 0.22) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(197, 191, 180, 0.16) 0%, rgba(197, 191, 180, 0.06) 35%, transparent 68%);
   top: -150px; left: -150px;
   animation: floatOrb1 14s ease-in-out infinite;
 }
 .orb-2 {
   width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.02) 40%, transparent 68%);
   top: 30%; right: -80px;
   animation: floatOrb2 18s ease-in-out infinite;
 }
 .orb-3 {
   width: 280px; height: 280px;
-  background: radial-gradient(circle, rgba(217, 119, 6, 0.04) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(217, 119, 6, 0.04) 0%, rgba(217, 119, 6, 0.015) 40%, transparent 68%);
   bottom: 80px; left: 35%;
   animation: floatOrb3 11s ease-in-out infinite;
 }
@@ -320,6 +327,17 @@ section { padding: 110px 0; position: relative; }
 @keyframes floatOrb3 {
   0%,100% { transform: translate(0,0); }
   50%     { transform: translate(30px,-25px); }
+}
+.hero-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(
+    600px circle at var(--sx, 70%) var(--sy, 35%),
+    rgba(197, 191, 180, 0.07),
+    transparent 60%
+  );
 }
 .hero-content { position: relative; z-index: 10; max-width: 860px; }
 
@@ -342,6 +360,11 @@ section { padding: 110px 0; position: relative; }
   background: #22c55e;
   border-radius: 50%;
   animation: blink 2.2s ease-in-out infinite;
+}
+.badge-time { color: var(--text-3); }
+.badge-time:not(:empty)::before {
+  content: '·';
+  margin-right: 0.5rem;
 }
 @keyframes blink {
   0%,100% { opacity: 1; }
@@ -933,6 +956,24 @@ section { padding: 110px 0; position: relative; }
   transition: color 0.2s;
 }
 .footer-link:hover { color: var(--violet-light); }
+
+/* ── Cursor-tracking glow on cards ── */
+.glow { position: relative; }
+.glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    320px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(197, 191, 180, 0.09),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+  pointer-events: none;
+  z-index: 0;
+}
+.glow:hover::before { opacity: 1; }
 
 /* ── Scroll Animation ── */
 .fade-up {

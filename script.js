@@ -1,69 +1,148 @@
-// Init icons & year
-feather.replace();
+// =====================================================
+// Inline SVG icons (replaces the feather-icons CDN)
+// =====================================================
+const ICONS = {
+  briefcase: '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  smartphone: '<rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
+  package: '<line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  cpu: '<rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>',
+  "volume-2": '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>',
+  "volume-x": '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>',
+  "refresh-cw": '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>'
+};
+
+function iconSvg(name, size = 16, strokeWidth = 2) {
+  return `<svg class="icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+}
+
+// Footer year
 document.getElementById("year").textContent = new Date().getFullYear();
 
-// Scroll progress bar
+// Live clock — local time in Doha
+(function () {
+  const el = document.getElementById("doha-time");
+  if (!el || typeof Intl === "undefined") return;
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Qatar",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+  function tick() {
+    el.textContent = `${fmt.format(new Date())} in Doha`;
+  }
+  tick();
+  setInterval(tick, 30000);
+})();
+
+// =====================================================
+// Single rAF-throttled scroll handler:
+// progress bar + navbar state + active nav link
+// =====================================================
 const progressBar = document.getElementById("progress-bar");
-if (progressBar) {
-  window.addEventListener("scroll", () => {
-    const scrolled = window.scrollY;
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    progressBar.style.transform = `scaleX(${total > 0 ? scrolled / total : 0})`;
-  }, { passive: true });
-}
-
-// Navbar scroll state
 const navbar = document.querySelector(".navbar");
-window.addEventListener("scroll", () => {
-  navbar.classList.toggle("scrolled", window.scrollY > 60);
-}, { passive: true });
-
-// Fade-up scroll observer
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) entry.target.classList.add("visible");
-  });
-}, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-
-document.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
-
-// Mobile menu
-const mobileToggle = document.querySelector(".mobile-toggle");
-const navLinks = document.querySelector(".nav-links");
 const links = document.querySelectorAll(".nav-link");
-
-if (mobileToggle) {
-  mobileToggle.addEventListener("click", () => {
-    const isOpen = navLinks.classList.toggle("active");
-    mobileToggle.innerHTML = `<i data-feather="${isOpen ? "x" : "menu"}"></i>`;
-    feather.replace();
-  });
-  links.forEach((link) => {
-    link.addEventListener("click", () => {
-      navLinks.classList.remove("active");
-      mobileToggle.innerHTML = `<i data-feather="menu"></i>`;
-      feather.replace();
-    });
-  });
-}
-
-// Active nav link on scroll
 const sections = document.querySelectorAll("section[id]");
-window.addEventListener("scroll", () => {
-  const scrollPos = window.scrollY + window.innerHeight / 3;
+
+let scrollScheduled = false;
+function onScrollFrame() {
+  scrollScheduled = false;
+  const y = window.scrollY;
+
+  if (progressBar) {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.transform = `scaleX(${total > 0 ? y / total : 0})`;
+  }
+
+  navbar.classList.toggle("scrolled", y > 60);
+
+  const scrollPos = y + window.innerHeight / 3;
+  let currentId = null;
   sections.forEach((section) => {
     if (
       section.offsetTop <= scrollPos &&
       section.offsetTop + section.offsetHeight > scrollPos
     ) {
-      links.forEach((l) => l.classList.remove("active"));
-      const match = document.querySelector(`.nav-link[href="#${section.id}"]`);
-      if (match) match.classList.add("active");
+      currentId = section.id;
     }
   });
+  if (currentId) {
+    links.forEach((l) =>
+      l.classList.toggle("active", l.getAttribute("href") === `#${currentId}`)
+    );
+  }
+}
+window.addEventListener("scroll", () => {
+  if (!scrollScheduled) {
+    scrollScheduled = true;
+    requestAnimationFrame(onScrollFrame);
+  }
 }, { passive: true });
+onScrollFrame();
 
-// Custom cursor — desktop only
+// =====================================================
+// Scroll reveal + decode effect on section tags
+// =====================================================
+function scrambleText(el) {
+  if (el.dataset.scrambled) return;
+  el.dataset.scrambled = "1";
+  const text = el.textContent;
+  const glyphs = "!<>-_\\/[]{}=+*^?#";
+  const total = 20;
+  let frame = 0;
+  (function step() {
+    frame++;
+    const progress = frame / total;
+    el.textContent = text
+      .split("")
+      .map((c, i) =>
+        c === " " || i < progress * text.length
+          ? c
+          : glyphs[(Math.random() * glyphs.length) | 0]
+      )
+      .join("");
+    if (frame < total) requestAnimationFrame(step);
+    else el.textContent = text;
+  })();
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+      const tag = entry.target.querySelector(".section-tag");
+      if (tag) scrambleText(tag);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+document.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+
+// =====================================================
+// Mobile menu (pure class toggle — no DOM rebuilding)
+// =====================================================
+const mobileToggle = document.querySelector(".mobile-toggle");
+const navLinks = document.querySelector(".nav-links");
+
+if (mobileToggle) {
+  mobileToggle.addEventListener("click", () => {
+    const isOpen = navLinks.classList.toggle("active");
+    mobileToggle.classList.toggle("open", isOpen);
+    mobileToggle.setAttribute("aria-expanded", isOpen);
+  });
+  links.forEach((link) => {
+    link.addEventListener("click", () => {
+      navLinks.classList.remove("active");
+      mobileToggle.classList.remove("open");
+      mobileToggle.setAttribute("aria-expanded", "false");
+    });
+  });
+}
+
+// =====================================================
+// Custom cursor — desktop only, transform-based (no layout)
+// =====================================================
 if (window.matchMedia("(pointer: fine)").matches) {
   const dot = document.createElement("div");
   const ring = document.createElement("div");
@@ -72,20 +151,24 @@ if (window.matchMedia("(pointer: fine)").matches) {
   document.body.appendChild(dot);
   document.body.appendChild(ring);
 
-  let mx = 0, my = 0, rx = 0, ry = 0;
+  let mx = 0, my = 0, rx = 0, ry = 0, seen = false;
 
   document.addEventListener("mousemove", (e) => {
     mx = e.clientX;
     my = e.clientY;
-    dot.style.left = mx + "px";
-    dot.style.top  = my + "px";
-  });
+    if (!seen) {
+      seen = true;
+      rx = mx; ry = my;
+      dot.style.opacity = "1";
+      ring.style.opacity = "1";
+    }
+    dot.style.transform = `translate3d(${mx}px,${my}px,0) translate(-50%,-50%)`;
+  }, { passive: true });
 
   (function animateRing() {
     rx += (mx - rx) * 0.12;
     ry += (my - ry) * 0.12;
-    ring.style.left = rx + "px";
-    ring.style.top  = ry + "px";
+    ring.style.transform = `translate3d(${rx}px,${ry}px,0) translate(-50%,-50%)`;
     requestAnimationFrame(animateRing);
   })();
 
@@ -95,7 +178,9 @@ if (window.matchMedia("(pointer: fine)").matches) {
   });
 }
 
+// =====================================================
 // Typed role cycling
+// =====================================================
 (function () {
   const el = document.getElementById("typed-role");
   if (!el) return;
@@ -120,7 +205,9 @@ if (window.matchMedia("(pointer: fine)").matches) {
   tick();
 })();
 
-// Hero orb mouse parallax
+// =====================================================
+// Hero — orb parallax + cursor spotlight
+// =====================================================
 (function () {
   const hero = document.querySelector(".hero");
   const layer = document.querySelector(".orb-layer");
@@ -128,9 +215,13 @@ if (window.matchMedia("(pointer: fine)").matches) {
 
   hero.addEventListener("mousemove", (e) => {
     const { left, top, width, height } = hero.getBoundingClientRect();
-    const x = ((e.clientX - left) / width  - 0.5) * 38;
-    const y = ((e.clientY - top)  / height - 0.5) * 28;
+    const px = e.clientX - left;
+    const py = e.clientY - top;
+    const x = (px / width - 0.5) * 38;
+    const y = (py / height - 0.5) * 28;
     layer.style.transform = `translate(${x}px, ${y}px)`;
+    hero.style.setProperty("--sx", `${px}px`);
+    hero.style.setProperty("--sy", `${py}px`);
   }, { passive: true });
 
   hero.addEventListener("mouseleave", () => {
@@ -138,7 +229,22 @@ if (window.matchMedia("(pointer: fine)").matches) {
   });
 })();
 
+// =====================================================
+// Card glow — border light tracks the cursor
+// =====================================================
+if (window.matchMedia("(pointer: fine)").matches) {
+  document.querySelectorAll(".glow").forEach((card) => {
+    card.addEventListener("mousemove", (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", `${e.clientX - r.left}px`);
+      card.style.setProperty("--my", `${e.clientY - r.top}px`);
+    }, { passive: true });
+  });
+}
+
+// =====================================================
 // Button click ripple
+// =====================================================
 document.querySelectorAll(".btn").forEach((btn) => {
   btn.addEventListener("click", (e) => {
     const r = btn.getBoundingClientRect();
@@ -151,7 +257,9 @@ document.querySelectorAll(".btn").forEach((btn) => {
   });
 });
 
+// =====================================================
 // 3D tilt on cards — desktop pointer only
+// =====================================================
 if (window.matchMedia("(pointer: fine)").matches &&
     !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 
@@ -164,7 +272,7 @@ if (window.matchMedia("(pointer: fine)").matches &&
         const y = ((e.clientY - r.top)  / r.height - 0.5) * 2;
         card.style.transform =
           `perspective(900px) rotateY(${x * maxDeg}deg) rotateX(${-y * maxDeg}deg) translateY(-5px)`;
-      });
+      }, { passive: true });
       card.addEventListener("mouseleave", () => {
         card.classList.remove("tilt-active");
         card.style.transform = "";
@@ -184,12 +292,14 @@ if (window.matchMedia("(pointer: fine)").matches &&
       const x = ((e.clientX - r.left) / r.width  - 0.5) * 14;
       const y = ((e.clientY - r.top)  / r.height - 0.5) * 14;
       btn.style.transform = `translate(${x}px, ${y}px) translateY(-2px)`;
-    });
+    }, { passive: true });
     btn.addEventListener("mouseleave", () => { btn.style.transform = ""; });
   });
 }
 
+// =====================================================
 // Stats counter animation
+// =====================================================
 function countUp(el, target, duration) {
   const start = performance.now();
   (function update(now) {
@@ -229,9 +339,7 @@ if (statsBar) {
   const highscoreVal = document.getElementById("game-highscore");
   const livesContainer = document.getElementById("game-lives");
   const soundBtn = document.getElementById("sound-btn");
-  let soundIcon = document.getElementById("sound-icon");
   const island = document.getElementById("game-island");
-  const islandNotif = document.getElementById("island-notif");
   const unlockedCount = document.getElementById("unlocked-count");
 
   // DOM Elements for notification morph
@@ -273,7 +381,7 @@ if (statsBar) {
       if (audioCtx.state === "suspended") {
         audioCtx.resume();
       }
-      
+
       const now = audioCtx.currentTime;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
@@ -347,11 +455,9 @@ if (statsBar) {
   // Sound controls
   soundBtn.addEventListener("click", () => {
     soundEnabled = !soundEnabled;
-    soundIcon.setAttribute("data-feather", soundEnabled ? "volume-2" : "volume-x");
-    soundBtn.querySelector("span").textContent = soundEnabled ? "Sound FX On" : "Sound FX Off";
-    feather.replace();
-    // Re-query because feather.replace() swaps the element in the DOM
-    soundIcon = document.getElementById("sound-icon");
+    soundBtn.innerHTML =
+      iconSvg(soundEnabled ? "volume-2" : "volume-x", 12) +
+      `<span>${soundEnabled ? "Sound FX On" : "Sound FX Off"}</span>`;
 
     // Init Audio context on click to avoid browser restrictions
     if (soundEnabled && !audioCtx) {
@@ -369,10 +475,11 @@ if (statsBar) {
 
   // Handle high resolution canvas layout
   function resize() {
+    dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   window.addEventListener("resize", resize);
   resize();
@@ -511,7 +618,7 @@ if (statsBar) {
       ctx.shadowBlur = 0;
 
       ctx.fillStyle = this.color;
-      ctx.font = "bold 9px var(--font-mono)";
+      ctx.font = "bold 9px monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(this.label[0], this.x, this.y); // Draw first letter
@@ -537,7 +644,7 @@ if (statsBar) {
       ctx.save();
       ctx.globalAlpha = Math.max(0, this.alpha);
       ctx.fillStyle = this.color;
-      ctx.font = "bold 9px var(--font-mono)";
+      ctx.font = "bold 9px monospace";
       ctx.textAlign = "center";
       ctx.fillText(this.text, this.x, this.y);
       ctx.restore();
@@ -569,22 +676,21 @@ if (statsBar) {
   function expandIsland(milestone) {
     isIslandExpanded = true;
     islandTarget.update();
-    
+
     // Set HTML details
     notifTitle.textContent = milestone.title;
     notifSubtitle.textContent = milestone.subtitle;
     notifBadge.textContent = milestone.badge;
     notifIconWrap.style.backgroundColor = milestone.color;
-    
+
     // Set custom icon
-    notifIconWrap.innerHTML = `<i data-feather="${milestone.icon}"></i>`;
-    feather.replace();
+    notifIconWrap.innerHTML = iconSvg(milestone.icon, 14, 2.5);
 
     island.classList.add("expanded");
-    
+
     // Sound & unlock logic
     playSound("island");
-    
+
     // Unlock Milestone on the sidebar list
     const card = document.getElementById(`ms-${milestone.id}`);
     if (card && card.classList.contains("locked")) {
@@ -592,7 +698,7 @@ if (statsBar) {
       card.classList.add("unlocked");
       unlockedMilestones.add(milestone.id);
       unlockedCount.textContent = unlockedMilestones.size;
-      
+
       // Chime for new unlock
       setTimeout(() => playSound("unlock"), 150);
     }
@@ -658,7 +764,7 @@ if (statsBar) {
   function gameOver() {
     isRunning = false;
     playSound("gameover");
-    
+
     // Update high score
     if (score > highscore) {
       highscore = score;
@@ -668,8 +774,7 @@ if (statsBar) {
 
     document.getElementById("overlay-title").textContent = "COMPILATION FAIL";
     document.getElementById("overlay-desc").textContent = `Build crashed. Score: ${score}. Best Build: ${highscore}. Unlock all 5 milestones!`;
-    startBtn.innerHTML = `Recompile <i data-feather="refresh-cw"></i>`;
-    feather.replace();
+    startBtn.innerHTML = `Recompile ${iconSvg("refresh-cw", 16)}`;
     overlay.classList.add("active");
   }
 
@@ -717,7 +822,7 @@ if (statsBar) {
         ball.x - ball.radius < islandTarget.x + islandTarget.width &&
         ball.y + ball.radius > islandTarget.y &&
         ball.y - ball.radius < islandTarget.y + islandTarget.height) {
-      
+
       // Bounce down
       ball.vy = Math.abs(ball.vy);
       ball.y = islandTarget.y + islandTarget.height + ball.radius;
@@ -731,7 +836,7 @@ if (statsBar) {
       // Trigger achievement expand
       const ms = milestones[activeMilestoneIndex];
       expandIsland(ms);
-      
+
       // Update active milestone for next hit
       activeMilestoneIndex = (activeMilestoneIndex + 1) % milestones.length;
 
@@ -759,7 +864,7 @@ if (statsBar) {
         ball.x - ball.radius < paddle.x + paddle.width &&
         ball.y + ball.radius > paddle.y &&
         ball.y - ball.radius < paddle.y + paddle.height) {
-      
+
       // Bounce up
       ball.vy = -Math.abs(ball.vy);
       ball.y = paddle.y - ball.radius;
@@ -783,7 +888,7 @@ if (statsBar) {
       lives--;
       updateLivesUI();
       playSound("fail");
-      
+
       if (lives > 0) {
         resetBall();
       } else {
@@ -805,13 +910,13 @@ if (statsBar) {
     // Update & Draw Skill Tokens
     tokens = tokens.filter(t => {
       t.update();
-      
+
       // Check collision with paddle
       if (t.x + t.radius > paddle.x &&
           t.x - t.radius < paddle.x + paddle.width &&
           t.y + t.radius > paddle.y &&
           t.y - t.radius < paddle.y + paddle.height) {
-        
+
         score += 25;
         scoreVal.textContent = score;
         playSound("catch");
