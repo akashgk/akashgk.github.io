@@ -184,14 +184,16 @@ function onScrollFrame() {
     heroStage.style.setProperty("--hp", clamp(span > 0 ? y / span : 0, 0, 1).toFixed(4));
   }
 
-  // 2. Statement words light up progressively
+  // 2. Statement words light up progressively.
+  // Floor of 0.3 keeps the text readable before it ignites, and the
+  // sweep completes while the section is still mid-screen.
   if (statementWords.length) {
     const r = statementSection.getBoundingClientRect();
     if (r.bottom > -50 && r.top < vh + 50) {
-      const p = clamp((vh * 0.85 - r.top) / (r.height + vh * 0.2), 0, 1);
+      const p = clamp((vh * 0.92 - r.top) / (r.height * 0.85), 0, 1);
       const thr = p * (statementWords.length + 3);
       for (let i = 0; i < statementWords.length; i++) {
-        statementWords[i].style.opacity = clamp(0.16 + (thr - i) * 0.84, 0.16, 1).toFixed(3);
+        statementWords[i].style.opacity = clamp(0.3 + (thr - i) * 0.7, 0.3, 1).toFixed(3);
       }
     }
   }
