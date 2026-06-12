@@ -1395,8 +1395,42 @@
       // Score state — must be declared before the first render() call
       let SCORES = null; // null = loading, "error" = failed, object = keyed results
       let fetchInFlight = false;
+
+      // Normalize a team name so our schedule's names line up with whatever
+      // spelling/aliases the scores API uses (e.g. "Korea Republic" vs "South Korea").
+      const TEAM_ALIASES = {
+        "korea republic": "south korea",
+        "korea south": "south korea",
+        "republic of korea": "south korea",
+        "united states": "usa",
+        us: "usa",
+        usa: "usa",
+        "ivory coast": "cote d ivoire",
+        "cote divoire": "cote d ivoire",
+        "cote d ivoire": "cote d ivoire",
+        czechia: "czech republic",
+        "czech republic": "czech republic",
+        "cabo verde": "cape verde",
+        "cape verde islands": "cape verde",
+        "bosnia and herzegovina": "bosnia herzegovina",
+        "bosnia herzegovina": "bosnia herzegovina",
+        "dr congo": "congo dr",
+        "congo dr": "congo dr",
+        "democratic republic of the congo": "congo dr",
+        "ir iran": "iran",
+      };
+      function normTeam(name) {
+        const s = (name || "")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z\s]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+        return TEAM_ALIASES[s] || s;
+      }
       function scoreKey(a, b) {
-        return (a + "|" + b).toLowerCase();
+        return normTeam(a) + "|" + normTeam(b);
       }
       function scoreFor(m) {
         if (!SCORES || SCORES === "error") return null;
@@ -1438,7 +1472,7 @@
         if (st === "done" && !isKnockout(m)) {
           const s = scoreFor(m);
           if (s && s.sa != null && s.sb != null) {
-            const swapped = (s.a || "").toLowerCase() !== m.a.toLowerCase();
+            const swapped = normTeam(s.a) !== normTeam(m.a);
             const ga = swapped ? s.sb : s.sa,
               gb = swapped ? s.sa : s.sb;
             const diff = Math.abs(ga - gb);
@@ -1556,7 +1590,7 @@
             done.length +
             ")" +
             '<button class="refreshbtn" onclick="fetchScores(true)">↻ Refresh scores</button>' +
-            "<small>Scores are fetched live via web search each time this page opens. Moved here only after expected full-time — group ~2h after kickoff, knockouts ~3h.</small>";
+            "<small>Scores are fetched live from TheSportsDB each time this page opens. Moved here only after expected full-time — group ~2h after kickoff, knockouts ~3h.</small>";
           list.appendChild(sh);
           lastDay = null;
           for (let i = done.length - 1; i >= 0; i--) {
@@ -1581,8 +1615,11 @@
       // Re-check every minute so live matches flip to completed automatically
       setInterval(render, 60 * 1000);
 
-      // ---- Live score fetching via Claude + web search ----
-      // (SCORES state and scoreFor() are declared near the top, before first render)
+      // ---- Live score fetching via TheSportsDB's free public API ----
+      // (SCORES state, normTeam() and scoreFor() are declared near the top, before first render)
+
+      const WORLDCUP_LEAGUE_ID = 4429; // FIFA World Cup, TheSportsDB
+      const WORLDCUP_SEASON = "2026";
 
       async function fetchScores(force) {
         if (fetchInFlight) return;
@@ -1596,47 +1633,25 @@
           SCORES = null;
           render();
         }
-        const lines = doneMatches
-          .map((m) => m.a + " vs " + m.b + " (played " + m.d + ", Group Stage)")
-          .join("; ");
         try {
           const response = await fetch(
-            "https://api.anthropic.com/v1/messages",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                model: "claude-sonnet-4-6",
-                max_tokens: 1000,
-                messages: [
-                  {
-                    role: "user",
-                    content:
-                      "Search the web for the confirmed final scores of these FIFA World Cup 2026 group-stage matches: " +
-                      lines +
-                      ". " +
-                      "Respond with ONLY a raw JSON array, no markdown fences, no preamble, no explanation. " +
-                      'Format: [{"a":"TeamA","b":"TeamB","sa":2,"sb":1}]. ' +
-                      "Team names must exactly match the names I gave. sa = goals for team a, sb = goals for team b, full-time score including any stoppage time. " +
-                      "If you cannot confirm a match's final score, set sa and sb to null for that match but still include it.",
-                  },
-                ],
-                tools: [{ type: "web_search_20250305", name: "web_search" }],
-              }),
-            },
+            "https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=" +
+              WORLDCUP_LEAGUE_ID +
+              "&s=" +
+              WORLDCUP_SEASON,
           );
+          if (!response.ok) throw new Error("HTTP " + response.status);
           const data = await response.json();
-          const text = data.content
-            .filter((i) => i.type === "text")
-            .map((i) => i.text)
-            .join("\n");
-          const clean = text.replace(/```json|```/g, "").trim();
-          const arr = JSON.parse(
-            clean.slice(clean.indexOf("["), clean.lastIndexOf("]") + 1),
-          );
+          const events = (data && data.events) || [];
           const map = {};
-          for (const s of arr) {
-            if (s && s.a && s.b) map[scoreKey(s.a, s.b)] = s;
+          for (const ev of events) {
+            if (ev.intHomeScore == null || ev.intAwayScore == null) continue;
+            map[scoreKey(ev.strHomeTeam, ev.strAwayTeam)] = {
+              a: ev.strHomeTeam,
+              b: ev.strAwayTeam,
+              sa: parseInt(ev.intHomeScore, 10),
+              sb: parseInt(ev.intAwayScore, 10),
+            };
           }
           SCORES = map;
         } catch (e) {
