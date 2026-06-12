@@ -364,14 +364,16 @@
         green "You" row in your own time zone, detected automatically from
         your device. Travelling or planning for friends elsewhere? Pick any
         time zone below (VPNs change your IP, not your device's time zone, so
-        use the picker for that).
+        use the picker for that). Search is accent-proof and covers nicknames
+        ("holland", "three lions") and <b>any</b> player by name — squad lookups
+        are fetched live so you're not limited to the headline stars.
       </p>
 
       <input
         class="search"
         id="search"
         type="search"
-        placeholder="Type a team, group letter, city or player to filter"
+        placeholder="Search any team, country, city, group letter or player name"
       />
 
       <div class="tzrow">
@@ -1733,28 +1735,167 @@
         return card;
       }
 
+      // Diacritic-insensitive folding so "mbappe" matches "Mbappé",
+      // "modric" matches "Modrić", "gimenez" matches "Giménez", etc.
+      function fold(s) {
+        return (s || "")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+
+      // Extra searchable terms per country: alternative names, demonyms and
+      // nicknames, so "holland", "korea", "dutch" or "three lions" all hit the
+      // right team even though the card shows the canonical name.
+      const COUNTRY_KEYWORDS = {
+        Mexico: "mexican el tri",
+        "South Africa": "south african bafana bafana",
+        "South Korea": "korea republic korean taeguk warriors",
+        "Czech Republic": "czechia czech",
+        Canada: "canadian canucks",
+        "Bosnia & Herzegovina": "bosnia herzegovina bosnian dragons",
+        USA: "united states america american us soccer usmnt stars and stripes",
+        Paraguay: "paraguayan albirroja",
+        Qatar: "qatari maroon annabi",
+        Switzerland: "swiss suisse schweiz svizzera nati",
+        Brazil: "brazilian brasil selecao canarinho",
+        Morocco: "moroccan maroc atlas lions",
+        Haiti: "haitian les grenadiers",
+        Scotland: "scottish tartan army",
+        Australia: "australian socceroos aussie",
+        Turkey: "turkiye turkish crescent stars",
+        Germany: "german deutschland die mannschaft",
+        Curacao: "curacaoan",
+        Netherlands: "holland dutch oranje nederland clockwork orange",
+        Japan: "japanese nippon nihon samurai blue",
+        "Ivory Coast": "cote d ivoire ivorian elephants",
+        Ecuador: "ecuadorian la tri",
+        Sweden: "swedish sverige blagult",
+        Tunisia: "tunisian eagles of carthage",
+        Spain: "spanish espana la roja",
+        "Cape Verde": "cabo verde cape verdean blue sharks",
+        Belgium: "belgian belgique belgie red devils",
+        Egypt: "egyptian pharaohs",
+        "Saudi Arabia": "saudi green falcons",
+        Uruguay: "uruguayan la celeste charrua",
+        Iran: "iranian persia team melli",
+        "New Zealand": "kiwi all whites aotearoa",
+        France: "french les bleus equipe de france",
+        Senegal: "senegalese lions of teranga",
+        Iraq: "iraqi lions of mesopotamia",
+        Norway: "norwegian norge",
+        Argentina: "argentine albiceleste la albiceleste",
+        Algeria: "algerian desert foxes les fennecs",
+        Austria: "austrian osterreich das team",
+        Jordan: "jordanian nashama",
+        Portugal: "portuguese selecao das quinas",
+        "DR Congo": "democratic republic congo congolese drc leopards",
+        England: "english three lions",
+        Croatia: "croatian hrvatska vatreni blazers",
+        Ghana: "ghanaian black stars",
+        Panama: "panamanian la marea roja",
+        Uzbekistan: "uzbek white wolves",
+        Colombia: "colombian los cafeteros",
+      };
+
+      // Normalized names of the 48 teams in our schedule — lets us map a
+      // player's API nationality back to a team we actually list.
+      const SCHEDULE_TEAMS = new Set();
+      for (const name of Object.keys(PLAYERS)) SCHEDULE_TEAMS.add(normTeam(name));
+
+      // Live player-name matches from TheSportsDB, mapped to national teams via
+      // each player's nationality. Lets search find ANY player, not just the
+      // hardcoded stars — degrades gracefully to local search if the API fails.
+      let apiTeamHits = new Set(); // normalized team names matched by player name
+      let apiHitsQuery = ""; // the query those hits correspond to
+      const playerSearchCache = {}; // folded query -> Set of normalized team names
+      let playerSearchTimer = null;
+
+      function teamSearchText(m) {
+        const t = teamsFor(m);
+        const players = (PLAYERS[t.a] || []).concat(PLAYERS[t.b] || []);
+        return fold(
+          [
+            t.a,
+            t.b,
+            m.a,
+            m.b,
+            m.s,
+            m.v,
+            players.join(" "),
+            COUNTRY_KEYWORDS[t.a] || "",
+            COUNTRY_KEYWORDS[t.b] || "",
+            COUNTRY_KEYWORDS[m.a] || "",
+            COUNTRY_KEYWORDS[m.b] || "",
+          ].join(" "),
+        );
+      }
+
       function matchesQuery(m, q) {
         if (!q) return true;
         if (q.length === 1) return m.s.toLowerCase() === "group " + q;
-        const t = teamsFor(m);
-        let hay = (
-          t.a +
-          " " +
-          t.b +
-          " " +
-          m.a +
-          " " +
-          m.b +
-          " " +
-          m.s +
-          " " +
-          m.v
-        ).toLowerCase();
-        const pa = PLAYERS[t.a] || [],
-          pb = PLAYERS[t.b] || [];
-        hay +=
-          " " + pa.join(" ").toLowerCase() + " " + pb.join(" ").toLowerCase();
-        return hay.includes(q);
+        const fq = fold(q);
+        if (teamSearchText(m).includes(fq)) return true;
+        // Live API player-name matches (resolved to a team via nationality).
+        if (apiHitsQuery && fold(apiHitsQuery) === fq) {
+          const t = teamsFor(m);
+          if (apiTeamHits.has(normTeam(t.a)) || apiTeamHits.has(normTeam(t.b)))
+            return true;
+        }
+        return false;
+      }
+
+      // Debounced live player lookup: ask TheSportsDB for players whose name
+      // matches the query, then surface their national teams' matches.
+      function schedulePlayerSearch(raw) {
+        if (playerSearchTimer) clearTimeout(playerSearchTimer);
+        const q = (raw || "").trim();
+        if (q.length < 3) {
+          if (apiHitsQuery) {
+            apiHitsQuery = "";
+            apiTeamHits = new Set();
+          }
+          return;
+        }
+        playerSearchTimer = setTimeout(() => fetchPlayerTeams(q), 300);
+      }
+
+      function applyPlayerHits(q, hits) {
+        // Ignore stale responses if the box has changed since the request.
+        if (fold(searchEl.value.trim()) !== fold(q)) return;
+        apiHitsQuery = q;
+        apiTeamHits = hits;
+        if (hits.size) render();
+      }
+
+      async function fetchPlayerTeams(q) {
+        const key = fold(q);
+        if (playerSearchCache[key]) {
+          applyPlayerHits(q, playerSearchCache[key]);
+          return;
+        }
+        try {
+          const res = await fetch(
+            "https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=" +
+              encodeURIComponent(q),
+          );
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const data = await res.json();
+          const players = (data && data.player) || [];
+          const hits = new Set();
+          for (const p of players) {
+            if (p.strSport && p.strSport !== "Soccer") continue;
+            const nat = normTeam(p.strNationality || "");
+            if (nat && SCHEDULE_TEAMS.has(nat)) hits.add(nat);
+          }
+          playerSearchCache[key] = hits;
+          applyPlayerHits(q, hits);
+        } catch (e) {
+          // Soft-fail: local search already covers stars + country aliases.
+          console.error("Player search failed:", e);
+        }
       }
 
       function setTab(tab) {
@@ -1891,7 +2032,10 @@
             : "No completed matches yet.";
       }
 
-      searchEl.addEventListener("input", render);
+      searchEl.addEventListener("input", () => {
+        schedulePlayerSearch(searchEl.value);
+        render();
+      });
       render();
       // Re-check every minute so live matches flip to completed automatically
       setInterval(render, 60 * 1000);
