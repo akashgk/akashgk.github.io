@@ -344,7 +344,8 @@
         extra time and penalties). Source: official FIFA post-draw schedule,
         December 2025. Key players are expected stars per squad — final 26-man
         lists may differ; verify before kickoff. Knockout pairings show bracket
-        slots until teams qualify.
+        slots until the qualified teams are confirmed — then real team names
+        and final scores fill in automatically from the live feed.
       </footer>
     </div>
 
@@ -1498,13 +1499,53 @@
         return SCORES[scoreKey(m.a, m.b)] || SCORES[scoreKey(m.b, m.a)] || null;
       }
 
-      function playersHTML(m) {
-        const pa = PLAYERS[m.a],
-          pb = PLAYERS[m.b];
+      // Knockout fixtures resolved from the API, keyed by kickoff UTC timestamp.
+      // Until the qualified teams are confirmed, knockout cards keep showing
+      // their bracket slots ("Group A runners-up", "Winner Match 73").
+      let KO = {};
+      const PLACEHOLDER_RE =
+        /winner|runner|loser|3rd place|group [a-l]\b|match \d|tbc|tbd|to be/i;
+
+      // Our canonical display name for each normalized team, so API spellings
+      // ("Korea Republic") render as the schedule's names ("South Korea") and
+      // PLAYERS lookups keep working for resolved knockout teams.
+      const DISPLAY = {};
+      for (const m of M) {
+        if (!isKnockout(m)) {
+          DISPLAY[normTeam(m.a)] = m.a;
+          DISPLAY[normTeam(m.b)] = m.b;
+        }
+      }
+      function displayName(apiName) {
+        return DISPLAY[normTeam(apiName)] || apiName;
+      }
+
+      function eventUTC(ev) {
+        let s = ev.strTimestamp || "";
+        if (!s && ev.dateEvent && ev.strTime) s = ev.dateEvent + "T" + ev.strTime;
+        if (!s) return null;
+        s = s.replace(" ", "T");
+        if (!/Z|[+-]\d\d:?\d\d$/.test(s)) s += "Z"; // TheSportsDB times are UTC
+        const t = Date.parse(s);
+        return isNaN(t) ? null : t;
+      }
+      function koInfo(m) {
+        return KO[kickoffUTC(m).getTime()] || null;
+      }
+      // Display teams for a match: real names once a knockout tie is resolved,
+      // bracket slots otherwise.
+      function teamsFor(m) {
+        const ko = isKnockout(m) ? koInfo(m) : null;
+        return ko ? { a: ko.a, b: ko.b } : { a: m.a, b: m.b };
+      }
+
+      function playersHTML(a, b) {
+        const pa = PLAYERS[a],
+          pb = PLAYERS[b];
         if (!pa && !pb) return "";
         let inner = "";
-        if (pa) inner += "<div><b>" + m.a + ":</b> " + pa.join(", ") + "</div>";
-        if (pb) inner += "<div><b>" + m.b + ":</b> " + pb.join(", ") + "</div>";
+        if (pa) inner += "<div><b>" + a + ":</b> " + pa.join(", ") + "</div>";
+        if (pb) inner += "<div><b>" + b + ":</b> " + pb.join(", ") + "</div>";
         return (
           '<details class="players"><summary>Key players</summary><div class="psquad">' +
           inner +
@@ -1529,18 +1570,26 @@
             : st === "done"
               ? '<span class="fttag">FULL TIME</span>'
               : "";
+        const ko = isKnockout(m) ? koInfo(m) : null;
+        const t = teamsFor(m);
         let scoreLine = "";
-        if (st === "done" && !isKnockout(m)) {
-          const s = scoreFor(m);
+        if (st === "done") {
+          const s = isKnockout(m)
+            ? ko && ko.sa != null && ko.sb != null
+              ? ko
+              : null
+            : scoreFor(m);
           if (s && s.sa != null && s.sb != null) {
-            const swapped = normTeam(s.a) !== normTeam(m.a);
+            const swapped = normTeam(s.a) !== normTeam(t.a);
             const ga = swapped ? s.sb : s.sa,
               gb = swapped ? s.sa : s.sb;
             const diff = Math.abs(ga - gb);
             const verdict =
               ga === gb
-                ? "Draw"
-                : (ga > gb ? m.a : m.b) +
+                ? isKnockout(m)
+                  ? "Draw — decided on penalties"
+                  : "Draw"
+                : (ga > gb ? t.a : t.b) +
                   " won by " +
                   diff +
                   " goal" +
@@ -1558,7 +1607,7 @@
               '<div class="scorenote muted">Couldn\u2019t fetch the result — check connection and hit Refresh above.</div>';
           } else if (SCORES) {
             scoreLine =
-              '<div class="scorenote muted">Final score not confirmed in search results yet.</div>';
+              '<div class="scorenote muted">Final score not confirmed yet — hit Refresh in a bit.</div>';
           } else {
             scoreLine = '<div class="scorenote">Fetching final score…</div>';
           }
@@ -1566,9 +1615,9 @@
         card.innerHTML =
           tag +
           '<div class="teams">' +
-          m.a +
+          t.a +
           '<span class="vs">vs</span>' +
-          m.b +
+          t.b +
           "</div>" +
           scoreLine +
           '<div class="stage">' +
@@ -1594,16 +1643,29 @@
           '<div class="venue">' +
           cityFull +
           "</div>" +
-          playersHTML(m);
+          playersHTML(t.a, t.b);
         return card;
       }
 
       function matchesQuery(m, q) {
         if (!q) return true;
         if (q.length === 1) return m.s.toLowerCase() === "group " + q;
-        let hay = (m.a + " " + m.b + " " + m.s + " " + m.v).toLowerCase();
-        const pa = PLAYERS[m.a] || [],
-          pb = PLAYERS[m.b] || [];
+        const t = teamsFor(m);
+        let hay = (
+          t.a +
+          " " +
+          t.b +
+          " " +
+          m.a +
+          " " +
+          m.b +
+          " " +
+          m.s +
+          " " +
+          m.v
+        ).toLowerCase();
+        const pa = PLAYERS[t.a] || [],
+          pb = PLAYERS[t.b] || [];
         hay +=
           " " + pa.join(" ").toLowerCase() + " " + pb.join(" ").toLowerCase();
         return hay.includes(q);
@@ -1703,10 +1765,9 @@
       async function fetchScores(force) {
         if (fetchInFlight) return;
         const now = new Date();
-        const doneMatches = M.filter(
-          (m) => !isKnockout(m) && status(m, now) === "done",
-        );
-        if (!doneMatches.length) return;
+        // Nothing to fetch until the first match has finished — after that the
+        // same feed serves scores AND knockout pairings as teams qualify.
+        if (!M.some((m) => status(m, now) === "done")) return;
         fetchInFlight = true;
         if (force) {
           SCORES = null;
@@ -1723,16 +1784,39 @@
           const data = await response.json();
           const events = (data && data.events) || [];
           const map = {};
+          const ko = {};
           for (const ev of events) {
-            if (ev.intHomeScore == null || ev.intAwayScore == null) continue;
-            map[scoreKey(ev.strHomeTeam, ev.strAwayTeam)] = {
-              a: ev.strHomeTeam,
-              b: ev.strAwayTeam,
-              sa: parseInt(ev.intHomeScore, 10),
-              sb: parseInt(ev.intAwayScore, 10),
-            };
+            const hasScore =
+              ev.intHomeScore != null && ev.intAwayScore != null;
+            if (hasScore) {
+              map[scoreKey(ev.strHomeTeam, ev.strAwayTeam)] = {
+                a: ev.strHomeTeam,
+                b: ev.strAwayTeam,
+                sa: parseInt(ev.intHomeScore, 10),
+                sb: parseInt(ev.intAwayScore, 10),
+              };
+            }
+            // Knockout resolution: once both team names are real (not bracket
+            // placeholders), key the fixture by its kickoff instant — every
+            // knockout kickoff in the schedule is unique.
+            const ts = eventUTC(ev);
+            if (
+              ts != null &&
+              ev.strHomeTeam &&
+              ev.strAwayTeam &&
+              !PLACEHOLDER_RE.test(ev.strHomeTeam) &&
+              !PLACEHOLDER_RE.test(ev.strAwayTeam)
+            ) {
+              ko[ts] = {
+                a: displayName(ev.strHomeTeam),
+                b: displayName(ev.strAwayTeam),
+                sa: hasScore ? parseInt(ev.intHomeScore, 10) : null,
+                sb: hasScore ? parseInt(ev.intAwayScore, 10) : null,
+              };
+            }
           }
           SCORES = map;
+          KO = ko;
         } catch (e) {
           console.error("Score fetch failed:", e);
           SCORES = "error";
