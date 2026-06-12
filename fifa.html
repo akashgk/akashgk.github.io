@@ -47,6 +47,34 @@
         border-color: #8a1538;
       }
 
+      .tzrow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: #555;
+      }
+      .tzrow label {
+        flex-shrink: 0;
+        font-weight: 700;
+      }
+      .tzrow select {
+        flex: 1;
+        min-width: 0;
+        font: inherit;
+        font-size: 14px;
+        padding: 7px 10px;
+        border: 1.5px solid #c9c4ba;
+        border-radius: 8px;
+        background: #fff;
+        color: #1d1d1f;
+      }
+      .tzrow select:focus {
+        outline: 2px solid #8a1538;
+        border-color: #8a1538;
+      }
+
       .tabs {
         display: flex;
         gap: 8px;
@@ -299,9 +327,11 @@
         Switch between the upcoming/live schedule and finished results using
         the tabs below. A match counts as finished only after its expected
         full-time, not at kickoff. Every match shows four kickoffs with
-        complete dates: stadium local, <b>Doha</b>, UK, and India — and if you
-        open this from anywhere else, a fifth green "You" row shows kickoff in
-        your own timezone automatically.
+        complete dates: stadium local, <b>Doha</b>, UK, and India — plus a
+        green "You" row in your own time zone, detected automatically from
+        your device. Travelling or planning for friends elsewhere? Pick any
+        time zone below (VPNs change your IP, not your device's time zone, so
+        use the picker for that).
       </p>
 
       <input
@@ -310,6 +340,11 @@
         type="search"
         placeholder="Type a team, group letter, city or player to filter"
       />
+
+      <div class="tzrow">
+        <label for="tzpick">Show kickoff in your time zone:</label>
+        <select id="tzpick"></select>
+      </div>
 
       <div class="tabs" id="tabs" role="tablist">
         <button
@@ -1333,8 +1368,12 @@
         return new Date(dohaDate(m).getTime() + 2.5 * 3600 * 1000);
       }
 
-      // Viewer's own timezone — show an extra row only if it isn't Doha, UK or India
-      const VIEWER_TZ = (function () {
+      // Viewer's "You" row. Auto mode uses the device timezone (hidden when
+      // that's Doha, UK or India — those rows are already shown). The picker
+      // lets anyone override it with any timezone — e.g. check France times
+      // from Doha — and the choice is remembered. Note: VPNs change your IP,
+      // not your device timezone, so auto-detect can't follow a VPN location.
+      const DETECTED_TZ = (function () {
         try {
           return Intl.DateTimeFormat().resolvedOptions().timeZone || "";
         } catch (e) {
@@ -1347,9 +1386,23 @@
         "Asia/Kolkata",
         "Asia/Calcutta",
       ];
-      const SHOW_VIEWER = !!VIEWER_TZ && KNOWN_TZ.indexOf(VIEWER_TZ) === -1;
+      let TZ_OVERRIDE = "";
+      try {
+        TZ_OVERRIDE = localStorage.getItem("wc26-tz") || "";
+        new Intl.DateTimeFormat("en-GB", { timeZone: TZ_OVERRIDE || "UTC" });
+      } catch (e) {
+        TZ_OVERRIDE = "";
+      }
+      function viewerTZ() {
+        return TZ_OVERRIDE || DETECTED_TZ;
+      }
+      function showViewerRow() {
+        if (TZ_OVERRIDE) return true; // explicitly picked — always show
+        return !!DETECTED_TZ && KNOWN_TZ.indexOf(DETECTED_TZ) === -1;
+      }
       function viewerTimeHTML(m) {
-        if (!SHOW_VIEWER) return "";
+        if (!showViewerRow()) return "";
+        const VIEWER_TZ = viewerTZ();
         const ko = kickoffUTC(m); // true UTC instant of kickoff
         const txt = new Intl.DateTimeFormat("en-GB", {
           timeZone: VIEWER_TZ,
@@ -1682,6 +1735,60 @@
       }
       tabActiveBtn.addEventListener("click", () => setTab("active"));
       tabDoneBtn.addEventListener("click", () => setTab("done"));
+
+      // Timezone picker — auto-detect by default, any IANA zone on demand
+      const tzPick = document.getElementById("tzpick");
+      (function () {
+        let zones = [];
+        try {
+          zones = Intl.supportedValuesOf("timeZone");
+        } catch (e) {
+          zones = [
+            "America/New_York",
+            "America/Chicago",
+            "America/Denver",
+            "America/Los_Angeles",
+            "America/Mexico_City",
+            "America/Sao_Paulo",
+            "Europe/London",
+            "Europe/Paris",
+            "Europe/Berlin",
+            "Europe/Madrid",
+            "Europe/Rome",
+            "Africa/Cairo",
+            "Africa/Lagos",
+            "Asia/Qatar",
+            "Asia/Dubai",
+            "Asia/Kolkata",
+            "Asia/Singapore",
+            "Asia/Tokyo",
+            "Asia/Seoul",
+            "Australia/Sydney",
+            "Pacific/Auckland",
+          ];
+        }
+        const auto = document.createElement("option");
+        auto.value = "";
+        auto.textContent =
+          "Auto" + (DETECTED_TZ ? " — detected: " + DETECTED_TZ : "");
+        tzPick.appendChild(auto);
+        for (const z of zones) {
+          const o = document.createElement("option");
+          o.value = z;
+          o.textContent = z.replace(/_/g, " ");
+          tzPick.appendChild(o);
+        }
+        if (TZ_OVERRIDE && zones.indexOf(TZ_OVERRIDE) !== -1)
+          tzPick.value = TZ_OVERRIDE;
+      })();
+      tzPick.addEventListener("change", () => {
+        TZ_OVERRIDE = tzPick.value;
+        try {
+          if (TZ_OVERRIDE) localStorage.setItem("wc26-tz", TZ_OVERRIDE);
+          else localStorage.removeItem("wc26-tz");
+        } catch (e) {}
+        render();
+      });
 
       function render() {
         const q = searchEl.value.trim().toLowerCase();
