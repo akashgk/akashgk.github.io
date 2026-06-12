@@ -37,6 +37,16 @@
     <link rel="canonical" href="https://akashgk.com/fifa.html" />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#8a1538" />
+    <!--
+      Google AdSense — replace ca-pub-XXXXXXXXXXXXXXXX with your real
+      publisher ID once your AdSense account is approved. Until then this
+      script 404s harmlessly and no ad space is reserved.
+    -->
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+      crossorigin="anonymous"
+    ></script>
     <style>
       * {
         margin: 0;
@@ -345,6 +355,22 @@
         text-align: center;
         color: #888;
       }
+      .ad-slot {
+        margin: 40px 0 8px;
+        text-align: center;
+      }
+      .ad-slot .ad-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #aaa;
+        margin-bottom: 6px;
+      }
+      .ad-slot .adsbygoogle {
+        display: block;
+        min-height: 90px;
+      }
       footer {
         margin-top: 48px;
         font-size: 14px;
@@ -396,6 +422,26 @@
 
       <main id="list"></main>
       <div class="empty" id="empty" hidden>No matches found.</div>
+
+      <!--
+        Single non-intrusive display ad, shown once below the match list.
+        Replace data-ad-client and data-ad-slot with the values from your
+        AdSense ad unit (see steps in the PR description / commit message).
+      -->
+      <div class="ad-slot">
+        <div class="ad-label">Advertisement</div>
+        <ins
+          class="adsbygoogle"
+          style="display: block"
+          data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+          data-ad-slot="XXXXXXXXXX"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
 
       <footer>
         Doha = Asia/Qatar, UTC+3, no daylight saving. UK = BST (UTC+1)
