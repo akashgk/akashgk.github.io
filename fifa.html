@@ -47,6 +47,38 @@
         border-color: #8a1538;
       }
 
+      .tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .tab {
+        flex: 1;
+        font: inherit;
+        font-size: 15px;
+        font-weight: 700;
+        padding: 11px 10px;
+        border: 1.5px solid #c9c4ba;
+        border-radius: 10px;
+        background: #fff;
+        color: #555;
+        cursor: pointer;
+        text-align: center;
+        transition: background 0.15s, color 0.15s, border-color 0.15s;
+      }
+      .tab .count {
+        font-weight: 400;
+        opacity: 0.75;
+      }
+      .tab.active {
+        background: #8a1538;
+        border-color: #8a1538;
+        color: #fff;
+      }
+      .tab.active .count {
+        opacity: 0.85;
+      }
+
       .dayhead {
         font-size: 20px;
         font-weight: 700;
@@ -77,6 +109,9 @@
         border-radius: 10px;
         background: #ece8df;
         color: #555;
+      }
+      #list > .sectionhead:first-child {
+        margin-top: 0;
       }
       .sectionhead small {
         display: block;
@@ -261,9 +296,9 @@
     <div class="wrap">
       <h1>FIFA World Cup 2026 — all 104 matches</h1>
       <p class="note">
-        Upcoming and in-progress matches first (today's at the top), finished
-        matches moved to the bottom. A match counts as finished only after its
-        expected full-time, not at kickoff. Every match shows four kickoffs with
+        Switch between the upcoming/live schedule and finished results using
+        the tabs below. A match counts as finished only after its expected
+        full-time, not at kickoff. Every match shows four kickoffs with
         complete dates: stadium local, <b>Doha</b>, UK, and India — and if you
         open this from anywhere else, a fifth green "You" row shows kickoff in
         your own timezone automatically.
@@ -275,6 +310,27 @@
         type="search"
         placeholder="Type a team, group letter, city or player to filter"
       />
+
+      <div class="tabs" id="tabs" role="tablist">
+        <button
+          class="tab active"
+          id="tab-active"
+          type="button"
+          role="tab"
+          aria-selected="true"
+        >
+          Upcoming &amp; Live <span class="count" id="count-active"></span>
+        </button>
+        <button
+          class="tab"
+          id="tab-done"
+          type="button"
+          role="tab"
+          aria-selected="false"
+        >
+          Completed <span class="count" id="count-done"></span>
+        </button>
+      </div>
 
       <main id="list"></main>
       <div class="empty" id="empty" hidden>No matches found.</div>
@@ -1391,6 +1447,11 @@
       const list = document.getElementById("list");
       const empty = document.getElementById("empty");
       const searchEl = document.getElementById("search");
+      const tabActiveBtn = document.getElementById("tab-active");
+      const tabDoneBtn = document.getElementById("tab-done");
+      const countActive = document.getElementById("count-active");
+      const countDone = document.getElementById("count-done");
+      let currentTab = "active"; // "active" | "done"
 
       // Score state — must be declared before the first render() call
       let SCORES = null; // null = loading, "error" = failed, object = keyed results
@@ -1548,6 +1609,18 @@
         return hay.includes(q);
       }
 
+      function setTab(tab) {
+        if (currentTab === tab) return;
+        currentTab = tab;
+        tabActiveBtn.classList.toggle("active", tab === "active");
+        tabDoneBtn.classList.toggle("active", tab === "done");
+        tabActiveBtn.setAttribute("aria-selected", tab === "active");
+        tabDoneBtn.setAttribute("aria-selected", tab === "done");
+        render();
+      }
+      tabActiveBtn.addEventListener("click", () => setTab("active"));
+      tabDoneBtn.addEventListener("click", () => setTab("done"));
+
       function render() {
         const q = searchEl.value.trim().toLowerCase();
         const today = dohaToday();
@@ -1563,51 +1636,57 @@
           (st === "done" ? done : active).push({ m, st });
         }
 
-        // Active (today + upcoming + live), chronological, grouped by Doha day
-        let lastDay = null;
-        for (const { m, st } of active) {
-          if (m.d !== lastDay) {
-            lastDay = m.d;
-            const h = document.createElement("div");
-            h.className = "dayhead" + (m.d === today ? " today" : "");
-            h.innerHTML =
-              dayLabel(m.d) +
-              (m.d === today
-                ? '<span class="todaytag">TODAY in Doha</span>'
-                : "");
-            list.appendChild(h);
-          }
-          list.appendChild(buildCard(m, st));
-          shown++;
-        }
+        countActive.textContent = "(" + active.length + ")";
+        countDone.textContent = "(" + done.length + ")";
 
-        // Completed matches at the end, most recent first
-        if (done.length) {
-          const sh = document.createElement("div");
-          sh.className = "sectionhead";
-          sh.innerHTML =
-            "✓ Completed matches (" +
-            done.length +
-            ")" +
-            '<button class="refreshbtn" onclick="fetchScores(true)">↻ Refresh scores</button>' +
-            "<small>Scores are fetched live from TheSportsDB each time this page opens. Moved here only after expected full-time — group ~2h after kickoff, knockouts ~3h.</small>";
-          list.appendChild(sh);
-          lastDay = null;
-          for (let i = done.length - 1; i >= 0; i--) {
-            const { m, st } = done[i];
+        let lastDay = null;
+        if (currentTab === "active") {
+          // Today + upcoming + live, chronological, grouped by Doha day
+          for (const { m, st } of active) {
             if (m.d !== lastDay) {
               lastDay = m.d;
               const h = document.createElement("div");
-              h.className = "dayhead";
-              h.textContent = dayLabel(m.d);
+              h.className = "dayhead" + (m.d === today ? " today" : "");
+              h.innerHTML =
+                dayLabel(m.d) +
+                (m.d === today
+                  ? '<span class="todaytag">TODAY in Doha</span>'
+                  : "");
               list.appendChild(h);
             }
             list.appendChild(buildCard(m, st));
             shown++;
           }
+        } else {
+          // Completed matches, most recent first
+          if (done.length) {
+            const sh = document.createElement("div");
+            sh.className = "sectionhead";
+            sh.innerHTML =
+              "Results" +
+              '<button class="refreshbtn" onclick="fetchScores(true)">↻ Refresh scores</button>' +
+              "<small>Scores are fetched live from TheSportsDB each time this page opens. A match appears here only after its expected full-time — group ~2h after kickoff, knockouts ~3h.</small>";
+            list.appendChild(sh);
+            for (let i = done.length - 1; i >= 0; i--) {
+              const { m, st } = done[i];
+              if (m.d !== lastDay) {
+                lastDay = m.d;
+                const h = document.createElement("div");
+                h.className = "dayhead";
+                h.textContent = dayLabel(m.d);
+                list.appendChild(h);
+              }
+              list.appendChild(buildCard(m, st));
+              shown++;
+            }
+          }
         }
 
         empty.hidden = shown > 0;
+        empty.textContent =
+          currentTab === "active"
+            ? "No upcoming or live matches found."
+            : "No completed matches yet.";
       }
 
       searchEl.addEventListener("input", render);
