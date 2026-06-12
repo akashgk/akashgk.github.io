@@ -1,0 +1,1661 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FIFA World Cup 2026 — Schedule in Doha Time</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        background: #faf8f4;
+        color: #1d1d1f;
+        font-size: 18px;
+        line-height: 1.55;
+      }
+      .wrap {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 24px 16px 80px;
+      }
+      h1 {
+        font-size: 26px;
+        line-height: 1.25;
+        margin-bottom: 6px;
+      }
+      .note {
+        font-size: 15px;
+        color: #555;
+        margin-bottom: 20px;
+      }
+      .search {
+        width: 100%;
+        font: inherit;
+        font-size: 17px;
+        padding: 12px 14px;
+        border: 1.5px solid #c9c4ba;
+        border-radius: 10px;
+        background: #fff;
+        margin-bottom: 8px;
+      }
+      .search:focus {
+        outline: 2px solid #8a1538;
+        border-color: #8a1538;
+      }
+
+      .dayhead {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 34px 0 4px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #1d1d1f;
+      }
+      .dayhead.today {
+        color: #8a1538;
+        border-color: #8a1538;
+      }
+      .todaytag {
+        font-size: 13px;
+        font-weight: 700;
+        background: #8a1538;
+        color: #fff;
+        border-radius: 5px;
+        padding: 2px 8px;
+        vertical-align: middle;
+        margin-left: 8px;
+      }
+
+      .sectionhead {
+        font-size: 22px;
+        font-weight: 800;
+        margin: 54px 0 0;
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: #ece8df;
+        color: #555;
+      }
+      .sectionhead small {
+        display: block;
+        font-size: 13.5px;
+        font-weight: 400;
+        margin-top: 2px;
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid #e2ddd2;
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 12px;
+      }
+      .card.qatar {
+        border-left: 5px solid #8a1538;
+      }
+      .card.final {
+        border-left: 5px solid #b8860b;
+        background: #fffdf2;
+      }
+      .card.done {
+        opacity: 0.72;
+        background: #f5f2ec;
+      }
+      .livetag,
+      .fttag {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        border-radius: 5px;
+        padding: 2px 8px;
+        margin-bottom: 8px;
+      }
+      .livetag {
+        background: #1a7a3a;
+        color: #fff;
+      }
+      .fttag {
+        background: #9b958a;
+        color: #fff;
+      }
+      .stage {
+        font-size: 13.5px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #8a1538;
+        margin: -4px 0 10px;
+      }
+      .card.done .stage {
+        color: #777;
+      }
+      .teams {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+      .teams .vs {
+        font-weight: 400;
+        color: #888;
+        font-size: 16px;
+        padding: 0 6px;
+      }
+      .timeline {
+        font-size: 16px;
+        display: grid;
+        gap: 5px;
+      }
+      .timeline .row {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+      }
+      .lbl {
+        flex: 0 0 64px;
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: #999;
+        padding-top: 2px;
+      }
+      .doha-time {
+        font-weight: 700;
+        color: #1d1d1f;
+      }
+      .doha-time .big {
+        color: #8a1538;
+      }
+      .card.done .doha-time .big {
+        color: #555;
+      }
+      .local-time {
+        color: #555;
+      }
+      .viewer-time {
+        color: #1a7a3a;
+        font-weight: 700;
+      }
+      .venue {
+        font-size: 14.5px;
+        color: #888;
+        margin-top: 8px;
+      }
+      .score {
+        font-size: 19px;
+        font-weight: 800;
+        margin: -2px 0 10px;
+        color: #1d1d1f;
+      }
+      .score .scorenote {
+        font-weight: 600;
+      }
+      .scorenote {
+        font-size: 13.5px;
+        color: #8a1538;
+        margin: -2px 0 10px;
+      }
+      .scorenote.muted {
+        color: #999;
+      }
+      .refreshbtn {
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        color: #8a1538;
+        background: none;
+        border: 1.5px solid #8a1538;
+        border-radius: 7px;
+        padding: 3px 10px;
+        margin-left: 10px;
+        cursor: pointer;
+        vertical-align: middle;
+      }
+      details.players {
+        margin-top: 10px;
+        font-size: 15px;
+      }
+      details.players summary {
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+        color: #8a1538;
+        list-style: none;
+        user-select: none;
+      }
+      details.players summary::before {
+        content: "▸ ";
+      }
+      details.players[open] summary::before {
+        content: "▾ ";
+      }
+      .psquad {
+        margin-top: 6px;
+        line-height: 1.5;
+      }
+      .psquad b {
+        font-weight: 700;
+      }
+      .pnote {
+        font-size: 12.5px;
+        color: #999;
+        margin-top: 4px;
+      }
+      .empty {
+        padding: 50px 0;
+        text-align: center;
+        color: #888;
+      }
+      footer {
+        margin-top: 48px;
+        font-size: 14px;
+        color: #777;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>FIFA World Cup 2026 — all 104 matches</h1>
+      <p class="note">
+        Upcoming and in-progress matches first (today's at the top), finished
+        matches moved to the bottom. A match counts as finished only after its
+        expected full-time, not at kickoff. Every match shows four kickoffs with
+        complete dates: stadium local, <b>Doha</b>, UK, and India — and if you
+        open this from anywhere else, a fifth green "You" row shows kickoff in
+        your own timezone automatically.
+      </p>
+
+      <input
+        class="search"
+        id="search"
+        type="search"
+        placeholder="Type a team, group letter, city or player to filter"
+      />
+
+      <main id="list"></main>
+      <div class="empty" id="empty" hidden>No matches found.</div>
+
+      <footer>
+        Doha = Asia/Qatar, UTC+3, no daylight saving. UK = BST (UTC+1)
+        throughout the tournament. India = IST (UTC+5:30), Doha plus 2h30. Venue
+        local times use June–July 2026 offsets: US/Canada East UTC−4, Central
+        UTC−5, Pacific UTC−7, Mexico UTC−6 (no DST). A group match is treated as
+        finished ~2 hours after kickoff; knockout matches ~3 hours (allowing
+        extra time and penalties). Source: official FIFA post-draw schedule,
+        December 2025. Key players are expected stars per squad — final 26-man
+        lists may differ; verify before kickoff. Knockout pairings show bracket
+        slots until teams qualify.
+      </footer>
+    </div>
+
+    <script>
+      const OFF = {
+        "New Jersey": -4,
+        Foxborough: -4,
+        Philadelphia: -4,
+        Atlanta: -4,
+        Miami: -4,
+        Toronto: -4,
+        Houston: -5,
+        Arlington: -5,
+        "Kansas City": -5,
+        "Mexico City": -6,
+        Zapopan: -6,
+        Guadalupe: -6,
+        "Los Angeles": -7,
+        "Santa Clara": -7,
+        Seattle: -7,
+        Vancouver: -7,
+      };
+      const CITYNAME = {
+        Foxborough: "Foxborough (Boston)",
+        Arlington: "Arlington (Dallas)",
+        Zapopan: "Zapopan (Guadalajara)",
+        Guadalupe: "Guadalupe (Monterrey)",
+        "Santa Clara": "Santa Clara (Bay Area)",
+        "New Jersey": "East Rutherford (New York–New Jersey)",
+      };
+
+      // Expected key players per squad (stars as of early 2026 — final squads may differ)
+      const PLAYERS = {
+        Mexico: ["Santiago Giménez", "Edson Álvarez", "Raúl Jiménez"],
+        "South Africa": ["Percy Tau", "Ronwen Williams", "Themba Zwane"],
+        "South Korea": ["Son Heung-min", "Lee Kang-in", "Kim Min-jae"],
+        "Czech Republic": ["Patrik Schick", "Tomáš Souček", "Adam Hložek"],
+        Canada: ["Alphonso Davies", "Jonathan David", "Stephen Eustáquio"],
+        "Bosnia & Herzegovina": [
+          "Edin Džeko",
+          "Ermedin Demirović",
+          "Sead Kolašinac",
+        ],
+        USA: ["Christian Pulisic", "Weston McKennie", "Folarin Balogun"],
+        Paraguay: ["Miguel Almirón", "Julio Enciso", "Gustavo Gómez"],
+        Qatar: ["Akram Afif", "Almoez Ali", "Meshaal Barsham"],
+        Switzerland: ["Granit Xhaka", "Manuel Akanji", "Breel Embolo"],
+        Brazil: ["Vinícius Júnior", "Raphinha", "Rodrygo"],
+        Morocco: ["Achraf Hakimi", "Brahim Díaz", "Yassine Bounou"],
+        Haiti: ["Duckens Nazon", "Frantzdy Pierrot", "Danley Jean Jacques"],
+        Scotland: ["Scott McTominay", "Andy Robertson", "John McGinn"],
+        Australia: ["Jackson Irvine", "Mathew Ryan", "Riley McGree"],
+        Turkey: ["Arda Güler", "Hakan Çalhanoğlu", "Kenan Yıldız"],
+        Germany: ["Jamal Musiala", "Florian Wirtz", "Joshua Kimmich"],
+        Curacao: ["Leandro Bacuna", "Juninho Bacuna", "Tahith Chong"],
+        Netherlands: ["Virgil van Dijk", "Cody Gakpo", "Frenkie de Jong"],
+        Japan: ["Takefusa Kubo", "Kaoru Mitoma", "Wataru Endo"],
+        "Ivory Coast": ["Sébastien Haller", "Franck Kessié", "Simon Adingra"],
+        Ecuador: ["Moisés Caicedo", "Piero Hincapié", "Kendry Páez"],
+        Sweden: ["Alexander Isak", "Viktor Gyökeres", "Dejan Kulusevski"],
+        Tunisia: ["Hannibal Mejbri", "Youssef Msakni", "Aïssa Laïdouni"],
+        Spain: ["Lamine Yamal", "Pedri", "Rodri"],
+        "Cape Verde": ["Ryan Mendes", "Bebé", "Garry Rodrigues"],
+        Belgium: ["Kevin De Bruyne", "Jérémy Doku", "Romelu Lukaku"],
+        Egypt: ["Mohamed Salah", "Omar Marmoush", "Mahmoud Trezeguet"],
+        "Saudi Arabia": [
+          "Salem Al-Dawsari",
+          "Firas Al-Buraikan",
+          "Mohammed Kanno",
+        ],
+        Uruguay: ["Federico Valverde", "Darwin Núñez", "Ronald Araújo"],
+        Iran: ["Mehdi Taremi", "Sardar Azmoun", "Alireza Jahanbakhsh"],
+        "New Zealand": ["Chris Wood", "Liberato Cacace", "Matthew Garbett"],
+        France: ["Kylian Mbappé", "Ousmane Dembélé", "Aurélien Tchouaméni"],
+        Senegal: ["Sadio Mané", "Nicolas Jackson", "Pape Matar Sarr"],
+        Iraq: ["Aymen Hussein", "Ali Al-Hamadi", "Zidane Iqbal"],
+        Norway: ["Erling Haaland", "Martin Ødegaard", "Alexander Sørloth"],
+        Argentina: ["Lionel Messi", "Julián Álvarez", "Lautaro Martínez"],
+        Algeria: ["Riyad Mahrez", "Mohamed Amoura", "Houssem Aouar"],
+        Austria: ["David Alaba", "Marcel Sabitzer", "Christoph Baumgartner"],
+        Jordan: ["Mousa Al-Tamari", "Yazan Al-Naimat", "Ali Olwan"],
+        Portugal: ["Cristiano Ronaldo", "Bruno Fernandes", "Rafael Leão"],
+        "DR Congo": ["Cédric Bakambu", "Yoane Wissa", "Chancel Mbemba"],
+        England: ["Harry Kane", "Jude Bellingham", "Bukayo Saka"],
+        Croatia: ["Luka Modrić", "Joško Gvardiol", "Mateo Kovačić"],
+        Ghana: ["Mohammed Kudus", "Thomas Partey", "Antoine Semenyo"],
+        Panama: ["Adalberto Carrasquilla", "José Fajardo", "Ismael Díaz"],
+        Uzbekistan: [
+          "Abdukodir Khusanov",
+          "Eldor Shomurodov",
+          "Abbosbek Fayzullaev",
+        ],
+        Colombia: ["Luis Díaz", "James Rodríguez", "Jhon Durán"],
+      };
+
+      const M = [
+        {
+          d: "2026-06-11",
+          t: "22:00",
+          a: "Mexico",
+          b: "South Africa",
+          s: "Group A",
+          v: "Mexico City",
+        },
+        {
+          d: "2026-06-12",
+          t: "05:00",
+          a: "South Korea",
+          b: "Czech Republic",
+          s: "Group A",
+          v: "Zapopan",
+        },
+        {
+          d: "2026-06-12",
+          t: "22:00",
+          a: "Canada",
+          b: "Bosnia & Herzegovina",
+          s: "Group B",
+          v: "Toronto",
+        },
+        {
+          d: "2026-06-13",
+          t: "04:00",
+          a: "USA",
+          b: "Paraguay",
+          s: "Group D",
+          v: "Los Angeles",
+        },
+        {
+          d: "2026-06-13",
+          t: "22:00",
+          a: "Qatar",
+          b: "Switzerland",
+          s: "Group B",
+          v: "Santa Clara",
+          q: 1,
+        },
+        {
+          d: "2026-06-14",
+          t: "01:00",
+          a: "Brazil",
+          b: "Morocco",
+          s: "Group C",
+          v: "New Jersey",
+        },
+        {
+          d: "2026-06-14",
+          t: "04:00",
+          a: "Haiti",
+          b: "Scotland",
+          s: "Group C",
+          v: "Foxborough",
+        },
+        {
+          d: "2026-06-14",
+          t: "07:00",
+          a: "Australia",
+          b: "Turkey",
+          s: "Group D",
+          v: "Vancouver",
+        },
+        {
+          d: "2026-06-14",
+          t: "20:00",
+          a: "Germany",
+          b: "Curacao",
+          s: "Group E",
+          v: "Houston",
+        },
+        {
+          d: "2026-06-14",
+          t: "23:00",
+          a: "Netherlands",
+          b: "Japan",
+          s: "Group F",
+          v: "Arlington",
+        },
+        {
+          d: "2026-06-15",
+          t: "02:00",
+          a: "Ivory Coast",
+          b: "Ecuador",
+          s: "Group E",
+          v: "Philadelphia",
+        },
+        {
+          d: "2026-06-15",
+          t: "05:00",
+          a: "Sweden",
+          b: "Tunisia",
+          s: "Group F",
+          v: "Guadalupe",
+        },
+        {
+          d: "2026-06-15",
+          t: "19:00",
+          a: "Spain",
+          b: "Cape Verde",
+          s: "Group H",
+          v: "Atlanta",
+        },
+        {
+          d: "2026-06-15",
+          t: "22:00",
+          a: "Belgium",
+          b: "Egypt",
+          s: "Group G",
+          v: "Seattle",
+        },
+        {
+          d: "2026-06-16",
+          t: "01:00",
+          a: "Saudi Arabia",
+          b: "Uruguay",
+          s: "Group H",
+          v: "Miami",
+        },
+        {
+          d: "2026-06-16",
+          t: "04:00",
+          a: "Iran",
+          b: "New Zealand",
+          s: "Group G",
+          v: "Los Angeles",
+        },
+        {
+          d: "2026-06-16",
+          t: "22:00",
+          a: "France",
+          b: "Senegal",
+          s: "Group I",
+          v: "New Jersey",
+        },
+        {
+          d: "2026-06-17",
+          t: "01:00",
+          a: "Iraq",
+          b: "Norway",
+          s: "Group I",
+          v: "Foxborough",
+        },
+        {
+          d: "2026-06-17",
+          t: "04:00",
+          a: "Argentina",
+          b: "Algeria",
+          s: "Group J",
+          v: "Kansas City",
+        },
+        {
+          d: "2026-06-17",
+          t: "07:00",
+          a: "Austria",
+          b: "Jordan",
+          s: "Group J",
+          v: "Santa Clara",
+        },
+        {
+          d: "2026-06-17",
+          t: "20:00",
+          a: "Portugal",
+          b: "DR Congo",
+          s: "Group K",
+          v: "Houston",
+        },
+        {
+          d: "2026-06-17",
+          t: "23:00",
+          a: "England",
+          b: "Croatia",
+          s: "Group L",
+          v: "Arlington",
+        },
+        {
+          d: "2026-06-18",
+          t: "02:00",
+          a: "Ghana",
+          b: "Panama",
+          s: "Group L",
+          v: "Toronto",
+        },
+        {
+          d: "2026-06-18",
+          t: "05:00",
+          a: "Uzbekistan",
+          b: "Colombia",
+          s: "Group K",
+          v: "Mexico City",
+        },
+        {
+          d: "2026-06-18",
+          t: "19:00",
+          a: "Czech Republic",
+          b: "South Africa",
+          s: "Group A",
+          v: "Atlanta",
+        },
+        {
+          d: "2026-06-18",
+          t: "22:00",
+          a: "Switzerland",
+          b: "Bosnia & Herzegovina",
+          s: "Group B",
+          v: "Los Angeles",
+        },
+        {
+          d: "2026-06-19",
+          t: "01:00",
+          a: "Canada",
+          b: "Qatar",
+          s: "Group B",
+          v: "Vancouver",
+          q: 1,
+        },
+        {
+          d: "2026-06-19",
+          t: "04:00",
+          a: "Mexico",
+          b: "South Korea",
+          s: "Group A",
+          v: "Zapopan",
+        },
+        {
+          d: "2026-06-19",
+          t: "22:00",
+          a: "USA",
+          b: "Australia",
+          s: "Group D",
+          v: "Seattle",
+        },
+        {
+          d: "2026-06-20",
+          t: "01:00",
+          a: "Scotland",
+          b: "Morocco",
+          s: "Group C",
+          v: "Foxborough",
+        },
+        {
+          d: "2026-06-20",
+          t: "03:30",
+          a: "Brazil",
+          b: "Haiti",
+          s: "Group C",
+          v: "Philadelphia",
+        },
+        {
+          d: "2026-06-20",
+          t: "06:00",
+          a: "Turkey",
+          b: "Paraguay",
+          s: "Group D",
+          v: "Santa Clara",
+        },
+        {
+          d: "2026-06-20",
+          t: "20:00",
+          a: "Netherlands",
+          b: "Sweden",
+          s: "Group F",
+          v: "Houston",
+        },
+        {
+          d: "2026-06-20",
+          t: "23:00",
+          a: "Germany",
+          b: "Ivory Coast",
+          s: "Group E",
+          v: "Toronto",
+        },
+        {
+          d: "2026-06-21",
+          t: "03:00",
+          a: "Ecuador",
+          b: "Curacao",
+          s: "Group E",
+          v: "Kansas City",
+        },
+        {
+          d: "2026-06-21",
+          t: "07:00",
+          a: "Tunisia",
+          b: "Japan",
+          s: "Group F",
+          v: "Guadalupe",
+        },
+        {
+          d: "2026-06-21",
+          t: "19:00",
+          a: "Spain",
+          b: "Saudi Arabia",
+          s: "Group H",
+          v: "Atlanta",
+        },
+        {
+          d: "2026-06-21",
+          t: "22:00",
+          a: "Belgium",
+          b: "Iran",
+          s: "Group G",
+          v: "Los Angeles",
+        },
+        {
+          d: "2026-06-22",
+          t: "01:00",
+          a: "Uruguay",
+          b: "Cape Verde",
+          s: "Group H",
+          v: "Miami",
+        },
+        {
+          d: "2026-06-22",
+          t: "04:00",
+          a: "New Zealand",
+          b: "Egypt",
+          s: "Group G",
+          v: "Vancouver",
+        },
+        {
+          d: "2026-06-22",
+          t: "20:00",
+          a: "Argentina",
+          b: "Austria",
+          s: "Group J",
+          v: "Arlington",
+        },
+        {
+          d: "2026-06-23",
+          t: "00:00",
+          a: "France",
+          b: "Iraq",
+          s: "Group I",
+          v: "Philadelphia",
+        },
+        {
+          d: "2026-06-23",
+          t: "03:00",
+          a: "Norway",
+          b: "Senegal",
+          s: "Group I",
+          v: "Toronto",
+        },
+        {
+          d: "2026-06-23",
+          t: "06:00",
+          a: "Jordan",
+          b: "Algeria",
+          s: "Group J",
+          v: "Santa Clara",
+        },
+        {
+          d: "2026-06-23",
+          t: "20:00",
+          a: "Portugal",
+          b: "Uzbekistan",
+          s: "Group K",
+          v: "Houston",
+        },
+        {
+          d: "2026-06-23",
+          t: "23:00",
+          a: "England",
+          b: "Ghana",
+          s: "Group L",
+          v: "Foxborough",
+        },
+        {
+          d: "2026-06-24",
+          t: "02:00",
+          a: "Panama",
+          b: "Croatia",
+          s: "Group L",
+          v: "Foxborough",
+        },
+        {
+          d: "2026-06-24",
+          t: "05:00",
+          a: "Colombia",
+          b: "DR Congo",
+          s: "Group K",
+          v: "Zapopan",
+        },
+        {
+          d: "2026-06-24",
+          t: "22:00",
+          a: "Switzerland",
+          b: "Canada",
+          s: "Group B",
+          v: "Vancouver",
+        },
+        {
+          d: "2026-06-24",
+          t: "22:00",
+          a: "Bosnia & Herzegovina",
+          b: "Qatar",
+          s: "Group B",
+          v: "Seattle",
+          q: 1,
+        },
+        {
+          d: "2026-06-25",
+          t: "01:00",
+          a: "Morocco",
+          b: "Haiti",
+          s: "Group C",
+          v: "Atlanta",
+        },
+        {
+          d: "2026-06-25",
+          t: "01:00",
+          a: "Scotland",
+          b: "Brazil",
+          s: "Group C",
+          v: "Miami",
+        },
+        {
+          d: "2026-06-25",
+          t: "04:00",
+          a: "South Africa",
+          b: "South Korea",
+          s: "Group A",
+          v: "Guadalupe",
+        },
+        {
+          d: "2026-06-25",
+          t: "04:00",
+          a: "Czech Republic",
+          b: "Mexico",
+          s: "Group A",
+          v: "Mexico City",
+        },
+        {
+          d: "2026-06-25",
+          t: "23:00",
+          a: "Curacao",
+          b: "Ivory Coast",
+          s: "Group E",
+          v: "Philadelphia",
+        },
+        {
+          d: "2026-06-25",
+          t: "23:00",
+          a: "Ecuador",
+          b: "Germany",
+          s: "Group E",
+          v: "New Jersey",
+        },
+        {
+          d: "2026-06-26",
+          t: "02:00",
+          a: "Tunisia",
+          b: "Netherlands",
+          s: "Group F",
+          v: "Kansas City",
+        },
+        {
+          d: "2026-06-26",
+          t: "02:00",
+          a: "Japan",
+          b: "Sweden",
+          s: "Group F",
+          v: "Arlington",
+        },
+        {
+          d: "2026-06-26",
+          t: "05:00",
+          a: "Turkey",
+          b: "USA",
+          s: "Group D",
+          v: "Los Angeles",
+        },
+        {
+          d: "2026-06-26",
+          t: "05:00",
+          a: "Paraguay",
+          b: "Australia",
+          s: "Group D",
+          v: "Santa Clara",
+        },
+        {
+          d: "2026-06-26",
+          t: "22:00",
+          a: "Norway",
+          b: "France",
+          s: "Group I",
+          v: "Foxborough",
+        },
+        {
+          d: "2026-06-26",
+          t: "22:00",
+          a: "Senegal",
+          b: "Iraq",
+          s: "Group I",
+          v: "Toronto",
+        },
+        {
+          d: "2026-06-27",
+          t: "03:00",
+          a: "Cape Verde",
+          b: "Saudi Arabia",
+          s: "Group H",
+          v: "Houston",
+        },
+        {
+          d: "2026-06-27",
+          t: "03:00",
+          a: "Uruguay",
+          b: "Spain",
+          s: "Group H",
+          v: "Zapopan",
+        },
+        {
+          d: "2026-06-27",
+          t: "06:00",
+          a: "New Zealand",
+          b: "Belgium",
+          s: "Group G",
+          v: "Vancouver",
+        },
+        {
+          d: "2026-06-27",
+          t: "06:00",
+          a: "Egypt",
+          b: "Iran",
+          s: "Group G",
+          v: "Seattle",
+        },
+        {
+          d: "2026-06-28",
+          t: "00:00",
+          a: "Panama",
+          b: "England",
+          s: "Group L",
+          v: "New Jersey",
+        },
+        {
+          d: "2026-06-28",
+          t: "00:00",
+          a: "Croatia",
+          b: "Ghana",
+          s: "Group L",
+          v: "Philadelphia",
+        },
+        {
+          d: "2026-06-28",
+          t: "02:30",
+          a: "Colombia",
+          b: "Portugal",
+          s: "Group K",
+          v: "Miami",
+        },
+        {
+          d: "2026-06-28",
+          t: "02:30",
+          a: "DR Congo",
+          b: "Uzbekistan",
+          s: "Group K",
+          v: "Atlanta",
+        },
+        {
+          d: "2026-06-28",
+          t: "05:00",
+          a: "Algeria",
+          b: "Austria",
+          s: "Group J",
+          v: "Kansas City",
+        },
+        {
+          d: "2026-06-28",
+          t: "05:00",
+          a: "Jordan",
+          b: "Argentina",
+          s: "Group J",
+          v: "Arlington",
+        },
+        {
+          d: "2026-06-28",
+          t: "22:00",
+          a: "Group A runners-up",
+          b: "Group B runners-up",
+          s: "Round of 32 · Match 73",
+          v: "Los Angeles",
+        },
+        {
+          d: "2026-06-29",
+          t: "20:00",
+          a: "Group C winners",
+          b: "Group F runners-up",
+          s: "Round of 32 · Match 76",
+          v: "Houston",
+        },
+        {
+          d: "2026-06-29",
+          t: "23:30",
+          a: "Group E winners",
+          b: "3rd place (A/B/C/D/F)",
+          s: "Round of 32 · Match 74",
+          v: "Foxborough",
+        },
+        {
+          d: "2026-06-30",
+          t: "04:00",
+          a: "Group F winners",
+          b: "Group C runners-up",
+          s: "Round of 32 · Match 75",
+          v: "Guadalupe",
+        },
+        {
+          d: "2026-06-30",
+          t: "20:00",
+          a: "Group E runners-up",
+          b: "Group I runners-up",
+          s: "Round of 32 · Match 78",
+          v: "Arlington",
+        },
+        {
+          d: "2026-07-01",
+          t: "00:00",
+          a: "Group I winners",
+          b: "3rd place (C/D/F/G/H)",
+          s: "Round of 32 · Match 77",
+          v: "New Jersey",
+        },
+        {
+          d: "2026-07-01",
+          t: "04:00",
+          a: "Group A winners",
+          b: "3rd place (C/E/F/H/I)",
+          s: "Round of 32 · Match 79",
+          v: "Mexico City",
+        },
+        {
+          d: "2026-07-01",
+          t: "19:00",
+          a: "Group L winners",
+          b: "3rd place (E/H/I/J/K)",
+          s: "Round of 32 · Match 80",
+          v: "Atlanta",
+        },
+        {
+          d: "2026-07-01",
+          t: "23:00",
+          a: "Group G winners",
+          b: "3rd place (A/E/H/I/J)",
+          s: "Round of 32 · Match 82",
+          v: "Seattle",
+        },
+        {
+          d: "2026-07-02",
+          t: "03:00",
+          a: "Group D winners",
+          b: "3rd place (B/E/F/I/J)",
+          s: "Round of 32 · Match 81",
+          v: "Santa Clara",
+        },
+        {
+          d: "2026-07-02",
+          t: "22:00",
+          a: "Group H winners",
+          b: "Group J runners-up",
+          s: "Round of 32 · Match 84",
+          v: "Los Angeles",
+        },
+        {
+          d: "2026-07-03",
+          t: "02:00",
+          a: "Group K runners-up",
+          b: "Group L runners-up",
+          s: "Round of 32 · Match 83",
+          v: "Toronto",
+        },
+        {
+          d: "2026-07-03",
+          t: "06:00",
+          a: "Group B winners",
+          b: "3rd place (E/F/G/I/J)",
+          s: "Round of 32 · Match 85",
+          v: "Vancouver",
+        },
+        {
+          d: "2026-07-03",
+          t: "21:00",
+          a: "Group D runners-up",
+          b: "Group G runners-up",
+          s: "Round of 32 · Match 88",
+          v: "Arlington",
+        },
+        {
+          d: "2026-07-04",
+          t: "01:00",
+          a: "Group J winners",
+          b: "Group H runners-up",
+          s: "Round of 32 · Match 86",
+          v: "Miami",
+        },
+        {
+          d: "2026-07-04",
+          t: "04:30",
+          a: "Group K winners",
+          b: "3rd place (D/E/I/J/L)",
+          s: "Round of 32 · Match 87",
+          v: "Kansas City",
+        },
+        {
+          d: "2026-07-04",
+          t: "20:00",
+          a: "Winner Match 73",
+          b: "Winner Match 75",
+          s: "Round of 16 · Match 90",
+          v: "Houston",
+        },
+        {
+          d: "2026-07-05",
+          t: "00:00",
+          a: "Winner Match 74",
+          b: "Winner Match 77",
+          s: "Round of 16 · Match 89",
+          v: "Philadelphia",
+        },
+        {
+          d: "2026-07-05",
+          t: "23:00",
+          a: "Winner Match 76",
+          b: "Winner Match 78",
+          s: "Round of 16 · Match 91",
+          v: "New Jersey",
+        },
+        {
+          d: "2026-07-06",
+          t: "03:00",
+          a: "Winner Match 79",
+          b: "Winner Match 80",
+          s: "Round of 16 · Match 92",
+          v: "Mexico City",
+        },
+        {
+          d: "2026-07-06",
+          t: "22:00",
+          a: "Winner Match 83",
+          b: "Winner Match 84",
+          s: "Round of 16 · Match 93",
+          v: "Arlington",
+        },
+        {
+          d: "2026-07-07",
+          t: "03:00",
+          a: "Winner Match 81",
+          b: "Winner Match 82",
+          s: "Round of 16 · Match 94",
+          v: "Seattle",
+        },
+        {
+          d: "2026-07-07",
+          t: "19:00",
+          a: "Winner Match 86",
+          b: "Winner Match 88",
+          s: "Round of 16 · Match 95",
+          v: "Atlanta",
+        },
+        {
+          d: "2026-07-07",
+          t: "23:00",
+          a: "Winner Match 85",
+          b: "Winner Match 87",
+          s: "Round of 16 · Match 96",
+          v: "Vancouver",
+        },
+        {
+          d: "2026-07-09",
+          t: "23:00",
+          a: "Winner Match 89",
+          b: "Winner Match 90",
+          s: "Quarter-final · Match 97",
+          v: "Foxborough",
+        },
+        {
+          d: "2026-07-10",
+          t: "22:00",
+          a: "Winner Match 93",
+          b: "Winner Match 94",
+          s: "Quarter-final · Match 98",
+          v: "Los Angeles",
+        },
+        {
+          d: "2026-07-12",
+          t: "00:00",
+          a: "Winner Match 91",
+          b: "Winner Match 92",
+          s: "Quarter-final · Match 99",
+          v: "Miami",
+        },
+        {
+          d: "2026-07-12",
+          t: "04:00",
+          a: "Winner Match 95",
+          b: "Winner Match 96",
+          s: "Quarter-final · Match 100",
+          v: "Kansas City",
+        },
+        {
+          d: "2026-07-14",
+          t: "22:00",
+          a: "Winner QF 97",
+          b: "Winner QF 98",
+          s: "Semi-final · Match 101",
+          v: "Arlington",
+        },
+        {
+          d: "2026-07-15",
+          t: "22:00",
+          a: "Winner QF 99",
+          b: "Winner QF 100",
+          s: "Semi-final · Match 102",
+          v: "Atlanta",
+        },
+        {
+          d: "2026-07-19",
+          t: "00:00",
+          a: "Loser Semi-final 1",
+          b: "Loser Semi-final 2",
+          s: "Third-place match · Match 103",
+          v: "Miami",
+        },
+        {
+          d: "2026-07-19",
+          t: "22:00",
+          a: "Winner Semi-final 1",
+          b: "Winner Semi-final 2",
+          s: "World Cup Final · Match 104",
+          v: "New Jersey",
+          f: 1,
+        },
+      ];
+
+      function fmtFull(dt) {
+        const days = [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ];
+        const mon = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+        const hh = String(dt.getUTCHours()).padStart(2, "0");
+        const mm = String(dt.getUTCMinutes()).padStart(2, "0");
+        return (
+          days[dt.getUTCDay()] +
+          ", " +
+          dt.getUTCDate() +
+          " " +
+          mon[dt.getUTCMonth()] +
+          " " +
+          dt.getUTCFullYear() +
+          ", " +
+          hh +
+          ":" +
+          mm
+        );
+      }
+      function dohaDate(m) {
+        return new Date(m.d + "T" + m.t + ":00Z");
+      } // wall-clock carrier (UTC fields hold Doha wall time)
+      function localDate(m) {
+        return new Date(dohaDate(m).getTime() - (3 - OFF[m.v]) * 3600 * 1000);
+      }
+      function ukDate(m) {
+        return new Date(dohaDate(m).getTime() - 2 * 3600 * 1000);
+      }
+      function indiaDate(m) {
+        return new Date(dohaDate(m).getTime() + 2.5 * 3600 * 1000);
+      }
+
+      // Viewer's own timezone — show an extra row only if it isn't Doha, UK or India
+      const VIEWER_TZ = (function () {
+        try {
+          return Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+        } catch (e) {
+          return "";
+        }
+      })();
+      const KNOWN_TZ = [
+        "Asia/Qatar",
+        "Europe/London",
+        "Asia/Kolkata",
+        "Asia/Calcutta",
+      ];
+      const SHOW_VIEWER = !!VIEWER_TZ && KNOWN_TZ.indexOf(VIEWER_TZ) === -1;
+      function viewerTimeHTML(m) {
+        if (!SHOW_VIEWER) return "";
+        const ko = kickoffUTC(m); // true UTC instant of kickoff
+        const txt = new Intl.DateTimeFormat("en-GB", {
+          timeZone: VIEWER_TZ,
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        })
+          .format(ko)
+          .replace(" at ", ", ");
+        let tz = VIEWER_TZ;
+        try {
+          const p = new Intl.DateTimeFormat("en-GB", {
+            timeZone: VIEWER_TZ,
+            timeZoneName: "short",
+          })
+            .formatToParts(ko)
+            .find((x) => x.type === "timeZoneName");
+          if (p) tz = p.value;
+        } catch (e) {}
+        return (
+          '<div class="row"><span class="lbl">You</span><span class="viewer-time">' +
+          txt +
+          " (" +
+          tz +
+          ")</span></div>"
+        );
+      }
+
+      // True kickoff instant in real UTC: Doha wall time minus 3h
+      function kickoffUTC(m) {
+        return new Date(dohaDate(m).getTime() - 3 * 3600 * 1000);
+      }
+      function isKnockout(m) {
+        return m.s.indexOf("Group ") !== 0;
+      }
+      // Expected full-time: group ≈ 2h after kickoff; knockout ≈ 3h (extra time + penalties)
+      function endUTC(m) {
+        return new Date(
+          kickoffUTC(m).getTime() + (isKnockout(m) ? 180 : 120) * 60 * 1000,
+        );
+      }
+      function status(m, now) {
+        if (now >= endUTC(m)) return "done";
+        if (now >= kickoffUTC(m)) return "live";
+        return "upcoming";
+      }
+
+      function dohaToday() {
+        return new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Qatar",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).format(new Date());
+      }
+      function dayLabel(dstr) {
+        const dt = new Date(dstr + "T12:00:00Z");
+        const days = [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ];
+        const mon = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+        return (
+          days[dt.getUTCDay()] +
+          ", " +
+          dt.getUTCDate() +
+          " " +
+          mon[dt.getUTCMonth()] +
+          " " +
+          dt.getUTCFullYear()
+        );
+      }
+
+      const list = document.getElementById("list");
+      const empty = document.getElementById("empty");
+      const searchEl = document.getElementById("search");
+
+      // Score state — must be declared before the first render() call
+      let SCORES = null; // null = loading, "error" = failed, object = keyed results
+      let fetchInFlight = false;
+      function scoreKey(a, b) {
+        return (a + "|" + b).toLowerCase();
+      }
+      function scoreFor(m) {
+        if (!SCORES || SCORES === "error") return null;
+        return SCORES[scoreKey(m.a, m.b)] || SCORES[scoreKey(m.b, m.a)] || null;
+      }
+
+      function playersHTML(m) {
+        const pa = PLAYERS[m.a],
+          pb = PLAYERS[m.b];
+        if (!pa && !pb) return "";
+        let inner = "";
+        if (pa) inner += "<div><b>" + m.a + ":</b> " + pa.join(", ") + "</div>";
+        if (pb) inner += "<div><b>" + m.b + ":</b> " + pb.join(", ") + "</div>";
+        return (
+          '<details class="players"><summary>Key players</summary><div class="psquad">' +
+          inner +
+          '<div class="pnote">Expected stars — final 26-man squads may differ.</div></div></details>'
+        );
+      }
+
+      function buildCard(m, st) {
+        const card = document.createElement("div");
+        card.className =
+          "card" +
+          (m.q ? " qatar" : "") +
+          (m.f ? " final" : "") +
+          (st === "done" ? " done" : "");
+        const utc = OFF[m.v];
+        const cityFull = CITYNAME[m.v] || m.v;
+        const stageLine =
+          m.s.indexOf("Group ") === 0 ? "Group Stage · " + m.s : m.s;
+        const tag =
+          st === "live"
+            ? '<span class="livetag">LIVE NOW</span>'
+            : st === "done"
+              ? '<span class="fttag">FULL TIME</span>'
+              : "";
+        let scoreLine = "";
+        if (st === "done" && !isKnockout(m)) {
+          const s = scoreFor(m);
+          if (s && s.sa != null && s.sb != null) {
+            const swapped = (s.a || "").toLowerCase() !== m.a.toLowerCase();
+            const ga = swapped ? s.sb : s.sa,
+              gb = swapped ? s.sa : s.sb;
+            const diff = Math.abs(ga - gb);
+            const verdict =
+              ga === gb
+                ? "Draw"
+                : (ga > gb ? m.a : m.b) +
+                  " won by " +
+                  diff +
+                  " goal" +
+                  (diff > 1 ? "s" : "");
+            scoreLine =
+              '<div class="score">' +
+              ga +
+              " – " +
+              gb +
+              ' <span class="scorenote">· ' +
+              verdict +
+              "</span></div>";
+          } else if (SCORES === "error") {
+            scoreLine =
+              '<div class="scorenote muted">Couldn\u2019t fetch the result — check connection and hit Refresh above.</div>';
+          } else if (SCORES) {
+            scoreLine =
+              '<div class="scorenote muted">Final score not confirmed in search results yet.</div>';
+          } else {
+            scoreLine = '<div class="scorenote">Fetching final score…</div>';
+          }
+        }
+        card.innerHTML =
+          tag +
+          '<div class="teams">' +
+          m.a +
+          '<span class="vs">vs</span>' +
+          m.b +
+          "</div>" +
+          scoreLine +
+          '<div class="stage">' +
+          stageLine +
+          "</div>" +
+          '<div class="timeline">' +
+          '<div class="row"><span class="lbl">Venue</span><span class="local-time">' +
+          fmtFull(localDate(m)) +
+          " local (UTC" +
+          utc +
+          ")</span></div>" +
+          '<div class="row"><span class="lbl">Doha</span><span class="doha-time"><span class="big">' +
+          fmtFull(dohaDate(m)) +
+          "</span> (UTC+3)</span></div>" +
+          '<div class="row"><span class="lbl">UK</span><span class="local-time">' +
+          fmtFull(ukDate(m)) +
+          " (BST, UTC+1)</span></div>" +
+          '<div class="row"><span class="lbl">India</span><span class="local-time">' +
+          fmtFull(indiaDate(m)) +
+          " (IST, UTC+5:30)</span></div>" +
+          viewerTimeHTML(m) +
+          "</div>" +
+          '<div class="venue">' +
+          cityFull +
+          "</div>" +
+          playersHTML(m);
+        return card;
+      }
+
+      function matchesQuery(m, q) {
+        if (!q) return true;
+        if (q.length === 1) return m.s.toLowerCase() === "group " + q;
+        let hay = (m.a + " " + m.b + " " + m.s + " " + m.v).toLowerCase();
+        const pa = PLAYERS[m.a] || [],
+          pb = PLAYERS[m.b] || [];
+        hay +=
+          " " + pa.join(" ").toLowerCase() + " " + pb.join(" ").toLowerCase();
+        return hay.includes(q);
+      }
+
+      function render() {
+        const q = searchEl.value.trim().toLowerCase();
+        const today = dohaToday();
+        const now = new Date();
+        list.innerHTML = "";
+        let shown = 0;
+
+        const active = [],
+          done = [];
+        for (const m of M) {
+          if (!matchesQuery(m, q)) continue;
+          const st = status(m, now);
+          (st === "done" ? done : active).push({ m, st });
+        }
+
+        // Active (today + upcoming + live), chronological, grouped by Doha day
+        let lastDay = null;
+        for (const { m, st } of active) {
+          if (m.d !== lastDay) {
+            lastDay = m.d;
+            const h = document.createElement("div");
+            h.className = "dayhead" + (m.d === today ? " today" : "");
+            h.innerHTML =
+              dayLabel(m.d) +
+              (m.d === today
+                ? '<span class="todaytag">TODAY in Doha</span>'
+                : "");
+            list.appendChild(h);
+          }
+          list.appendChild(buildCard(m, st));
+          shown++;
+        }
+
+        // Completed matches at the end, most recent first
+        if (done.length) {
+          const sh = document.createElement("div");
+          sh.className = "sectionhead";
+          sh.innerHTML =
+            "✓ Completed matches (" +
+            done.length +
+            ")" +
+            '<button class="refreshbtn" onclick="fetchScores(true)">↻ Refresh scores</button>' +
+            "<small>Scores are fetched live via web search each time this page opens. Moved here only after expected full-time — group ~2h after kickoff, knockouts ~3h.</small>";
+          list.appendChild(sh);
+          lastDay = null;
+          for (let i = done.length - 1; i >= 0; i--) {
+            const { m, st } = done[i];
+            if (m.d !== lastDay) {
+              lastDay = m.d;
+              const h = document.createElement("div");
+              h.className = "dayhead";
+              h.textContent = dayLabel(m.d);
+              list.appendChild(h);
+            }
+            list.appendChild(buildCard(m, st));
+            shown++;
+          }
+        }
+
+        empty.hidden = shown > 0;
+      }
+
+      searchEl.addEventListener("input", render);
+      render();
+      // Re-check every minute so live matches flip to completed automatically
+      setInterval(render, 60 * 1000);
+
+      // ---- Live score fetching via Claude + web search ----
+      // (SCORES state and scoreFor() are declared near the top, before first render)
+
+      async function fetchScores(force) {
+        if (fetchInFlight) return;
+        const now = new Date();
+        const doneMatches = M.filter(
+          (m) => !isKnockout(m) && status(m, now) === "done",
+        );
+        if (!doneMatches.length) return;
+        fetchInFlight = true;
+        if (force) {
+          SCORES = null;
+          render();
+        }
+        const lines = doneMatches
+          .map((m) => m.a + " vs " + m.b + " (played " + m.d + ", Group Stage)")
+          .join("; ");
+        try {
+          const response = await fetch(
+            "https://api.anthropic.com/v1/messages",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                model: "claude-sonnet-4-6",
+                max_tokens: 1000,
+                messages: [
+                  {
+                    role: "user",
+                    content:
+                      "Search the web for the confirmed final scores of these FIFA World Cup 2026 group-stage matches: " +
+                      lines +
+                      ". " +
+                      "Respond with ONLY a raw JSON array, no markdown fences, no preamble, no explanation. " +
+                      'Format: [{"a":"TeamA","b":"TeamB","sa":2,"sb":1}]. ' +
+                      "Team names must exactly match the names I gave. sa = goals for team a, sb = goals for team b, full-time score including any stoppage time. " +
+                      "If you cannot confirm a match's final score, set sa and sb to null for that match but still include it.",
+                  },
+                ],
+                tools: [{ type: "web_search_20250305", name: "web_search" }],
+              }),
+            },
+          );
+          const data = await response.json();
+          const text = data.content
+            .filter((i) => i.type === "text")
+            .map((i) => i.text)
+            .join("\n");
+          const clean = text.replace(/```json|```/g, "").trim();
+          const arr = JSON.parse(
+            clean.slice(clean.indexOf("["), clean.lastIndexOf("]") + 1),
+          );
+          const map = {};
+          for (const s of arr) {
+            if (s && s.a && s.b) map[scoreKey(s.a, s.b)] = s;
+          }
+          SCORES = map;
+        } catch (e) {
+          console.error("Score fetch failed:", e);
+          SCORES = "error";
+        }
+        fetchInFlight = false;
+        render();
+      }
+
+      // Auto-fetch on open
+      fetchScores();
+      // Re-fetch every 15 minutes so newly finished matches pick up scores
+      setInterval(
+        () => {
+          fetchScores(true);
+        },
+        15 * 60 * 1000,
+      );
+    </script>
+  </body>
+</html>
