@@ -361,7 +361,7 @@
         color: #888;
       }
       .ad-slot {
-        margin: 40px 0 8px;
+        margin: 20px 0;
         text-align: center;
       }
       .ad-slot .ad-label {
@@ -423,6 +423,25 @@
         >
           Completed <span class="count" id="count-done"></span>
         </button>
+      </div>
+
+      <!--
+        Second non-intrusive display ad, shown once above the match list.
+        Create a new "Display ad" unit in AdSense and replace data-ad-slot
+        below with that unit's slot ID (data-ad-client stays the same —
+        it's your publisher ID, shared across all ad units).
+      -->
+      <div class="ad-slot">
+        <div class="ad-label">Advertisement</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-8383761535214883"
+             data-ad-slot="XXXXXXXXXX"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
 
       <main id="list"></main>
