@@ -266,10 +266,19 @@
         color: #1d1d1f;
       }
       .kickoff-time .big {
-        color: #8a1538;
+        color: #1a7a3a;
       }
       .card.done .kickoff-time .big {
         color: #555;
+      }
+      .official-time {
+        display: block;
+        font-size: 13px;
+        font-weight: 400;
+        letter-spacing: normal;
+        text-transform: none;
+        color: #999;
+        margin-top: 2px;
       }
       .local-time {
         color: #555;
@@ -431,8 +440,9 @@
       </div>
 
       <footer>
-        Kickoff times are shown in your device's detected time zone — use the
-        picker above to check any other zone. Venue local times use June–July
+        Your time (in green) is shown in your device's detected time zone —
+        use the picker above to check any other zone. The time next to each
+        matchup is the official UTC kickoff. Venue local times use June–July
         2026 offsets: US/Canada East UTC−4, Central UTC−5, Pacific UTC−7,
         Mexico UTC−6 (no DST). A group match is treated as finished ~2 hours
         after kickoff; knockout matches ~3 hours (allowing extra time and
@@ -1469,7 +1479,7 @@
           if (p) tz = p.value;
         } catch (e) {}
         return (
-          '<div class="row"><span class="lbl">Kickoff</span><span class="kickoff-time"><span class="big">' +
+          '<div class="row"><span class="lbl">Your time</span><span class="kickoff-time"><span class="big">' +
           txt +
           "</span> (" +
           tz +
@@ -1480,6 +1490,30 @@
       // True kickoff instant in real UTC: Doha wall time minus 3h
       function kickoffUTC(m) {
         return new Date(dohaDate(m).getTime() - 3 * 3600 * 1000);
+      }
+      // Compact UTC kickoff — a neutral "official time" shown next to every
+      // match title, independent of where the viewer is.
+      function officialTimeStr(m) {
+        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const mon = [
+          "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        ];
+        const ko = kickoffUTC(m);
+        const hh = String(ko.getUTCHours()).padStart(2, "0");
+        const mm = String(ko.getUTCMinutes()).padStart(2, "0");
+        return (
+          days[ko.getUTCDay()] +
+          " " +
+          ko.getUTCDate() +
+          " " +
+          mon[ko.getUTCMonth()] +
+          ", " +
+          hh +
+          ":" +
+          mm +
+          " UTC"
+        );
       }
       function isKnockout(m) {
         return m.s.indexOf("Group ") !== 0;
@@ -1713,6 +1747,9 @@
           t.a +
           '<span class="vs">vs</span>' +
           t.b +
+          '<span class="official-time">' +
+          officialTimeStr(m) +
+          "</span>" +
           "</div>" +
           scoreLine +
           '<div class="stage">' +
