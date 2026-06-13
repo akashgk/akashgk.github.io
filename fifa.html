@@ -5,33 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="FIFA World Cup 2026 schedule with kickoff times in Doha, UK, India, and your own time zone. Live scores, knockout bracket updates, and match search — built with AI by Akash G Krishnan."
+      content="FIFA World Cup 2026 schedule with kickoff times shown automatically in your own time zone. Live scores, knockout bracket updates, and match search — built with AI by Akash G Krishnan."
     />
-    <title>FIFA World Cup 2026 — Schedule in Doha Time</title>
+    <title>FIFA World Cup 2026 — Schedule in Your Time Zone</title>
     <meta property="og:type" content="website" />
     <meta
       property="og:title"
-      content="FIFA World Cup 2026 — Schedule in Doha Time"
+      content="FIFA World Cup 2026 — Schedule in Your Time Zone"
     />
     <meta
       property="og:description"
-      content="The full FIFA World Cup 2026 schedule with live scores and kickoff times converted to Doha, UK, India, and your local time zone."
+      content="The full FIFA World Cup 2026 schedule with live scores and kickoff times converted automatically to your local time zone."
     />
     <meta property="og:url" content="https://akashgk.com/fifa.html" />
     <meta property="og:image" content="https://akashgk.com/images/og-banner.jpeg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="FIFA World Cup 2026 — Schedule in Doha Time"
+      content="FIFA World Cup 2026 — Schedule in Your Time Zone"
     />
     <meta
       name="twitter:description"
-      content="The full FIFA World Cup 2026 schedule with live scores and kickoff times converted to Doha, UK, India, and your local time zone."
+      content="The full FIFA World Cup 2026 schedule with live scores and kickoff times converted automatically to your local time zone."
     />
     <meta name="twitter:image" content="https://akashgk.com/images/og-banner.jpeg" />
     <meta
       name="keywords"
-      content="FIFA World Cup 2026, World Cup schedule Doha time, World Cup 2026 fixtures, World Cup live scores, World Cup kickoff times time zone, Akash G Krishnan"
+      content="FIFA World Cup 2026, World Cup schedule local time, World Cup 2026 fixtures, World Cup live scores, World Cup kickoff times time zone, Akash G Krishnan"
     />
     <meta name="author" content="Akash G Krishnan" />
     <link rel="canonical" href="https://akashgk.com/fifa.html" />
@@ -261,22 +261,18 @@
         color: #999;
         padding-top: 2px;
       }
-      .doha-time {
+      .kickoff-time {
         font-weight: 700;
         color: #1d1d1f;
       }
-      .doha-time .big {
+      .kickoff-time .big {
         color: #8a1538;
       }
-      .card.done .doha-time .big {
+      .card.done .kickoff-time .big {
         color: #555;
       }
       .local-time {
         color: #555;
-      }
-      .viewer-time {
-        color: #1a7a3a;
-        font-weight: 700;
       }
       .venue {
         font-size: 14.5px;
@@ -376,8 +372,8 @@
     <div class="wrap">
       <h1>FIFA World Cup 2026 — all 104 matches</h1>
       <p class="note">
-        Every kickoff in <b>Doha</b> time, plus your own. Live scores and
-        full squad search.
+        Every kickoff shown in <b>your own time zone</b>, detected
+        automatically. Live scores and full squad search.
       </p>
 
       <input
@@ -435,16 +431,16 @@
       </div>
 
       <footer>
-        Doha = Asia/Qatar, UTC+3, no daylight saving. UK = BST (UTC+1)
-        throughout the tournament. India = IST (UTC+5:30), Doha plus 2h30. Venue
-        local times use June–July 2026 offsets: US/Canada East UTC−4, Central
-        UTC−5, Pacific UTC−7, Mexico UTC−6 (no DST). A group match is treated as
-        finished ~2 hours after kickoff; knockout matches ~3 hours (allowing
-        extra time and penalties). Source: official FIFA post-draw schedule,
-        December 2025. Key players are expected stars per squad — final 26-man
-        lists may differ; verify before kickoff. Knockout pairings show bracket
-        slots until the qualified teams are confirmed — then real team names
-        and final scores fill in automatically from the live feed.
+        Kickoff times are shown in your device's detected time zone — use the
+        picker above to check any other zone. Venue local times use June–July
+        2026 offsets: US/Canada East UTC−4, Central UTC−5, Pacific UTC−7,
+        Mexico UTC−6 (no DST). A group match is treated as finished ~2 hours
+        after kickoff; knockout matches ~3 hours (allowing extra time and
+        penalties). Source: official FIFA post-draw schedule, December 2025.
+        Key players are expected stars per squad — final 26-man lists may
+        differ; verify before kickoff. Knockout pairings show bracket slots
+        until the qualified teams are confirmed — then real team names and
+        final scores fill in automatically from the live feed.
       </footer>
     </div>
 
@@ -1425,18 +1421,11 @@
       function localDate(m) {
         return new Date(dohaDate(m).getTime() - (3 - OFF[m.v]) * 3600 * 1000);
       }
-      function ukDate(m) {
-        return new Date(dohaDate(m).getTime() - 2 * 3600 * 1000);
-      }
-      function indiaDate(m) {
-        return new Date(dohaDate(m).getTime() + 2.5 * 3600 * 1000);
-      }
 
-      // Viewer's "You" row. Auto mode uses the device timezone (hidden when
-      // that's Doha, UK or India — those rows are already shown). The picker
-      // lets anyone override it with any timezone — e.g. check France times
-      // from Doha — and the choice is remembered. Note: VPNs change your IP,
-      // not your device timezone, so auto-detect can't follow a VPN location.
+      // Viewer's local kickoff time — the primary time shown on every card.
+      // Auto-detected from the device, or overridden via the time zone
+      // picker (and remembered in localStorage). Falls back to UTC if
+      // detection isn't available.
       const DETECTED_TZ = (function () {
         try {
           return Intl.DateTimeFormat().resolvedOptions().timeZone || "";
@@ -1444,12 +1433,6 @@
           return "";
         }
       })();
-      const KNOWN_TZ = [
-        "Asia/Qatar",
-        "Europe/London",
-        "Asia/Kolkata",
-        "Asia/Calcutta",
-      ];
       let TZ_OVERRIDE = "";
       try {
         TZ_OVERRIDE = localStorage.getItem("wc26-tz") || "";
@@ -1458,14 +1441,9 @@
         TZ_OVERRIDE = "";
       }
       function viewerTZ() {
-        return TZ_OVERRIDE || DETECTED_TZ;
-      }
-      function showViewerRow() {
-        if (TZ_OVERRIDE) return true; // explicitly picked — always show
-        return !!DETECTED_TZ && KNOWN_TZ.indexOf(DETECTED_TZ) === -1;
+        return TZ_OVERRIDE || DETECTED_TZ || "UTC";
       }
       function viewerTimeHTML(m) {
-        if (!showViewerRow()) return "";
         const VIEWER_TZ = viewerTZ();
         const ko = kickoffUTC(m); // true UTC instant of kickoff
         const txt = new Intl.DateTimeFormat("en-GB", {
@@ -1491,9 +1469,9 @@
           if (p) tz = p.value;
         } catch (e) {}
         return (
-          '<div class="row"><span class="lbl">You</span><span class="viewer-time">' +
+          '<div class="row"><span class="lbl">Kickoff</span><span class="kickoff-time"><span class="big">' +
           txt +
-          " (" +
+          "</span> (" +
           tz +
           ")</span></div>"
         );
@@ -1741,21 +1719,12 @@
           stageLine +
           "</div>" +
           '<div class="timeline">' +
+          viewerTimeHTML(m) +
           '<div class="row"><span class="lbl">Venue</span><span class="local-time">' +
           fmtFull(localDate(m)) +
           " local (UTC" +
           utc +
           ")</span></div>" +
-          '<div class="row"><span class="lbl">Doha</span><span class="doha-time"><span class="big">' +
-          fmtFull(dohaDate(m)) +
-          "</span> (UTC+3)</span></div>" +
-          '<div class="row"><span class="lbl">UK</span><span class="local-time">' +
-          fmtFull(ukDate(m)) +
-          " (BST, UTC+1)</span></div>" +
-          '<div class="row"><span class="lbl">India</span><span class="local-time">' +
-          fmtFull(indiaDate(m)) +
-          " (IST, UTC+5:30)</span></div>" +
-          viewerTimeHTML(m) +
           "</div>" +
           '<div class="venue">' +
           cityFull +
@@ -2021,9 +1990,7 @@
               h.className = "dayhead" + (m.d === today ? " today" : "");
               h.innerHTML =
                 dayLabel(m.d) +
-                (m.d === today
-                  ? '<span class="todaytag">TODAY in Doha</span>'
-                  : "");
+                (m.d === today ? '<span class="todaytag">TODAY</span>' : "");
               list.appendChild(h);
             }
             list.appendChild(buildCard(m, st));
