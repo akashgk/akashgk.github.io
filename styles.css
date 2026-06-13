@@ -661,6 +661,14 @@ body.drawer-locked { overflow: hidden; }
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+/* JS wraps each word in .w, moving text out of <strong> into child spans —
+   re-apply the gradient clip per word so it isn't left invisible */
+.statement strong .w {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 /* .w spans injected by JS; dimmed until scroll lights them */
 .statement .w {
   opacity: 1;
