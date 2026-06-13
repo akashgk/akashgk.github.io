@@ -268,7 +268,12 @@
       .kickoff-time .big {
         color: #1a7a3a;
       }
-      .card.done .kickoff-time .big {
+      .kickoff-time .here {
+        font-weight: 600;
+        color: #1a7a3a;
+      }
+      .card.done .kickoff-time .big,
+      .card.done .kickoff-time .here {
         color: #555;
       }
       .official-time {
@@ -281,7 +286,9 @@
         margin-top: 2px;
       }
       .local-time {
-        color: #555;
+        font-size: 13px;
+        font-weight: 400;
+        color: #999;
       }
       .venue {
         font-size: 14.5px;
@@ -440,9 +447,11 @@
       </div>
 
       <footer>
-        Your time (in green) is shown in your device's detected time zone —
-        use the picker above to check any other zone. The time next to each
-        matchup is the official UTC kickoff. Venue local times use June–July
+        The green "In your time" row is when the match kicks off where you
+        are — detected from your device, with your location shown next to it.
+        Use the picker above to check any other zone. The small time next to
+        each matchup is the official UTC kickoff, and "At stadium" is the
+        local time at the venue. Stadium local times use June–July
         2026 offsets: US/Canada East UTC−4, Central UTC−5, Pacific UTC−7,
         Mexico UTC−6 (no DST). A group match is treated as finished ~2 hours
         after kickoff; knockout matches ~3 hours (allowing extra time and
@@ -1453,6 +1462,13 @@
       function viewerTZ() {
         return TZ_OVERRIDE || DETECTED_TZ || "UTC";
       }
+      // Friendly place name from an IANA zone, e.g.
+      // "America/New_York" -> "New York", "Asia/Kolkata" -> "Kolkata".
+      function locationLabel(tz) {
+        if (!tz || tz === "UTC") return "UTC";
+        const parts = tz.split("/");
+        return parts[parts.length - 1].replace(/_/g, " ");
+      }
       function viewerTimeHTML(m) {
         const VIEWER_TZ = viewerTZ();
         const ko = kickoffUTC(m); // true UTC instant of kickoff
@@ -1478,12 +1494,15 @@
             .find((x) => x.type === "timeZoneName");
           if (p) tz = p.value;
         } catch (e) {}
+        const place = locationLabel(VIEWER_TZ);
         return (
-          '<div class="row"><span class="lbl">Your time</span><span class="kickoff-time"><span class="big">' +
+          '<div class="row"><span class="lbl">In your time</span><span class="kickoff-time"><span class="big">' +
           txt +
-          "</span> (" +
+          '</span> <span class="here">in ' +
+          place +
+          " (" +
           tz +
-          ")</span></div>"
+          ")</span></span></div>"
         );
       }
 
@@ -1757,7 +1776,7 @@
           "</div>" +
           '<div class="timeline">' +
           viewerTimeHTML(m) +
-          '<div class="row"><span class="lbl">Venue</span><span class="local-time">' +
+          '<div class="row"><span class="lbl">At stadium</span><span class="local-time">' +
           fmtFull(localDate(m)) +
           " local (UTC" +
           utc +
