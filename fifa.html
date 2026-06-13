@@ -376,6 +376,13 @@
         display: block;
         min-height: 90px;
       }
+      .ad-infeed {
+        margin: 18px 0;
+        padding: 10px;
+        background: #fff;
+        border: 1px solid #ece7df;
+        border-radius: 14px;
+      }
       footer {
         margin-top: 48px;
         font-size: 14px;
@@ -425,31 +432,12 @@
         </button>
       </div>
 
-      <!--
-        Second non-intrusive display ad ("fifa-2"), shown once above the
-        match list. data-ad-client is the shared publisher ID; data-ad-slot
-        is this unit's own slot ID.
-      -->
-      <div class="ad-slot">
-        <div class="ad-label">Advertisement</div>
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-8383761535214883"
-             data-ad-slot="4889971380"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-      </div>
-
       <main id="list"></main>
       <div class="empty" id="empty" hidden>No matches found.</div>
 
       <!--
-        Single non-intrusive display ad, shown once below the match list.
-        Replace data-ad-client and data-ad-slot with the values from your
-        AdSense ad unit (see steps in the PR description / commit message).
+        Display ad shown once below the match list. In-feed ads (woven
+        between fixtures) are injected by render() in the script below.
       -->
       <div class="ad-slot">
         <div class="ad-label">Advertisement</div>
@@ -2036,6 +2024,50 @@
         render();
       });
 
+      // ---- In-feed ads: a few display units woven between fixtures ----
+      // Each ad node is created ONCE and merely repositioned on later
+      // renders — never recreated or re-requested. That matters because the
+      // list re-renders on every keystroke, tab switch and once a minute;
+      // reloading ads that often would be invalid traffic under AdSense
+      // policy. Capped well below "one per fixture" for the same reason.
+      const IN_FEED_SLOTS = ["4889971380", "2180006001", "6666087482"];
+      const IN_FEED_CAP = IN_FEED_SLOTS.length; // max in-feed ads on the page
+      const IN_FEED_MIN_GAP = 6; // never denser than every 6 fixtures
+      const inFeedAdNodes = [];
+      function inFeedAd(i) {
+        if (inFeedAdNodes[i]) return inFeedAdNodes[i];
+        const wrap = document.createElement("div");
+        wrap.className = "ad-slot ad-infeed";
+        const label = document.createElement("div");
+        label.className = "ad-label";
+        label.textContent = "Advertisement";
+        const ins = document.createElement("ins");
+        ins.className = "adsbygoogle";
+        ins.style.display = "block";
+        ins.setAttribute("data-ad-client", "ca-pub-8383761535214883");
+        ins.setAttribute("data-ad-slot", IN_FEED_SLOTS[i]);
+        ins.setAttribute("data-ad-format", "auto");
+        ins.setAttribute("data-full-width-responsive", "true");
+        wrap.appendChild(label);
+        wrap.appendChild(ins);
+        wrap._pushed = false;
+        inFeedAdNodes[i] = wrap;
+        return wrap;
+      }
+      // Request an ad for any in-feed unit that's now in the DOM and hasn't
+      // been requested yet — exactly once per unit.
+      function loadPlacedInFeedAds() {
+        for (const wrap of inFeedAdNodes) {
+          if (wrap && !wrap._pushed && document.body.contains(wrap)) {
+            try {
+              window.adsbygoogle = window.adsbygoogle || [];
+              window.adsbygoogle.push({});
+              wrap._pushed = true;
+            } catch (e) {}
+          }
+        }
+      }
+
       function render() {
         const q = searchEl.value.trim().toLowerCase();
         const today = dohaToday();
@@ -2054,6 +2086,23 @@
         countActive.textContent = "(" + active.length + ")";
         countDone.textContent = "(" + done.length + ")";
 
+        // Spread up to IN_FEED_CAP ads across the cards in the current tab,
+        // evenly but never closer than IN_FEED_MIN_GAP fixtures apart.
+        const totalCards = currentTab === "active" ? active.length : done.length;
+        const adGap = Math.max(
+          IN_FEED_MIN_GAP,
+          Math.floor(totalCards / (IN_FEED_CAP + 1)),
+        );
+        let cardIdx = 0;
+        let adsPlaced = 0;
+        function maybeAd() {
+          if (adsPlaced >= IN_FEED_CAP) return;
+          if (cardIdx >= totalCards) return; // not after the very last card
+          if (cardIdx % adGap !== 0) return;
+          list.appendChild(inFeedAd(adsPlaced));
+          adsPlaced++;
+        }
+
         let lastDay = null;
         if (currentTab === "active") {
           // Today + upcoming + live, chronological, grouped by Doha day
@@ -2069,6 +2118,8 @@
             }
             list.appendChild(buildCard(m, st));
             shown++;
+            cardIdx++;
+            maybeAd();
           }
         } else {
           // Completed matches, most recent first
@@ -2091,9 +2142,14 @@
               }
               list.appendChild(buildCard(m, st));
               shown++;
+              cardIdx++;
+              maybeAd();
             }
           }
         }
+
+        // Request ads for any in-feed units placed this render (once each).
+        loadPlacedInFeedAds();
 
         empty.hidden = shown > 0;
         empty.textContent =
