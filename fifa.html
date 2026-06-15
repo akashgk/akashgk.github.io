@@ -1939,7 +1939,7 @@
         }
         try {
           const res = await fetch(
-            "https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=" +
+            "https://www.thesportsdb.com/api/v1/json/123/searchplayers.php?p=" +
               encodeURIComponent(q),
           );
           if (!res.ok) throw new Error("HTTP " + res.status);
@@ -2186,7 +2186,7 @@
         }
         try {
           const response = await fetch(
-            "https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=" +
+            "https://www.thesportsdb.com/api/v1/json/123/eventsseason.php?id=" +
               WORLDCUP_LEAGUE_ID +
               "&s=" +
               WORLDCUP_SEASON,
