@@ -1543,16 +1543,87 @@
       function isKnockout(m) {
         return m.s.indexOf("Group ") !== 0;
       }
-      // Expected full-time: group ≈ 2h after kickoff; knockout ≈ 3h (extra time + penalties)
+      // Time-based fallback for full-time, used only when the live feed hasn't
+      // reported the real match state yet (feed unreachable, or status not posted).
+      // These are deliberately generous upper bounds on wall-clock duration:
+      // a 90-min game routinely runs ~2h10m once you add the 15-min halftime and
+      // modern stoppage time (England 0-0 Iran at the 2022 World Cup played 117
+      // minutes), and a knockout that goes to extra time + penalties can pass
+      // 3h15m. Under-estimating here is exactly what flips a still-playing match
+      // to "completed" too early — so we round up, not down.
       function endUTC(m) {
         return new Date(
-          kickoffUTC(m).getTime() + (isKnockout(m) ? 180 : 120) * 60 * 1000,
+          kickoffUTC(m).getTime() + (isKnockout(m) ? 240 : 150) * 60 * 1000,
         );
       }
+      // The live feed is authoritative when it has reported a fixture: a match
+      // is only "done" once the feed says it finished, and a match the feed
+      // reports in-play stays "live" no matter what the clock says — so we never
+      // mark a match completed while it is still being played. We fall back to
+      // the time window only for fixtures the feed hasn't told us about yet.
       function status(m, now) {
+        const fs = apiState(m);
+        if (fs) return fs;
         if (now >= endUTC(m)) return "done";
         if (now >= kickoffUTC(m)) return "live";
         return "upcoming";
+      }
+      // Map TheSportsDB's strStatus into our states. Anything we don't recognise
+      // (not started, postponed, cancelled, blank) returns null so the caller
+      // falls back to the time window rather than guessing.
+      function feedState(raw) {
+        const s = (raw == null ? "" : String(raw)).trim().toLowerCase();
+        if (!s || s === "ns" || s === "tbd" || s.indexOf("not started") !== -1)
+          return null;
+        if (
+          s.indexOf("postpon") !== -1 ||
+          s.indexOf("cancel") !== -1 ||
+          s.indexOf("abandon") !== -1 ||
+          s.indexOf("suspend") !== -1 ||
+          s.indexOf("await") !== -1
+        )
+          return null;
+        if (
+          s === "ft" ||
+          s === "aet" ||
+          s === "pen" ||
+          s === "ap" ||
+          s === "fin" ||
+          s === "full time" ||
+          s.indexOf("finished") !== -1 ||
+          s.indexOf("after ") === 0
+        )
+          return "done";
+        if (
+          /^\d+\+?'?$/.test(s) || // a live clock like "57", "90+"
+          s === "1h" ||
+          s === "2h" ||
+          s === "ht" ||
+          s === "et" ||
+          s === "bt" ||
+          s === "p" ||
+          s === "live" ||
+          s === "playing" ||
+          s === "in play" ||
+          s.indexOf("half") !== -1 ||
+          s.indexOf("extra") !== -1 ||
+          s.indexOf("penalt") !== -1 ||
+          s.indexOf("break") !== -1
+        )
+          return "live";
+        return null;
+      }
+      // Authoritative state for a fixture from the live feed, or null if the feed
+      // hasn't reported it. Group games match on team names; knockout games
+      // (still showing bracket placeholders) match on their unique kickoff instant.
+      function apiState(m) {
+        if (!STATE) return null;
+        return (
+          STATE[scoreKey(m.a, m.b)] ||
+          STATE[scoreKey(m.b, m.a)] ||
+          STATE_TS[kickoffUTC(m).getTime()] ||
+          null
+        );
       }
 
       function dohaToday() {
@@ -1610,6 +1681,11 @@
 
       // Score state — must be declared before the first render() call
       let SCORES = null; // null = loading, "error" = failed, object = keyed results
+      // Authoritative match state from the live feed (TheSportsDB strStatus):
+      // "live" | "done" per fixture. STATE is keyed by team names (group games),
+      // STATE_TS by kickoff-UTC ms (knockouts still showing bracket placeholders).
+      let STATE = null;
+      let STATE_TS = {};
       let fetchInFlight = false;
 
       // Normalize a team name so our schedule's names line up with whatever
@@ -2130,7 +2206,7 @@
             sh.innerHTML =
               "Results" +
               '<button class="refreshbtn" onclick="fetchScores(true)">↻ Refresh scores</button>' +
-              "<small>Scores are fetched live from TheSportsDB each time this page opens. A match appears here only after its expected full-time — group ~2h after kickoff, knockouts ~3h.</small>";
+              "<small>Scores are fetched live from TheSportsDB each time this page opens. A match moves here once the live feed confirms full-time (with a generous time-based fallback if the feed is delayed), so a game that’s still being played won’t show up as completed.</small>";
             list.appendChild(sh);
             for (let i = done.length - 1; i >= 0; i--) {
               const { m, st } = done[i];
@@ -2176,9 +2252,10 @@
       async function fetchScores(force) {
         if (fetchInFlight) return;
         const now = new Date();
-        // Nothing to fetch until the first match has finished — after that the
-        // same feed serves scores AND knockout pairings as teams qualify.
-        if (!M.some((m) => status(m, now) === "done")) return;
+        // Start polling once the first match has kicked off — from then on the
+        // same feed serves live status, final scores AND knockout pairings, so
+        // we can flip a card to "completed" the moment the feed confirms it.
+        if (!M.some((m) => now >= kickoffUTC(m))) return;
         fetchInFlight = true;
         if (force) {
           SCORES = null;
@@ -2196,10 +2273,17 @@
           const events = (data && data.events) || [];
           const map = {};
           const ko = {};
+          const state = {};
+          const stateTs = {};
           for (const ev of events) {
+            const fs = feedState(ev.strStatus);
             const hasScore =
               ev.intHomeScore != null && ev.intAwayScore != null;
-            if (hasScore) {
+            // Only treat a score as final when the feed isn't telling us the
+            // match is still in play — never surface a live score as the result.
+            const finalScore = hasScore && fs !== "live";
+            if (fs) state[scoreKey(ev.strHomeTeam, ev.strAwayTeam)] = fs;
+            if (finalScore) {
               map[scoreKey(ev.strHomeTeam, ev.strAwayTeam)] = {
                 a: ev.strHomeTeam,
                 b: ev.strAwayTeam,
@@ -2218,16 +2302,19 @@
               !PLACEHOLDER_RE.test(ev.strHomeTeam) &&
               !PLACEHOLDER_RE.test(ev.strAwayTeam)
             ) {
+              if (fs) stateTs[ts] = fs;
               ko[ts] = {
                 a: displayName(ev.strHomeTeam),
                 b: displayName(ev.strAwayTeam),
-                sa: hasScore ? parseInt(ev.intHomeScore, 10) : null,
-                sb: hasScore ? parseInt(ev.intAwayScore, 10) : null,
+                sa: finalScore ? parseInt(ev.intHomeScore, 10) : null,
+                sb: finalScore ? parseInt(ev.intAwayScore, 10) : null,
               };
             }
           }
           SCORES = map;
           KO = ko;
+          STATE = state;
+          STATE_TS = stateTs;
         } catch (e) {
           console.error("Score fetch failed:", e);
           SCORES = "error";
