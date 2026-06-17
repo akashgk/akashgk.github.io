@@ -1644,9 +1644,11 @@
 
       // Score state — must be declared before the first render() call
       let SCORES = null; // null = loading, "error" = failed, object = keyed results
-      // Authoritative match state from the live feed (TheSportsDB strStatus):
-      // "live" | "done" per fixture. STATE is keyed by team names (group games),
-      // STATE_TS by kickoff-UTC ms (knockouts still showing bracket placeholders).
+      let SCORES_TS = {}; // final scores keyed by kickoff-UTC ms (timestamp match)
+      // Authoritative match state from the live feed: "live" | "done" per fixture.
+      // STATE is keyed by team names, STATE_TS by kickoff-UTC ms — we match a
+      // fixture on either, so a result still resolves when the feed's spelling of
+      // a team differs from ours, as long as the kickoff instant lines up.
       let STATE = null;
       let STATE_TS = {};
       let fetchInFlight = false;
@@ -1690,7 +1692,12 @@
       }
       function scoreFor(m) {
         if (!SCORES || SCORES === "error") return null;
-        return SCORES[scoreKey(m.a, m.b)] || SCORES[scoreKey(m.b, m.a)] || null;
+        return (
+          SCORES[scoreKey(m.a, m.b)] ||
+          SCORES[scoreKey(m.b, m.a)] ||
+          SCORES_TS[kickoffUTC(m).getTime()] ||
+          null
+        );
       }
 
       // Knockout fixtures resolved from the API, keyed by kickoff UTC timestamp.
@@ -2146,82 +2153,165 @@
       // Re-check every minute so live matches flip to completed automatically
       setInterval(render, 60 * 1000);
 
-      // ---- Live score fetching via TheSportsDB's free public API ----
-      // (SCORES state, normTeam() and scoreFor() are declared near the top, before first render)
+      // ---- Live scores & match status ----
+      // Primary feed: ESPN's public scoreboard API — no key, CORS-enabled, and
+      // full World Cup coverage. A single ranged request returns every fixture
+      // of the tournament, so we never hit the rate-limit/coverage gaps that
+      // left most matches blank on TheSportsDB's shared free key. Each event is
+      // matched to our schedule by BOTH kickoff instant and team names, so a
+      // result resolves even if one of those differs slightly. TheSportsDB is
+      // kept only as a fallback for the rare case ESPN is unreachable.
+      // (SCORES state, normTeam() and scoreFor() are declared near the top.)
+      const ESPN_URL =
+        "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?limit=300&dates=20260611-20260719";
+      const TSDB_URL =
+        "https://www.thesportsdb.com/api/v1/json/123/eventsseason.php?id=4429&s=2026";
 
-      const WORLDCUP_LEAGUE_ID = 4429; // FIFA World Cup, TheSportsDB
-      const WORLDCUP_SEASON = "2026";
+      // ESPN status state ("pre" | "in" | "post") → our feed states.
+      function espnState(ev) {
+        const t = (ev && ev.status && ev.status.type) || {};
+        if (t.state === "post" || t.completed === true) return "done";
+        if (t.state === "in") return "live";
+        return null; // "pre"/unknown → let the time window decide
+      }
+      function espnTeams(ev) {
+        const comp =
+          ev && ev.competitions && ev.competitions[0]
+            ? ev.competitions[0]
+            : ev;
+        const cs = (comp && comp.competitors) || [];
+        let home = null,
+          away = null;
+        for (const c of cs) {
+          if (c.homeAway === "home") home = c;
+          else if (c.homeAway === "away") away = c;
+        }
+        if ((!home || !away) && cs.length === 2) {
+          home = home || cs[0];
+          away = away || cs[1];
+        }
+        return { home: home, away: away };
+      }
+      function espnName(c) {
+        const t = (c && c.team) || {};
+        return t.displayName || t.name || t.shortDisplayName || "";
+      }
+      function espnScore(c) {
+        if (!c || c.score == null) return null;
+        const raw = typeof c.score === "object" ? c.score.value : c.score;
+        if (raw == null || raw === "") return null;
+        const n = parseInt(raw, 10);
+        return isNaN(n) ? null : n;
+      }
+
+      // Build our score/state maps from a normalized fixture list. Each fixture:
+      // { ts, home, away, sa, sb, fs } with fs = "live" | "done" | null. Every
+      // map is keyed both by team names and by kickoff-UTC ms for dual matching.
+      function applyFixtures(fixtures) {
+        const map = {},
+          mapTs = {},
+          ko = {},
+          state = {},
+          stateTs = {};
+        for (const f of fixtures) {
+          if (!f.home || !f.away) continue;
+          const finalScore = f.fs !== "live" && f.sa != null && f.sb != null;
+          if (f.fs) {
+            state[scoreKey(f.home, f.away)] = f.fs;
+            if (f.ts != null) stateTs[f.ts] = f.fs;
+          }
+          if (finalScore) {
+            const rec = { a: f.home, b: f.away, sa: f.sa, sb: f.sb };
+            map[scoreKey(f.home, f.away)] = rec;
+            if (f.ts != null) mapTs[f.ts] = rec;
+          }
+          // Knockout pairing resolution — only once both names are real teams.
+          if (
+            f.ts != null &&
+            !PLACEHOLDER_RE.test(f.home) &&
+            !PLACEHOLDER_RE.test(f.away)
+          ) {
+            ko[f.ts] = {
+              a: displayName(f.home),
+              b: displayName(f.away),
+              sa: finalScore ? f.sa : null,
+              sb: finalScore ? f.sb : null,
+            };
+          }
+        }
+        SCORES = map;
+        SCORES_TS = mapTs;
+        KO = ko;
+        STATE = state;
+        STATE_TS = stateTs;
+      }
+
+      async function fetchFromESPN() {
+        const res = await fetch(ESPN_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("ESPN HTTP " + res.status);
+        const data = await res.json();
+        const events = (data && data.events) || [];
+        if (!events.length) throw new Error("ESPN returned no events");
+        return events.map(function (ev) {
+          const t = espnTeams(ev);
+          const ts = ev.date ? Date.parse(ev.date) : NaN;
+          return {
+            ts: isNaN(ts) ? null : ts,
+            home: espnName(t.home),
+            away: espnName(t.away),
+            sa: espnScore(t.home),
+            sb: espnScore(t.away),
+            fs: espnState(ev),
+          };
+        });
+      }
+
+      async function fetchFromTSDB() {
+        const res = await fetch(TSDB_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("TSDB HTTP " + res.status);
+        const data = await res.json();
+        const events = (data && data.events) || [];
+        return events.map(function (ev) {
+          const sa =
+            ev.intHomeScore != null ? parseInt(ev.intHomeScore, 10) : null;
+          const sb =
+            ev.intAwayScore != null ? parseInt(ev.intAwayScore, 10) : null;
+          return {
+            ts: eventUTC(ev),
+            home: ev.strHomeTeam || "",
+            away: ev.strAwayTeam || "",
+            sa: sa == null || isNaN(sa) ? null : sa,
+            sb: sb == null || isNaN(sb) ? null : sb,
+            fs: feedState(ev.strStatus),
+          };
+        });
+      }
 
       async function fetchScores(force) {
         if (fetchInFlight) return;
         const now = new Date();
         // Start polling once the first match has kicked off — from then on the
-        // same feed serves live status, final scores AND knockout pairings, so
-        // we can flip a card to "completed" the moment the feed confirms it.
+        // feed serves live status, final scores AND knockout pairings, so we can
+        // flip a card to "completed" the moment the feed confirms it.
         if (!M.some((m) => now >= kickoffUTC(m))) return;
         fetchInFlight = true;
         if (force) {
           SCORES = null;
           render();
         }
+        let fixtures = null;
         try {
-          const response = await fetch(
-            "https://www.thesportsdb.com/api/v1/json/123/eventsseason.php?id=" +
-              WORLDCUP_LEAGUE_ID +
-              "&s=" +
-              WORLDCUP_SEASON,
-          );
-          if (!response.ok) throw new Error("HTTP " + response.status);
-          const data = await response.json();
-          const events = (data && data.events) || [];
-          const map = {};
-          const ko = {};
-          const state = {};
-          const stateTs = {};
-          for (const ev of events) {
-            const fs = feedState(ev.strStatus);
-            const hasScore =
-              ev.intHomeScore != null && ev.intAwayScore != null;
-            // Only treat a score as final when the feed isn't telling us the
-            // match is still in play — never surface a live score as the result.
-            const finalScore = hasScore && fs !== "live";
-            if (fs) state[scoreKey(ev.strHomeTeam, ev.strAwayTeam)] = fs;
-            if (finalScore) {
-              map[scoreKey(ev.strHomeTeam, ev.strAwayTeam)] = {
-                a: ev.strHomeTeam,
-                b: ev.strAwayTeam,
-                sa: parseInt(ev.intHomeScore, 10),
-                sb: parseInt(ev.intAwayScore, 10),
-              };
-            }
-            // Knockout resolution: once both team names are real (not bracket
-            // placeholders), key the fixture by its kickoff instant — every
-            // knockout kickoff in the schedule is unique.
-            const ts = eventUTC(ev);
-            if (
-              ts != null &&
-              ev.strHomeTeam &&
-              ev.strAwayTeam &&
-              !PLACEHOLDER_RE.test(ev.strHomeTeam) &&
-              !PLACEHOLDER_RE.test(ev.strAwayTeam)
-            ) {
-              if (fs) stateTs[ts] = fs;
-              ko[ts] = {
-                a: displayName(ev.strHomeTeam),
-                b: displayName(ev.strAwayTeam),
-                sa: finalScore ? parseInt(ev.intHomeScore, 10) : null,
-                sb: finalScore ? parseInt(ev.intAwayScore, 10) : null,
-              };
-            }
+          fixtures = await fetchFromESPN();
+        } catch (e1) {
+          console.warn("ESPN feed failed, falling back to TheSportsDB:", e1);
+          try {
+            fixtures = await fetchFromTSDB();
+          } catch (e2) {
+            console.error("All score feeds failed:", e2);
           }
-          SCORES = map;
-          KO = ko;
-          STATE = state;
-          STATE_TS = stateTs;
-        } catch (e) {
-          console.error("Score fetch failed:", e);
-          SCORES = "error";
         }
+        if (fixtures) applyFixtures(fixtures);
+        else SCORES = "error";
         fetchInFlight = false;
         render();
       }
