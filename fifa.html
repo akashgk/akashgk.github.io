@@ -2579,7 +2579,11 @@
           stateTs = {};
         for (const f of fixtures) {
           if (!f.home || !f.away) continue;
-          const finalScore = f.fs !== "live" && f.sa != null && f.sb != null;
+          // Require an explicit "done" from the feed — ESPN returns a non-null
+          // default score of "0" for fixtures that haven't kicked off yet
+          // (fs is null for those), so "not live" alone isn't enough to call
+          // a score final.
+          const finalScore = f.fs === "done" && f.sa != null && f.sb != null;
           if (f.fs) {
             state[scoreKey(f.home, f.away)] = f.fs;
             if (f.ts != null)
