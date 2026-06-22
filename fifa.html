@@ -184,6 +184,69 @@
         margin-top: 2px;
       }
 
+      .standings-note {
+        font-size: 13.5px;
+        color: #555;
+        margin: -6px 0 18px;
+        line-height: 1.5;
+      }
+      .standings-group {
+        margin-top: 22px;
+      }
+      .standings-group:first-child {
+        margin-top: 0;
+      }
+      .standings-head {
+        font-size: 16px;
+        font-weight: 800;
+        background: #ece8df;
+        color: #555;
+        border-radius: 8px 8px 0 0;
+        padding: 8px 12px;
+      }
+      .standings-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid #e2ddd2;
+        border-radius: 0 0 10px 10px;
+        border-top: none;
+      }
+      .standings-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+        white-space: nowrap;
+      }
+      .standings-table th,
+      .standings-table td {
+        padding: 7px 9px;
+        text-align: center;
+      }
+      .standings-table th {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #888;
+        border-bottom: 1.5px solid #e2ddd2;
+      }
+      .standings-table td.st-team,
+      .standings-table th.st-team {
+        text-align: left;
+      }
+      .standings-table tbody tr:not(:last-child) td {
+        border-bottom: 1px solid #f0ede5;
+      }
+      .standings-table tr.advancing td.st-team {
+        font-weight: 700;
+        border-left: 3px solid #1a7a3a;
+        padding-left: 6px;
+      }
+      .standings-table td.st-pts {
+        font-weight: 800;
+        color: #8a1538;
+      }
+
       .card {
         background: #fff;
         border: 1px solid #e2ddd2;
@@ -430,6 +493,15 @@
         >
           Completed <span class="count" id="count-done"></span>
         </button>
+        <button
+          class="tab"
+          id="tab-standings"
+          type="button"
+          role="tab"
+          aria-selected="false"
+        >
+          Standings
+        </button>
       </div>
 
       <main id="list"></main>
@@ -459,13 +531,15 @@
         each matchup is the official UTC kickoff, and "At stadium" is the
         local time at the venue. Stadium local times use June–July
         2026 offsets: US/Canada East UTC−4, Central UTC−5, Pacific UTC−7,
-        Mexico UTC−6 (no DST). A group match is treated as finished ~2 hours
-        after kickoff; knockout matches ~3 hours (allowing extra time and
-        penalties). Source: official FIFA post-draw schedule, December 2025.
-        Key players are expected stars per squad — final 26-man lists may
-        differ; verify before kickoff. Knockout pairings show bracket slots
-        until the qualified teams are confirmed — then real team names and
-        final scores fill in automatically from the live feed.
+        Mexico UTC−6 (no DST). A match is marked completed once the live feed
+        confirms full-time; if the feed hasn’t reported yet, it falls back to
+        an estimate of 2.5 hours after kickoff for group games and 4 hours
+        for knockouts (allowing for extra time and penalties). Source:
+        official FIFA post-draw schedule, December 2025. Key players are
+        expected stars per squad — final 26-man lists may differ; verify
+        before kickoff. Knockout pairings show bracket slots until the
+        qualified teams are confirmed — then real team names and final
+        scores fill in automatically from the live feed.
       </footer>
     </div>
 
@@ -1621,7 +1695,7 @@
         return (
           STATE[scoreKey(m.a, m.b)] ||
           STATE[scoreKey(m.b, m.a)] ||
-          STATE_TS[kickoffUTC(m).getTime()] ||
+          attributeState(m, STATE_TS[kickoffUTC(m).getTime()]) ||
           null
         );
       }
@@ -1675,17 +1749,21 @@
       const searchEl = document.getElementById("search");
       const tabActiveBtn = document.getElementById("tab-active");
       const tabDoneBtn = document.getElementById("tab-done");
+      const tabStandingsBtn = document.getElementById("tab-standings");
       const countActive = document.getElementById("count-active");
       const countDone = document.getElementById("count-done");
-      let currentTab = "active"; // "active" | "done"
+      let currentTab = "active"; // "active" | "done" | "standings"
 
-      // Score state — must be declared before the first render() call
-      let SCORES = null; // null = loading, "error" = failed, object = keyed results
+      // Score state — must be declared before the first render() call.
+      // null = never fetched yet, "error" = first fetch failed, object = keyed
+      // results. Once SCORES holds results, a later failed refresh leaves it
+      // untouched rather than reverting to null/"error" (see fetchScores()).
+      let SCORES = null;
       let SCORES_TS = {}; // final scores keyed by kickoff-UTC ms (timestamp match)
       // Authoritative match state from the live feed: "live" | "done" per fixture.
-      // STATE is keyed by team names, STATE_TS by kickoff-UTC ms — we match a
-      // fixture on either, so a result still resolves when the feed's spelling of
-      // a team differs from ours, as long as the kickoff instant lines up.
+      // STATE is keyed by team names; STATE_TS by kickoff-UTC ms holds
+      // { a, b, fs } so attributeState() can confirm the names line up before
+      // trusting a timestamp-only match (see attributeState's comment).
       let STATE = null;
       let STATE_TS = {};
       let fetchInFlight = false;
@@ -1735,6 +1813,34 @@
           SCORES_TS[kickoffUTC(m).getTime()] ||
           null
         );
+      }
+      // A raw score record's a/b may be in the feed's home/away order, which can
+      // differ from t.a/t.b — and when a record was only resolved via the
+      // kickoff-timestamp fallback (SCORES_TS), its names might not match either
+      // side's spelling at all. Only attribute the score to t.a/t.b when at least
+      // one side's name is confirmed by normTeam(); otherwise return null rather
+      // than guess, so a mismatch never silently corrupts a score or a standings
+      // table.
+      function attributeScore(t, s) {
+        if (!s || s.sa == null || s.sb == null) return null;
+        if (normTeam(s.a) === normTeam(t.a) || normTeam(s.b) === normTeam(t.b))
+          return { sa: s.sa, sb: s.sb };
+        if (normTeam(s.a) === normTeam(t.b) || normTeam(s.b) === normTeam(t.a))
+          return { sa: s.sb, sb: s.sa };
+        return null;
+      }
+      // Same guard as attributeScore, for the live/done state fallback: the
+      // World Cup schedule has several simultaneous-kickoff collisions (whole
+      // groups kick off at the same instant on the final group matchday), so a
+      // STATE_TS lookup can land on a *different* match that shares the same
+      // kickoff instant. Only trust it when the names actually correspond.
+      function attributeState(t, s) {
+        if (!s) return null;
+        if (normTeam(s.a) === normTeam(t.a) || normTeam(s.b) === normTeam(t.b))
+          return s.fs;
+        if (normTeam(s.a) === normTeam(t.b) || normTeam(s.b) === normTeam(t.a))
+          return s.fs;
+        return null;
       }
 
       // Knockout fixtures resolved from the API, keyed by kickoff UTC timestamp.
@@ -1812,15 +1918,18 @@
         const t = teamsFor(m);
         let scoreLine = "";
         if (st === "done") {
+          // Knockout: koInfo() already keys ko.a/ko.b to t.a/t.b, so its sa/sb
+          // need no re-attribution. Group stage: attributeScore() confirms which
+          // side of the raw feed record (which may be in feed home/away order)
+          // is t.a vs t.b before trusting it.
           const s = isKnockout(m)
             ? ko && ko.sa != null && ko.sb != null
               ? ko
               : null
-            : scoreFor(m);
+            : attributeScore(t, scoreFor(m));
           if (s && s.sa != null && s.sb != null) {
-            const swapped = normTeam(s.a) !== normTeam(t.a);
-            const ga = swapped ? s.sb : s.sa,
-              gb = swapped ? s.sa : s.sb;
+            const ga = s.sa,
+              gb = s.sb;
             const diff = Math.abs(ga - gb);
             const verdict =
               ga === gb
@@ -2047,12 +2156,15 @@
         currentTab = tab;
         tabActiveBtn.classList.toggle("active", tab === "active");
         tabDoneBtn.classList.toggle("active", tab === "done");
+        tabStandingsBtn.classList.toggle("active", tab === "standings");
         tabActiveBtn.setAttribute("aria-selected", tab === "active");
         tabDoneBtn.setAttribute("aria-selected", tab === "done");
+        tabStandingsBtn.setAttribute("aria-selected", tab === "standings");
         render();
       }
       tabActiveBtn.addEventListener("click", () => setTab("active"));
       tabDoneBtn.addEventListener("click", () => setTab("done"));
+      tabStandingsBtn.addEventListener("click", () => setTab("standings"));
 
       // Timezone picker — auto-detect by default, any IANA zone on demand
       const tzPick = document.getElementById("tzpick");
@@ -2107,6 +2219,146 @@
         } catch (e) {}
         render();
       });
+
+      // ---- Group standings ----
+      // Computed fresh on every render() from the same SCORES state the match
+      // cards use, so a result that resolves the live feed updates the table
+      // the instant fetchScores() re-renders — no separate fetch or cache.
+      const GROUP_LABELS = (function () {
+        const set = new Set();
+        for (const m of M) if (m.s.indexOf("Group ") === 0) set.add(m.s);
+        return Array.from(set).sort(); // "Group A".."Group L" sorts correctly
+      })();
+
+      function emptyStandingsRow(team) {
+        return { team, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 };
+      }
+
+      // Tiebreak: points, then goal difference, then goals scored — the only
+      // criteria that are pure arithmetic on the matches we know about. Ties
+      // beyond that fall back to alphabetical order, which is NOT an official
+      // tiebreaker — head-to-head and disciplinary points aren't computed here.
+      function sortStandings(rows) {
+        return rows.slice().sort((x, y) => {
+          if (y.pts !== x.pts) return y.pts - x.pts;
+          if (y.gd !== x.gd) return y.gd - x.gd;
+          if (y.gf !== x.gf) return y.gf - x.gf;
+          return x.team.localeCompare(y.team);
+        });
+      }
+
+      function computeStandings() {
+        const standings = {};
+        for (const g of GROUP_LABELS) {
+          const matches = M.filter((m) => m.s === g);
+          const recs = {};
+          for (const m of matches) {
+            if (!recs[m.a]) recs[m.a] = emptyStandingsRow(m.a);
+            if (!recs[m.b]) recs[m.b] = emptyStandingsRow(m.b);
+          }
+          for (const m of matches) {
+            const r = attributeScore(m, scoreFor(m)); // {sa, sb} for m.a, m.b
+            if (!r) continue; // not played yet, or feed name couldn't be confirmed
+            const ra = recs[m.a],
+              rb = recs[m.b];
+            ra.p++;
+            rb.p++;
+            ra.gf += r.sa;
+            ra.ga += r.sb;
+            rb.gf += r.sb;
+            rb.ga += r.sa;
+            if (r.sa > r.sb) {
+              ra.w++;
+              rb.l++;
+              ra.pts += 3;
+            } else if (r.sa < r.sb) {
+              rb.w++;
+              ra.l++;
+              rb.pts += 3;
+            } else {
+              ra.d++;
+              rb.d++;
+              ra.pts++;
+              rb.pts++;
+            }
+          }
+          const rows = Object.values(recs);
+          for (const r of rows) r.gd = r.gf - r.ga;
+          standings[g] = sortStandings(rows);
+        }
+        return standings;
+      }
+
+      function buildStandingsTable(groupLabel, rows) {
+        const wrap = document.createElement("div");
+        wrap.className = "standings-group";
+        const head = document.createElement("div");
+        head.className = "standings-head";
+        head.textContent = groupLabel;
+        wrap.appendChild(head);
+
+        const scroll = document.createElement("div");
+        scroll.className = "standings-scroll";
+        const table = document.createElement("table");
+        table.className = "standings-table";
+        table.innerHTML =
+          "<thead><tr>" +
+          '<th class="st-team">Team</th>' +
+          "<th>P</th><th>W</th><th>D</th><th>L</th>" +
+          "<th>GF</th><th>GA</th><th>GD</th><th>Pts</th>" +
+          "</tr></thead>";
+        const tbody = document.createElement("tbody");
+        rows.forEach((r, i) => {
+          const tr = document.createElement("tr");
+          if (i < 2) tr.className = "advancing";
+          tr.innerHTML =
+            '<td class="st-team">' +
+            r.team +
+            "</td><td>" +
+            r.p +
+            "</td><td>" +
+            r.w +
+            "</td><td>" +
+            r.d +
+            "</td><td>" +
+            r.l +
+            "</td><td>" +
+            r.gf +
+            "</td><td>" +
+            r.ga +
+            "</td><td>" +
+            (r.gd > 0 ? "+" + r.gd : r.gd) +
+            '</td><td class="st-pts">' +
+            r.pts +
+            "</td>";
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        scroll.appendChild(table);
+        wrap.appendChild(scroll);
+        return wrap;
+      }
+
+      function renderStandings(q) {
+        const note = document.createElement("div");
+        note.className = "sectionhead";
+        note.innerHTML =
+          "Group Standings" +
+          '<button class="refreshbtn" onclick="fetchScores()">↻ Refresh scores</button>' +
+          '<small class="standings-note">Updates live as results come in. Top 2 in each group (green edge) advance to the Round of 32, plus the 8 best third-placed teams across all 12 groups (not shown here). Ties beyond points → goal difference → goals scored are ordered alphabetically — head-to-head and disciplinary tiebreakers aren’t applied.</small>';
+        list.appendChild(note);
+
+        const standings = computeStandings();
+        let shownGroups = 0;
+        for (const g of GROUP_LABELS) {
+          const matches = M.filter((m) => m.s === g);
+          if (q && !matches.some((m) => matchesQuery(m, q))) continue;
+          list.appendChild(buildStandingsTable(g, standings[g]));
+          shownGroups++;
+        }
+        empty.hidden = shownGroups > 0;
+        empty.textContent = "No groups match your search.";
+      }
 
       // ---- In-feed ads: a few display units woven between fixtures ----
       // Each ad node is created ONCE and merely repositioned on later
@@ -2170,6 +2422,11 @@
         countActive.textContent = "(" + active.length + ")";
         countDone.textContent = "(" + done.length + ")";
 
+        if (currentTab === "standings") {
+          renderStandings(q);
+          return;
+        }
+
         // Spread up to IN_FEED_CAP ads across the cards in the current tab,
         // evenly but never closer than IN_FEED_MIN_GAP fixtures apart.
         const totalCards = currentTab === "active" ? active.length : done.length;
@@ -2212,8 +2469,8 @@
             sh.className = "sectionhead";
             sh.innerHTML =
               "Results" +
-              '<button class="refreshbtn" onclick="fetchScores(true)">↻ Refresh scores</button>' +
-              "<small>Scores are fetched live from TheSportsDB each time this page opens. A match moves here once the live feed confirms full-time (with a generous time-based fallback if the feed is delayed), so a game that’s still being played won’t show up as completed.</small>";
+              '<button class="refreshbtn" onclick="fetchScores()">↻ Refresh scores</button>' +
+              "<small>Scores are fetched live each time this page opens. A match moves here once the live feed confirms full-time (with a generous time-based fallback if the feed is delayed), so a game that’s still being played won’t show up as completed.</small>";
             list.appendChild(sh);
             for (let i = done.length - 1; i >= 0; i--) {
               const { m, st } = done[i];
@@ -2263,6 +2520,16 @@
         "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?limit=300&dates=20260611-20260719";
       const TSDB_URL =
         "https://www.thesportsdb.com/api/v1/json/123/eventsseason.php?id=4429&s=2026";
+
+      // Bound every feed request so a hung connection (no response, no error)
+      // can't wedge fetchInFlight forever and permanently disable refreshing.
+      function fetchWithTimeout(url, ms) {
+        const ctrl = new AbortController();
+        const id = setTimeout(() => ctrl.abort(), ms);
+        return fetch(url, { cache: "no-store", signal: ctrl.signal }).finally(
+          () => clearTimeout(id),
+        );
+      }
 
       // ESPN status state ("pre" | "in" | "post") → our feed states.
       function espnState(ev) {
@@ -2315,7 +2582,8 @@
           const finalScore = f.fs !== "live" && f.sa != null && f.sb != null;
           if (f.fs) {
             state[scoreKey(f.home, f.away)] = f.fs;
-            if (f.ts != null) stateTs[f.ts] = f.fs;
+            if (f.ts != null)
+              stateTs[f.ts] = { a: f.home, b: f.away, fs: f.fs };
           }
           if (finalScore) {
             const rec = { a: f.home, b: f.away, sa: f.sa, sb: f.sb };
@@ -2344,7 +2612,7 @@
       }
 
       async function fetchFromESPN() {
-        const res = await fetch(ESPN_URL, { cache: "no-store" });
+        const res = await fetchWithTimeout(ESPN_URL, 12000);
         if (!res.ok) throw new Error("ESPN HTTP " + res.status);
         const data = await res.json();
         const events = (data && data.events) || [];
@@ -2364,7 +2632,7 @@
       }
 
       async function fetchFromTSDB() {
-        const res = await fetch(TSDB_URL, { cache: "no-store" });
+        const res = await fetchWithTimeout(TSDB_URL, 12000);
         if (!res.ok) throw new Error("TSDB HTTP " + res.status);
         const data = await res.json();
         const events = (data && data.events) || [];
@@ -2384,7 +2652,7 @@
         });
       }
 
-      async function fetchScores(force) {
+      async function fetchScores() {
         if (fetchInFlight) return;
         const now = new Date();
         // Start polling once the first match has kicked off — from then on the
@@ -2392,24 +2660,31 @@
         // flip a card to "completed" the moment the feed confirms it.
         if (!M.some((m) => now >= kickoffUTC(m))) return;
         fetchInFlight = true;
-        if (force) {
-          SCORES = null;
-          render();
-        }
-        let fixtures = null;
+        // The finally guarantees fetchInFlight always resets, even if a feed
+        // returns unexpected data that throws while parsing — otherwise every
+        // future refresh (button and 15-min interval alike) would be silently
+        // blocked forever by the in-flight guard above.
         try {
-          fixtures = await fetchFromESPN();
-        } catch (e1) {
-          console.warn("ESPN feed failed, falling back to TheSportsDB:", e1);
+          let fixtures = null;
           try {
-            fixtures = await fetchFromTSDB();
-          } catch (e2) {
-            console.error("All score feeds failed:", e2);
+            fixtures = await fetchFromESPN();
+          } catch (e1) {
+            console.warn("ESPN feed failed, falling back to TheSportsDB:", e1);
+            try {
+              fixtures = await fetchFromTSDB();
+            } catch (e2) {
+              console.error("All score feeds failed:", e2);
+            }
           }
+          if (fixtures) applyFixtures(fixtures);
+          // A failed refresh never discards data already fetched successfully —
+          // only the first attempt (SCORES still null) records "error", so a
+          // transient failure on a later periodic refresh can't blank out
+          // scores or standings that were already confirmed.
+          else if (!SCORES) SCORES = "error";
+        } finally {
+          fetchInFlight = false;
         }
-        if (fixtures) applyFixtures(fixtures);
-        else SCORES = "error";
-        fetchInFlight = false;
         render();
       }
 
@@ -2418,7 +2693,7 @@
       // Re-fetch every 15 minutes so newly finished matches pick up scores
       setInterval(
         () => {
-          fetchScores(true);
+          fetchScores();
         },
         15 * 60 * 1000,
       );
