@@ -1658,7 +1658,7 @@
         return (
           STATE[scoreKey(m.a, m.b)] ||
           STATE[scoreKey(m.b, m.a)] ||
-          STATE_TS[kickoffUTC(m).getTime()] ||
+          attributeState(m, STATE_TS[kickoffUTC(m).getTime()]) ||
           null
         );
       }
@@ -1717,13 +1717,16 @@
       const countDone = document.getElementById("count-done");
       let currentTab = "active"; // "active" | "done" | "standings"
 
-      // Score state — must be declared before the first render() call
-      let SCORES = null; // null = loading, "error" = failed, object = keyed results
+      // Score state — must be declared before the first render() call.
+      // null = never fetched yet, "error" = first fetch failed, object = keyed
+      // results. Once SCORES holds results, a later failed refresh leaves it
+      // untouched rather than reverting to null/"error" (see fetchScores()).
+      let SCORES = null;
       let SCORES_TS = {}; // final scores keyed by kickoff-UTC ms (timestamp match)
       // Authoritative match state from the live feed: "live" | "done" per fixture.
-      // STATE is keyed by team names, STATE_TS by kickoff-UTC ms — we match a
-      // fixture on either, so a result still resolves when the feed's spelling of
-      // a team differs from ours, as long as the kickoff instant lines up.
+      // STATE is keyed by team names; STATE_TS by kickoff-UTC ms holds
+      // { a, b, fs } so attributeState() can confirm the names line up before
+      // trusting a timestamp-only match (see attributeState's comment).
       let STATE = null;
       let STATE_TS = {};
       let fetchInFlight = false;
@@ -1787,6 +1790,19 @@
           return { sa: s.sa, sb: s.sb };
         if (normTeam(s.a) === normTeam(t.b) || normTeam(s.b) === normTeam(t.a))
           return { sa: s.sb, sb: s.sa };
+        return null;
+      }
+      // Same guard as attributeScore, for the live/done state fallback: the
+      // World Cup schedule has several simultaneous-kickoff collisions (whole
+      // groups kick off at the same instant on the final group matchday), so a
+      // STATE_TS lookup can land on a *different* match that shares the same
+      // kickoff instant. Only trust it when the names actually correspond.
+      function attributeState(t, s) {
+        if (!s) return null;
+        if (normTeam(s.a) === normTeam(t.a) || normTeam(s.b) === normTeam(t.b))
+          return s.fs;
+        if (normTeam(s.a) === normTeam(t.b) || normTeam(s.b) === normTeam(t.a))
+          return s.fs;
         return null;
       }
 
@@ -2297,7 +2313,7 @@
         note.className = "sectionhead";
         note.innerHTML =
           "Group Standings" +
-          '<button class="refreshbtn" onclick="fetchScores(true)">↻ Refresh scores</button>' +
+          '<button class="refreshbtn" onclick="fetchScores()">↻ Refresh scores</button>' +
           '<small class="standings-note">Updates live as results come in. Top 2 in each group (green edge) advance to the Round of 32, plus the 8 best third-placed teams across all 12 groups (not shown here). Ties beyond points → goal difference → goals scored are ordered alphabetically — head-to-head and disciplinary tiebreakers aren’t applied.</small>';
         list.appendChild(note);
 
@@ -2361,7 +2377,7 @@
             sh.className = "sectionhead";
             sh.innerHTML =
               "Results" +
-              '<button class="refreshbtn" onclick="fetchScores(true)">↻ Refresh scores</button>' +
+              '<button class="refreshbtn" onclick="fetchScores()">↻ Refresh scores</button>' +
               "<small>Scores are fetched live each time this page opens. A match moves here once the live feed confirms full-time (with a generous time-based fallback if the feed is delayed), so a game that’s still being played won’t show up as completed.</small>";
             list.appendChild(sh);
             for (let i = done.length - 1; i >= 0; i--) {
@@ -2407,6 +2423,16 @@
         "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?limit=300&dates=20260611-20260719";
       const TSDB_URL =
         "https://www.thesportsdb.com/api/v1/json/123/eventsseason.php?id=4429&s=2026";
+
+      // Bound every feed request so a hung connection (no response, no error)
+      // can't wedge fetchInFlight forever and permanently disable refreshing.
+      function fetchWithTimeout(url, ms) {
+        const ctrl = new AbortController();
+        const id = setTimeout(() => ctrl.abort(), ms);
+        return fetch(url, { cache: "no-store", signal: ctrl.signal }).finally(
+          () => clearTimeout(id),
+        );
+      }
 
       // ESPN status state ("pre" | "in" | "post") → our feed states.
       function espnState(ev) {
@@ -2459,7 +2485,8 @@
           const finalScore = f.fs !== "live" && f.sa != null && f.sb != null;
           if (f.fs) {
             state[scoreKey(f.home, f.away)] = f.fs;
-            if (f.ts != null) stateTs[f.ts] = f.fs;
+            if (f.ts != null)
+              stateTs[f.ts] = { a: f.home, b: f.away, fs: f.fs };
           }
           if (finalScore) {
             const rec = { a: f.home, b: f.away, sa: f.sa, sb: f.sb };
@@ -2488,7 +2515,7 @@
       }
 
       async function fetchFromESPN() {
-        const res = await fetch(ESPN_URL, { cache: "no-store" });
+        const res = await fetchWithTimeout(ESPN_URL, 12000);
         if (!res.ok) throw new Error("ESPN HTTP " + res.status);
         const data = await res.json();
         const events = (data && data.events) || [];
@@ -2508,7 +2535,7 @@
       }
 
       async function fetchFromTSDB() {
-        const res = await fetch(TSDB_URL, { cache: "no-store" });
+        const res = await fetchWithTimeout(TSDB_URL, 12000);
         if (!res.ok) throw new Error("TSDB HTTP " + res.status);
         const data = await res.json();
         const events = (data && data.events) || [];
@@ -2528,7 +2555,7 @@
         });
       }
 
-      async function fetchScores(force) {
+      async function fetchScores() {
         if (fetchInFlight) return;
         const now = new Date();
         // Start polling once the first match has kicked off — from then on the
@@ -2536,24 +2563,31 @@
         // flip a card to "completed" the moment the feed confirms it.
         if (!M.some((m) => now >= kickoffUTC(m))) return;
         fetchInFlight = true;
-        if (force) {
-          SCORES = null;
-          render();
-        }
-        let fixtures = null;
+        // The finally guarantees fetchInFlight always resets, even if a feed
+        // returns unexpected data that throws while parsing — otherwise every
+        // future refresh (button and 15-min interval alike) would be silently
+        // blocked forever by the in-flight guard above.
         try {
-          fixtures = await fetchFromESPN();
-        } catch (e1) {
-          console.warn("ESPN feed failed, falling back to TheSportsDB:", e1);
+          let fixtures = null;
           try {
-            fixtures = await fetchFromTSDB();
-          } catch (e2) {
-            console.error("All score feeds failed:", e2);
+            fixtures = await fetchFromESPN();
+          } catch (e1) {
+            console.warn("ESPN feed failed, falling back to TheSportsDB:", e1);
+            try {
+              fixtures = await fetchFromTSDB();
+            } catch (e2) {
+              console.error("All score feeds failed:", e2);
+            }
           }
+          if (fixtures) applyFixtures(fixtures);
+          // A failed refresh never discards data already fetched successfully —
+          // only the first attempt (SCORES still null) records "error", so a
+          // transient failure on a later periodic refresh can't blank out
+          // scores or standings that were already confirmed.
+          else if (!SCORES) SCORES = "error";
+        } finally {
+          fetchInFlight = false;
         }
-        if (fixtures) applyFixtures(fixtures);
-        else SCORES = "error";
-        fetchInFlight = false;
         render();
       }
 
@@ -2562,7 +2596,7 @@
       // Re-fetch every 15 minutes so newly finished matches pick up scores
       setInterval(
         () => {
-          fetchScores(true);
+          fetchScores();
         },
         15 * 60 * 1000,
       );
