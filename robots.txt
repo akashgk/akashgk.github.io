@@ -4,6 +4,7 @@
 User-agent: *
 Allow: /
 Allow: /images/
+Allow: /fifa.html
 Allow: /AKASH_2025_FEB.pdf
 Disallow: /.git/
 

@@ -5,33 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="FIFA World Cup 2026 schedule with kickoff times in Doha, UK, India, and your own time zone. Live scores, knockout bracket updates, and match search — built with AI by Akash G Krishnan."
+      content="FIFA World Cup 2026 schedule with kickoff times shown automatically in your own time zone. Live scores, knockout bracket updates, and match search — built with AI by Akash G Krishnan."
     />
-    <title>FIFA World Cup 2026 — Schedule in Doha Time</title>
+    <title>FIFA World Cup 2026 — Schedule in Your Time Zone</title>
     <meta property="og:type" content="website" />
     <meta
       property="og:title"
-      content="FIFA World Cup 2026 — Schedule in Doha Time"
+      content="FIFA World Cup 2026 — Schedule in Your Time Zone"
     />
     <meta
       property="og:description"
-      content="The full FIFA World Cup 2026 schedule with live scores and kickoff times converted to Doha, UK, India, and your local time zone."
+      content="The full FIFA World Cup 2026 schedule with live scores and kickoff times converted automatically to your local time zone."
     />
     <meta property="og:url" content="https://akashgk.com/fifa.html" />
     <meta property="og:image" content="https://akashgk.com/images/og-banner.jpeg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="FIFA World Cup 2026 — Schedule in Doha Time"
+      content="FIFA World Cup 2026 — Schedule in Your Time Zone"
     />
     <meta
       name="twitter:description"
-      content="The full FIFA World Cup 2026 schedule with live scores and kickoff times converted to Doha, UK, India, and your local time zone."
+      content="The full FIFA World Cup 2026 schedule with live scores and kickoff times converted automatically to your local time zone."
     />
     <meta name="twitter:image" content="https://akashgk.com/images/og-banner.jpeg" />
     <meta
       name="keywords"
-      content="FIFA World Cup 2026, World Cup schedule Doha time, World Cup 2026 fixtures, World Cup live scores, World Cup kickoff times time zone, Akash G Krishnan"
+      content="FIFA World Cup 2026, World Cup schedule local time, World Cup 2026 fixtures, World Cup live scores, World Cup kickoff times time zone, Akash G Krishnan"
     />
     <meta name="author" content="Akash G Krishnan" />
     <link rel="canonical" href="https://akashgk.com/fifa.html" />
@@ -324,22 +324,34 @@
         color: #999;
         padding-top: 2px;
       }
-      .doha-time {
+      .kickoff-time {
         font-weight: 700;
         color: #1d1d1f;
       }
-      .doha-time .big {
-        color: #8a1538;
+      .kickoff-time .big {
+        color: #1a7a3a;
       }
-      .card.done .doha-time .big {
+      .kickoff-time .here {
+        font-weight: 600;
+        color: #1a7a3a;
+      }
+      .card.done .kickoff-time .big,
+      .card.done .kickoff-time .here {
         color: #555;
+      }
+      .official-time {
+        display: block;
+        font-size: 13px;
+        font-weight: 400;
+        letter-spacing: normal;
+        text-transform: none;
+        color: #999;
+        margin-top: 2px;
       }
       .local-time {
-        color: #555;
-      }
-      .viewer-time {
-        color: #1a7a3a;
-        font-weight: 700;
+        font-size: 13px;
+        font-weight: 400;
+        color: #999;
       }
       .venue {
         font-size: 14.5px;
@@ -412,7 +424,7 @@
         color: #888;
       }
       .ad-slot {
-        margin: 40px 0 8px;
+        margin: 20px 0;
         text-align: center;
       }
       .ad-slot .ad-label {
@@ -427,6 +439,13 @@
         display: block;
         min-height: 90px;
       }
+      .ad-infeed {
+        margin: 18px 0;
+        padding: 10px;
+        background: #fff;
+        border: 1px solid #ece7df;
+        border-radius: 14px;
+      }
       footer {
         margin-top: 48px;
         font-size: 14px;
@@ -439,8 +458,8 @@
     <div class="wrap">
       <h1>FIFA World Cup 2026 — all 104 matches</h1>
       <p class="note">
-        Every kickoff in <b>Doha</b> time, plus your own. Live scores and
-        full squad search.
+        Every kickoff shown in <b>your own time zone</b>, detected
+        automatically. Live scores and full squad search.
       </p>
 
       <input
@@ -489,9 +508,8 @@
       <div class="empty" id="empty" hidden>No matches found.</div>
 
       <!--
-        Single non-intrusive display ad, shown once below the match list.
-        Replace data-ad-client and data-ad-slot with the values from your
-        AdSense ad unit (see steps in the PR description / commit message).
+        Display ad shown once below the match list. In-feed ads (woven
+        between fixtures) are injected by render() in the script below.
       -->
       <div class="ad-slot">
         <div class="ad-label">Advertisement</div>
@@ -507,18 +525,21 @@
       </div>
 
       <footer>
-        Doha = Asia/Qatar, UTC+3, no daylight saving. UK = BST (UTC+1)
-        throughout the tournament. India = IST (UTC+5:30), Doha plus 2h30. Venue
-        local times use June–July 2026 offsets: US/Canada East UTC−4, Central
-        UTC−5, Pacific UTC−7, Mexico UTC−6 (no DST). A match is marked completed
-        once the live feed confirms full-time; if the feed hasn’t reported yet,
-        it falls back to an estimate of 2.5 hours after kickoff for group games
-        and 4 hours for knockouts (allowing for extra time and penalties).
-        Source: official FIFA post-draw schedule,
-        December 2025. Key players are expected stars per squad — final 26-man
-        lists may differ; verify before kickoff. Knockout pairings show bracket
-        slots until the qualified teams are confirmed — then real team names
-        and final scores fill in automatically from the live feed.
+        The green "In your time" row is when the match kicks off where you
+        are — detected from your device, with your location shown next to it.
+        Use the picker above to check any other zone. The small time next to
+        each matchup is the official UTC kickoff, and "At stadium" is the
+        local time at the venue. Stadium local times use June–July
+        2026 offsets: US/Canada East UTC−4, Central UTC−5, Pacific UTC−7,
+        Mexico UTC−6 (no DST). A match is marked completed once the live feed
+        confirms full-time; if the feed hasn’t reported yet, it falls back to
+        an estimate of 2.5 hours after kickoff for group games and 4 hours
+        for knockouts (allowing for extra time and penalties). Source:
+        official FIFA post-draw schedule, December 2025. Key players are
+        expected stars per squad — final 26-man lists may differ; verify
+        before kickoff. Knockout pairings show bracket slots until the
+        qualified teams are confirmed — then real team names and final
+        scores fill in automatically from the live feed.
       </footer>
     </div>
 
@@ -1499,18 +1520,11 @@
       function localDate(m) {
         return new Date(dohaDate(m).getTime() - (3 - OFF[m.v]) * 3600 * 1000);
       }
-      function ukDate(m) {
-        return new Date(dohaDate(m).getTime() - 2 * 3600 * 1000);
-      }
-      function indiaDate(m) {
-        return new Date(dohaDate(m).getTime() + 2.5 * 3600 * 1000);
-      }
 
-      // Viewer's "You" row. Auto mode uses the device timezone (hidden when
-      // that's Doha, UK or India — those rows are already shown). The picker
-      // lets anyone override it with any timezone — e.g. check France times
-      // from Doha — and the choice is remembered. Note: VPNs change your IP,
-      // not your device timezone, so auto-detect can't follow a VPN location.
+      // Viewer's local kickoff time — the primary time shown on every card.
+      // Auto-detected from the device, or overridden via the time zone
+      // picker (and remembered in localStorage). Falls back to UTC if
+      // detection isn't available.
       const DETECTED_TZ = (function () {
         try {
           return Intl.DateTimeFormat().resolvedOptions().timeZone || "";
@@ -1518,12 +1532,6 @@
           return "";
         }
       })();
-      const KNOWN_TZ = [
-        "Asia/Qatar",
-        "Europe/London",
-        "Asia/Kolkata",
-        "Asia/Calcutta",
-      ];
       let TZ_OVERRIDE = "";
       try {
         TZ_OVERRIDE = localStorage.getItem("wc26-tz") || "";
@@ -1532,14 +1540,16 @@
         TZ_OVERRIDE = "";
       }
       function viewerTZ() {
-        return TZ_OVERRIDE || DETECTED_TZ;
+        return TZ_OVERRIDE || DETECTED_TZ || "UTC";
       }
-      function showViewerRow() {
-        if (TZ_OVERRIDE) return true; // explicitly picked — always show
-        return !!DETECTED_TZ && KNOWN_TZ.indexOf(DETECTED_TZ) === -1;
+      // Friendly place name from an IANA zone, e.g.
+      // "America/New_York" -> "New York", "Asia/Kolkata" -> "Kolkata".
+      function locationLabel(tz) {
+        if (!tz || tz === "UTC") return "UTC";
+        const parts = tz.split("/");
+        return parts[parts.length - 1].replace(/_/g, " ");
       }
       function viewerTimeHTML(m) {
-        if (!showViewerRow()) return "";
         const VIEWER_TZ = viewerTZ();
         const ko = kickoffUTC(m); // true UTC instant of kickoff
         const txt = new Intl.DateTimeFormat("en-GB", {
@@ -1564,18 +1574,45 @@
             .find((x) => x.type === "timeZoneName");
           if (p) tz = p.value;
         } catch (e) {}
+        const place = locationLabel(VIEWER_TZ);
         return (
-          '<div class="row"><span class="lbl">You</span><span class="viewer-time">' +
+          '<div class="row"><span class="lbl">In your time</span><span class="kickoff-time"><span class="big">' +
           txt +
+          '</span> <span class="here">in ' +
+          place +
           " (" +
           tz +
-          ")</span></div>"
+          ")</span></span></div>"
         );
       }
 
       // True kickoff instant in real UTC: Doha wall time minus 3h
       function kickoffUTC(m) {
         return new Date(dohaDate(m).getTime() - 3 * 3600 * 1000);
+      }
+      // Compact UTC kickoff — a neutral "official time" shown next to every
+      // match title, independent of where the viewer is.
+      function officialTimeStr(m) {
+        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const mon = [
+          "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        ];
+        const ko = kickoffUTC(m);
+        const hh = String(ko.getUTCHours()).padStart(2, "0");
+        const mm = String(ko.getUTCMinutes()).padStart(2, "0");
+        return (
+          days[ko.getUTCDay()] +
+          " " +
+          ko.getUTCDate() +
+          " " +
+          mon[ko.getUTCMonth()] +
+          ", " +
+          hh +
+          ":" +
+          mm +
+          " UTC"
+        );
       }
       function isKnockout(m) {
         return m.s.indexOf("Group ") !== 0;
@@ -1928,27 +1965,21 @@
           t.a +
           '<span class="vs">vs</span>' +
           t.b +
+          '<span class="official-time">' +
+          officialTimeStr(m) +
+          "</span>" +
           "</div>" +
           scoreLine +
           '<div class="stage">' +
           stageLine +
           "</div>" +
           '<div class="timeline">' +
-          '<div class="row"><span class="lbl">Venue</span><span class="local-time">' +
+          viewerTimeHTML(m) +
+          '<div class="row"><span class="lbl">At stadium</span><span class="local-time">' +
           fmtFull(localDate(m)) +
           " local (UTC" +
           utc +
           ")</span></div>" +
-          '<div class="row"><span class="lbl">Doha</span><span class="doha-time"><span class="big">' +
-          fmtFull(dohaDate(m)) +
-          "</span> (UTC+3)</span></div>" +
-          '<div class="row"><span class="lbl">UK</span><span class="local-time">' +
-          fmtFull(ukDate(m)) +
-          " (BST, UTC+1)</span></div>" +
-          '<div class="row"><span class="lbl">India</span><span class="local-time">' +
-          fmtFull(indiaDate(m)) +
-          " (IST, UTC+5:30)</span></div>" +
-          viewerTimeHTML(m) +
           "</div>" +
           '<div class="venue">' +
           cityFull +
@@ -2329,6 +2360,50 @@
         empty.textContent = "No groups match your search.";
       }
 
+      // ---- In-feed ads: a few display units woven between fixtures ----
+      // Each ad node is created ONCE and merely repositioned on later
+      // renders — never recreated or re-requested. That matters because the
+      // list re-renders on every keystroke, tab switch and once a minute;
+      // reloading ads that often would be invalid traffic under AdSense
+      // policy. Capped well below "one per fixture" for the same reason.
+      const IN_FEED_SLOTS = ["4889971380", "2180006001", "6666087482"];
+      const IN_FEED_CAP = IN_FEED_SLOTS.length; // max in-feed ads on the page
+      const IN_FEED_MIN_GAP = 6; // never denser than every 6 fixtures
+      const inFeedAdNodes = [];
+      function inFeedAd(i) {
+        if (inFeedAdNodes[i]) return inFeedAdNodes[i];
+        const wrap = document.createElement("div");
+        wrap.className = "ad-slot ad-infeed";
+        const label = document.createElement("div");
+        label.className = "ad-label";
+        label.textContent = "Advertisement";
+        const ins = document.createElement("ins");
+        ins.className = "adsbygoogle";
+        ins.style.display = "block";
+        ins.setAttribute("data-ad-client", "ca-pub-8383761535214883");
+        ins.setAttribute("data-ad-slot", IN_FEED_SLOTS[i]);
+        ins.setAttribute("data-ad-format", "auto");
+        ins.setAttribute("data-full-width-responsive", "true");
+        wrap.appendChild(label);
+        wrap.appendChild(ins);
+        wrap._pushed = false;
+        inFeedAdNodes[i] = wrap;
+        return wrap;
+      }
+      // Request an ad for any in-feed unit that's now in the DOM and hasn't
+      // been requested yet — exactly once per unit.
+      function loadPlacedInFeedAds() {
+        for (const wrap of inFeedAdNodes) {
+          if (wrap && !wrap._pushed && document.body.contains(wrap)) {
+            try {
+              window.adsbygoogle = window.adsbygoogle || [];
+              window.adsbygoogle.push({});
+              wrap._pushed = true;
+            } catch (e) {}
+          }
+        }
+      }
+
       function render() {
         const q = searchEl.value.trim().toLowerCase();
         const today = dohaToday();
@@ -2352,6 +2427,23 @@
           return;
         }
 
+        // Spread up to IN_FEED_CAP ads across the cards in the current tab,
+        // evenly but never closer than IN_FEED_MIN_GAP fixtures apart.
+        const totalCards = currentTab === "active" ? active.length : done.length;
+        const adGap = Math.max(
+          IN_FEED_MIN_GAP,
+          Math.floor(totalCards / (IN_FEED_CAP + 1)),
+        );
+        let cardIdx = 0;
+        let adsPlaced = 0;
+        function maybeAd() {
+          if (adsPlaced >= IN_FEED_CAP) return;
+          if (cardIdx >= totalCards) return; // not after the very last card
+          if (cardIdx % adGap !== 0) return;
+          list.appendChild(inFeedAd(adsPlaced));
+          adsPlaced++;
+        }
+
         let lastDay = null;
         if (currentTab === "active") {
           // Today + upcoming + live, chronological, grouped by Doha day
@@ -2362,13 +2454,13 @@
               h.className = "dayhead" + (m.d === today ? " today" : "");
               h.innerHTML =
                 dayLabel(m.d) +
-                (m.d === today
-                  ? '<span class="todaytag">TODAY in Doha</span>'
-                  : "");
+                (m.d === today ? '<span class="todaytag">TODAY</span>' : "");
               list.appendChild(h);
             }
             list.appendChild(buildCard(m, st));
             shown++;
+            cardIdx++;
+            maybeAd();
           }
         } else {
           // Completed matches, most recent first
@@ -2391,9 +2483,14 @@
               }
               list.appendChild(buildCard(m, st));
               shown++;
+              cardIdx++;
+              maybeAd();
             }
           }
         }
+
+        // Request ads for any in-feed units placed this render (once each).
+        loadPlacedInFeedAds();
 
         empty.hidden = shown > 0;
         empty.textContent =
