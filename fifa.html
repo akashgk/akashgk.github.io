@@ -279,6 +279,20 @@
         background: #1a7a3a;
         color: #fff;
       }
+      @media (prefers-reduced-motion: no-preference) {
+        .livetag {
+          animation: livepulse 2s ease-in-out infinite;
+        }
+      }
+      @keyframes livepulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(26, 122, 58, 0.45);
+        }
+        50% {
+          box-shadow: 0 0 0 6px rgba(26, 122, 58, 0);
+        }
+      }
       .fttag {
         background: #9b958a;
         color: #fff;
@@ -374,6 +388,47 @@
       }
       .scorenote.muted {
         color: #999;
+      }
+      .score.live {
+        color: #1a7a3a;
+      }
+      .goals {
+        display: grid;
+        gap: 3px;
+        margin: -4px 0 12px;
+        font-size: 14px;
+        line-height: 1.45;
+        color: #3a3a3c;
+      }
+      .card.done .goals {
+        color: #6b6b6b;
+      }
+      .goals .grow {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 5px;
+      }
+      .goals .gball {
+        font-size: 12px;
+      }
+      .goals .gteam {
+        font-weight: 700;
+        color: #8a1538;
+      }
+      .card.done .goals .gteam {
+        color: #8a6b73;
+      }
+      .goals .gmin {
+        font-weight: 700;
+        color: #1a7a3a;
+        font-variant-numeric: tabular-nums;
+      }
+      .card.done .goals .gmin {
+        color: #777;
+      }
+      .venue .attend {
+        color: #aaa;
       }
       .refreshbtn {
         font: inherit;
@@ -1766,6 +1821,14 @@
       // trusting a timestamp-only match (see attributeState's comment).
       let STATE = null;
       let STATE_TS = {};
+      // Rich per-match detail from the live feed: live score, goal scorers (with
+      // minute), the status detail ("63'", "HT", "AET", "FT (Pens)") and the
+      // attendance. Keyed by team names (META) and by kickoff-UTC ms (META_TS),
+      // exactly like SCORES, so metaFor() can dual-match and confirm names line
+      // up before trusting a timestamp-only hit. Purely additive: if the feed
+      // omits any of it, the card just renders without that flourish.
+      let META = null;
+      let META_TS = {};
       let fetchInFlight = false;
 
       // Normalize a team name so our schedule's names line up with whatever
@@ -1843,6 +1906,66 @@
         return null;
       }
 
+      // Escape feed-supplied text (goal scorers, status detail) before it goes
+      // into innerHTML — these strings come from ESPN, not our own schedule.
+      function esc(s) {
+        return (s == null ? "" : String(s)).replace(/[&<>"']/g, function (c) {
+          return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          }[c];
+        });
+      }
+
+      // Rich match detail (live score, scorers, status detail, attendance),
+      // oriented to t.a/t.b. Same dual-match + name-correspondence guard as
+      // scoreFor()/attributeState(): a bare timestamp hit is only trusted when
+      // the names line up, so simultaneous kickoffs can't cross-attribute.
+      function metaFor(m) {
+        if (!META) return null;
+        const t = teamsFor(m);
+        let s = META[scoreKey(t.a, t.b)] || META[scoreKey(t.b, t.a)] || null;
+        if (!s) {
+          const cand = META_TS[kickoffUTC(m).getTime()];
+          if (
+            cand &&
+            (normTeam(cand.a) === normTeam(t.a) ||
+              normTeam(cand.b) === normTeam(t.b) ||
+              normTeam(cand.a) === normTeam(t.b) ||
+              normTeam(cand.b) === normTeam(t.a))
+          )
+            s = cand;
+        }
+        if (!s) return null;
+        // Orient the feed's home/away (s.a/s.b) onto our t.a/t.b.
+        const swapped =
+          normTeam(s.a) === normTeam(t.b) || normTeam(s.b) === normTeam(t.a);
+        return {
+          aScore: swapped ? s.sb : s.sa,
+          bScore: swapped ? s.sa : s.sb,
+          aGoals: (swapped ? s.scB : s.scA) || [],
+          bGoals: (swapped ? s.scA : s.scB) || [],
+          detail: s.detail || "",
+          attendance: s.attendance != null ? s.attendance : null,
+        };
+      }
+
+      // Render one team's goal scorers as "Name 23', Name 67'" (penalties and
+      // own goals flagged). Returns "" when there's nothing to show.
+      function goalsHTML(goals) {
+        if (!goals || !goals.length) return "";
+        return goals
+          .map(function (g) {
+            const min = g.clock ? ' <span class="gmin">' + esc(g.clock) + "</span>" : "";
+            const flag = g.og ? " (OG)" : g.pen ? " (P)" : "";
+            return esc(g.name) + esc(flag) + min;
+          })
+          .join(", ");
+      }
+
       // Knockout fixtures resolved from the API, keyed by kickoff UTC timestamp.
       // Until the qualified teams are confirmed, knockout cards keep showing
       // their bracket slots ("Group A runners-up", "Winner Match 73").
@@ -1908,14 +2031,26 @@
         const cityFull = CITYNAME[m.v] || m.v;
         const stageLine =
           m.s.indexOf("Group ") === 0 ? "Group Stage · " + m.s : m.s;
+        const t = teamsFor(m);
+        const mt = metaFor(m);
+        const liveSuffix =
+          st === "live" && mt && mt.detail ? " · " + esc(mt.detail) : "";
+        // "FT"/"Full Time" is already conveyed by the tag; only append a detail
+        // when it adds something (AET, penalties, etc.).
+        const doneSuffix =
+          st === "done" &&
+          mt &&
+          mt.detail &&
+          !/^(ft|full[\s-]?time)$/i.test(mt.detail.trim())
+            ? " · " + esc(mt.detail)
+            : "";
         const tag =
           st === "live"
-            ? '<span class="livetag">LIVE NOW</span>'
+            ? '<span class="livetag">LIVE NOW' + liveSuffix + "</span>"
             : st === "done"
-              ? '<span class="fttag">FULL TIME</span>'
+              ? '<span class="fttag">FULL TIME' + doneSuffix + "</span>"
               : "";
         const ko = isKnockout(m) ? koInfo(m) : null;
-        const t = teamsFor(m);
         let scoreLine = "";
         if (st === "done") {
           // Knockout: koInfo() already keys ko.a/ko.b to t.a/t.b, so its sa/sb
@@ -1959,6 +2094,38 @@
             scoreLine = '<div class="scorenote">Fetching final score…</div>';
           }
         }
+        // In-progress matches: show the running score (not counted in standings
+        // until the feed confirms full time).
+        if (st === "live" && mt && mt.aScore != null && mt.bScore != null) {
+          scoreLine =
+            '<div class="score live">' + mt.aScore + " – " + mt.bScore + "</div>";
+        }
+        // Goal scorers with the minute, per team — for live or finished games.
+        let goalsLine = "";
+        if (mt) {
+          let rows = "";
+          if (mt.aGoals.length)
+            rows +=
+              '<div class="grow"><span class="gball">⚽</span> <span class="gteam">' +
+              esc(t.a) +
+              "</span> " +
+              goalsHTML(mt.aGoals) +
+              "</div>";
+          if (mt.bGoals.length)
+            rows +=
+              '<div class="grow"><span class="gball">⚽</span> <span class="gteam">' +
+              esc(t.b) +
+              "</span> " +
+              goalsHTML(mt.bGoals) +
+              "</div>";
+          if (rows) goalsLine = '<div class="goals">' + rows + "</div>";
+        }
+        const attendLine =
+          mt && mt.attendance
+            ? ' <span class="attend">· ' +
+              mt.attendance.toLocaleString() +
+              " fans</span>"
+            : "";
         card.innerHTML =
           tag +
           '<div class="teams">' +
@@ -1970,6 +2137,7 @@
           "</span>" +
           "</div>" +
           scoreLine +
+          goalsLine +
           '<div class="stage">' +
           stageLine +
           "</div>" +
@@ -1983,6 +2151,7 @@
           "</div>" +
           '<div class="venue">' +
           cityFull +
+          attendLine +
           "</div>" +
           playersHTML(t.a, t.b);
         return card;
@@ -2567,6 +2736,42 @@
         const n = parseInt(raw, 10);
         return isNaN(n) ? null : n;
       }
+      // A short status string for the card: "63'" for a live match, "HT",
+      // "AET" or "FT (Pens)" for finished ones. Falls back to "" so the card
+      // shows its default LIVE/FULL TIME tag with nothing appended.
+      function espnDetail(ev) {
+        const ty = (ev && ev.status && ev.status.type) || {};
+        return ty.shortDetail || ty.detail || "";
+      }
+      // Pull goal scorers out of ESPN's play-by-play "details" array, split by
+      // which team scored (matched on competitor team id). scA = home team's
+      // goals, scB = away team's, each { name, clock, pen, og }. ESPN omits this
+      // for many fixtures, so an empty result is normal — the card just renders
+      // without scorers.
+      function espnGoals(comp, homeId, awayId) {
+        const scA = [],
+          scB = [];
+        const details = (comp && comp.details) || [];
+        const hid = homeId != null ? String(homeId) : null;
+        const aid = awayId != null ? String(awayId) : null;
+        for (const d of details) {
+          if (!d || d.scoringPlay !== true) continue;
+          const ath = (d.athletesInvolved && d.athletesInvolved[0]) || null;
+          const name = (ath && (ath.displayName || ath.shortName)) || "";
+          if (!name) continue;
+          const typeTxt = (d.type && d.type.text) || "";
+          const g = {
+            name: name,
+            clock: (d.clock && d.clock.displayValue) || "",
+            pen: d.penaltyKick === true || /penalt/i.test(typeTxt),
+            og: d.ownGoal === true || /own goal/i.test(typeTxt),
+          };
+          const tid = d.team && d.team.id != null ? String(d.team.id) : null;
+          if (hid != null && tid === hid) scA.push(g);
+          else if (aid != null && tid === aid) scB.push(g);
+        }
+        return { scA: scA, scB: scB };
+      }
 
       // Build our score/state maps from a normalized fixture list. Each fixture:
       // { ts, home, away, sa, sb, fs } with fs = "live" | "done" | null. Every
@@ -2576,9 +2781,27 @@
           mapTs = {},
           ko = {},
           state = {},
-          stateTs = {};
+          stateTs = {},
+          meta = {},
+          metaTs = {};
         for (const f of fixtures) {
           if (!f.home || !f.away) continue;
+          // Rich detail for any match the feed has started reporting on (live
+          // or done): live/running score, goal scorers, status detail and gate.
+          if (f.fs) {
+            const mrec = {
+              a: f.home,
+              b: f.away,
+              sa: f.sa,
+              sb: f.sb,
+              scA: f.scA || [],
+              scB: f.scB || [],
+              detail: f.detail || "",
+              attendance: f.attendance != null ? f.attendance : null,
+            };
+            meta[scoreKey(f.home, f.away)] = mrec;
+            if (f.ts != null) metaTs[f.ts] = mrec;
+          }
           // Require an explicit "done" from the feed — ESPN returns a non-null
           // default score of "0" for fixtures that haven't kicked off yet
           // (fs is null for those), so "not live" alone isn't enough to call
@@ -2613,6 +2836,8 @@
         KO = ko;
         STATE = state;
         STATE_TS = stateTs;
+        META = meta;
+        META_TS = metaTs;
       }
 
       async function fetchFromESPN() {
@@ -2622,8 +2847,29 @@
         const events = (data && data.events) || [];
         if (!events.length) throw new Error("ESPN returned no events");
         return events.map(function (ev) {
+          const comp =
+            (ev.competitions && ev.competitions[0]) || ev;
           const t = espnTeams(ev);
           const ts = ev.date ? Date.parse(ev.date) : NaN;
+          // Enrichment is best-effort: if ESPN's shape ever differs from what
+          // we expect here, swallow it and still return the core fields below
+          // so live scores and standings keep working.
+          let scA = [],
+            scB = [],
+            detail = "",
+            attendance = null;
+          try {
+            const homeId = t.home && t.home.team && t.home.team.id;
+            const awayId = t.away && t.away.team && t.away.team.id;
+            const goals = espnGoals(comp, homeId, awayId);
+            scA = goals.scA;
+            scB = goals.scB;
+            detail = espnDetail(ev);
+            const att = comp && comp.attendance;
+            attendance = typeof att === "number" && att > 0 ? att : null;
+          } catch (e) {
+            /* keep core fields; drop the flourishes */
+          }
           return {
             ts: isNaN(ts) ? null : ts,
             home: espnName(t.home),
@@ -2631,6 +2877,10 @@
             sa: espnScore(t.home),
             sb: espnScore(t.away),
             fs: espnState(ev),
+            scA: scA,
+            scB: scB,
+            detail: detail,
+            attendance: attendance,
           };
         });
       }
