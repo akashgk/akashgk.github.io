@@ -392,6 +392,11 @@
       .score.live {
         color: #1a7a3a;
       }
+      .score .penscore {
+        font-size: 15px;
+        font-weight: 800;
+        color: #8a1538;
+      }
       .goals {
         display: grid;
         gap: 3px;
@@ -1948,6 +1953,8 @@
           bScore: swapped ? s.sa : s.sb,
           aGoals: (swapped ? s.scB : s.scA) || [],
           bGoals: (swapped ? s.scA : s.scB) || [],
+          aShootout: swapped ? s.shB : s.shA,
+          bShootout: swapped ? s.shA : s.shB,
           detail: s.detail || "",
           attendance: s.attendance != null ? s.attendance : null,
         };
@@ -2066,21 +2073,46 @@
             const ga = s.sa,
               gb = s.sb;
             const diff = Math.abs(ga - gb);
-            const verdict =
-              ga === gb
-                ? isKnockout(m)
-                  ? "Draw — decided on penalties"
-                  : "Draw"
-                : (ga > gb ? t.a : t.b) +
-                  " won by " +
-                  diff +
-                  " goal" +
-                  (diff > 1 ? "s" : "");
+            // A level knockout went to penalties: name the winner and the
+            // shootout score when the feed gives them, instead of the vague
+            // "decided on penalties".
+            const hasPens =
+              isKnockout(m) &&
+              ga === gb &&
+              mt &&
+              mt.aShootout != null &&
+              mt.bShootout != null &&
+              mt.aShootout !== mt.bShootout;
+            let verdict;
+            if (hasPens) {
+              const winner = mt.aShootout > mt.bShootout ? t.a : t.b;
+              verdict = esc(winner) + " won on penalties";
+            } else if (ga === gb) {
+              verdict = isKnockout(m)
+                ? "Draw — decided on penalties"
+                : "Draw";
+            } else {
+              verdict =
+                (ga > gb ? t.a : t.b) +
+                " won by " +
+                diff +
+                " goal" +
+                (diff > 1 ? "s" : "");
+            }
+            const pensTag =
+              hasPens
+                ? ' <span class="penscore">(' +
+                  mt.aShootout +
+                  "–" +
+                  mt.bShootout +
+                  " pens)</span>"
+                : "";
             scoreLine =
               '<div class="score">' +
               ga +
               " – " +
               gb +
+              pensTag +
               ' <span class="scorenote">· ' +
               verdict +
               "</span></div>";
@@ -2743,34 +2775,73 @@
         const ty = (ev && ev.status && ev.status.type) || {};
         return ty.shortDetail || ty.detail || "";
       }
+      function espnNum(v) {
+        if (v == null) return null;
+        const n = parseInt(v, 10);
+        return isNaN(n) ? null : n;
+      }
       // Pull goal scorers out of ESPN's play-by-play "details" array, split by
       // which team scored (matched on competitor team id). scA = home team's
-      // goals, scB = away team's, each { name, clock, pen, og }. ESPN omits this
-      // for many fixtures, so an empty result is normal — the card just renders
-      // without scorers.
-      function espnGoals(comp, homeId, awayId) {
+      // goals, scB = away team's, each { name, clock, pen, og }. Penalty
+      // SHOOTOUT kicks are deliberately kept OUT of the scorer lists — they
+      // aren't match goals — and instead summarised as a shootout tally
+      // (shA/shB) so the card can say who actually advanced. ESPN omits all of
+      // this for many fixtures, so an empty result is normal.
+      function espnGoals(comp, home, away) {
         const scA = [],
           scB = [];
         const details = (comp && comp.details) || [];
-        const hid = homeId != null ? String(homeId) : null;
-        const aid = awayId != null ? String(awayId) : null;
+        const hid = home && home.team && home.team.id != null ? String(home.team.id) : null;
+        const aid = away && away.team && away.team.id != null ? String(away.team.id) : null;
+        // Authoritative shootout tally, when ESPN provides it on the competitor.
+        let shA = espnNum(home && home.shootoutScore);
+        let shB = espnNum(away && away.shootoutScore);
+        // A match went to penalties if either tally is present, or a detail is
+        // explicitly flagged as a shootout kick.
+        const hasShootout =
+          (shA != null && shB != null) ||
+          details.some(function (d) {
+            return (
+              d &&
+              (d.shootout === true ||
+                /shootout/i.test((d.type && d.type.text) || ""))
+            );
+          });
+        let cntA = 0,
+          cntB = 0; // fallback shootout count from scored kicks
         for (const d of details) {
           if (!d || d.scoringPlay !== true) continue;
           const ath = (d.athletesInvolved && d.athletesInvolved[0]) || null;
           const name = (ath && (ath.displayName || ath.shortName)) || "";
-          if (!name) continue;
           const typeTxt = (d.type && d.type.text) || "";
+          const tid = d.team && d.team.id != null ? String(d.team.id) : null;
+          const clk = ((d.clock && d.clock.displayValue) || "").trim();
+          const isPen = d.penaltyKick === true || /penalt/i.test(typeTxt);
+          // Shootout kick: explicitly flagged, or — when the match did go to a
+          // shootout — a penalty logged at the 120' end-of-ET clock.
+          const isShootoutKick =
+            d.shootout === true ||
+            /shootout/i.test(typeTxt) ||
+            (hasShootout && isPen && /^120'?(\+\d+'?)?$/.test(clk));
+          if (isShootoutKick) {
+            if (hid != null && tid === hid) cntA++;
+            else if (aid != null && tid === aid) cntB++;
+            continue; // never list a shootout kick as a match goal
+          }
+          if (!name) continue;
           const g = {
             name: name,
-            clock: (d.clock && d.clock.displayValue) || "",
-            pen: d.penaltyKick === true || /penalt/i.test(typeTxt),
+            clock: clk,
+            pen: isPen,
             og: d.ownGoal === true || /own goal/i.test(typeTxt),
           };
-          const tid = d.team && d.team.id != null ? String(d.team.id) : null;
           if (hid != null && tid === hid) scA.push(g);
           else if (aid != null && tid === aid) scB.push(g);
         }
-        return { scA: scA, scB: scB };
+        // Prefer ESPN's own tally; fall back to counting scored kicks.
+        if (shA == null && hasShootout) shA = cntA;
+        if (shB == null && hasShootout) shB = cntB;
+        return { scA: scA, scB: scB, shA: shA, shB: shB };
       }
 
       // Build our score/state maps from a normalized fixture list. Each fixture:
@@ -2796,6 +2867,8 @@
               sb: f.sb,
               scA: f.scA || [],
               scB: f.scB || [],
+              shA: f.shA != null ? f.shA : null,
+              shB: f.shB != null ? f.shB : null,
               detail: f.detail || "",
               attendance: f.attendance != null ? f.attendance : null,
             };
@@ -2856,14 +2929,16 @@
           // so live scores and standings keep working.
           let scA = [],
             scB = [],
+            shA = null,
+            shB = null,
             detail = "",
             attendance = null;
           try {
-            const homeId = t.home && t.home.team && t.home.team.id;
-            const awayId = t.away && t.away.team && t.away.team.id;
-            const goals = espnGoals(comp, homeId, awayId);
+            const goals = espnGoals(comp, t.home, t.away);
             scA = goals.scA;
             scB = goals.scB;
+            shA = goals.shA;
+            shB = goals.shB;
             detail = espnDetail(ev);
             const att = comp && comp.attendance;
             attendance = typeof att === "number" && att > 0 ? att : null;
@@ -2879,6 +2954,8 @@
             fs: espnState(ev),
             scA: scA,
             scB: scB,
+            shA: shA,
+            shB: shB,
             detail: detail,
             attendance: attendance,
           };
