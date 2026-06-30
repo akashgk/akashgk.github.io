@@ -242,9 +242,44 @@
         border-left: 3px solid #1a7a3a;
         padding-left: 6px;
       }
+      .standings-table tr.best3 td.st-team {
+        font-weight: 700;
+        border-left: 3px solid #b8860b;
+        padding-left: 6px;
+      }
+      .standings-table tr.eliminated td {
+        color: #b0aaa0;
+      }
+      .standings-table tr.cutline td {
+        border-top: 2px dashed #d8b24a;
+      }
       .standings-table td.st-pts {
         font-weight: 800;
         color: #8a1538;
+      }
+      .standings-table tr.eliminated td.st-pts {
+        color: #b0aaa0;
+      }
+      .qmark {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+      .qmark.adv {
+        color: #1a7a3a;
+      }
+      .qmark.b3 {
+        color: #b8860b;
+      }
+      .qmark.out {
+        color: #c0392b;
+      }
+      .standings-note .k-adv {
+        color: #1a7a3a;
+      }
+      .standings-note .k-b3 {
+        color: #b8860b;
       }
 
       .card {
@@ -2484,13 +2519,48 @@
             }
           }
           const rows = Object.values(recs);
-          for (const r of rows) r.gd = r.gf - r.ga;
+          for (const r of rows) {
+            r.gd = r.gf - r.ga;
+            r.group = g;
+          }
           standings[g] = sortStandings(rows);
         }
         return standings;
       }
 
-      function buildStandingsTable(groupLabel, rows) {
+      // The group stage is "complete" once every group fixture has a confirmed
+      // result. Until then we keep the live framing and don't try to rank the
+      // third-placed teams (the table would be meaningless mid-stage).
+      function groupStageComplete() {
+        const gm = M.filter((m) => m.s.indexOf("Group ") === 0);
+        return (
+          gm.length > 0 &&
+          gm.every((m) => attributeScore(m, scoreFor(m)) != null)
+        );
+      }
+
+      // Rank the twelve third-placed teams against each other — points, then
+      // goal difference, then goals scored (the official order; the remaining
+      // FIFA tiebreakers, fair-play and drawing of lots, aren't computed here).
+      // The top 8 advance to the Round of 32.
+      function rankThirds(standings) {
+        const thirds = [];
+        for (const g of GROUP_LABELS) {
+          const rows = standings[g];
+          if (rows && rows[2]) thirds.push(rows[2]);
+        }
+        thirds.sort((x, y) => {
+          if (y.pts !== x.pts) return y.pts - x.pts;
+          if (y.gd !== x.gd) return y.gd - x.gd;
+          if (y.gf !== x.gf) return y.gf - x.gf;
+          return x.team.localeCompare(y.team);
+        });
+        return thirds;
+      }
+
+      const BEST_THIRDS_QUALIFY = 8;
+
+      function buildStandingsTable(groupLabel, rows, qThirds, complete) {
         const wrap = document.createElement("div");
         wrap.className = "standings-group";
         const head = document.createElement("div");
@@ -2511,10 +2581,25 @@
         const tbody = document.createElement("tbody");
         rows.forEach((r, i) => {
           const tr = document.createElement("tr");
-          if (i < 2) tr.className = "advancing";
+          // Top two always go through. A third-placed team is marked only once
+          // the group stage is settled and it's among the 8 best thirds; the
+          // rest are flagged out (but only post-completion, so we never call a
+          // match "eliminated" while games are still being played).
+          const isBest3 = complete && i === 2 && qThirds && qThirds.has(r.team);
+          let chip = "";
+          if (i < 2) {
+            tr.className = "advancing";
+            chip = ' <span class="qmark adv" title="Through to the Round of 32">✓</span>';
+          } else if (isBest3) {
+            tr.className = "best3";
+            chip = ' <span class="qmark b3" title="Advanced as one of the 8 best third-placed teams">✓ 3rd</span>';
+          } else if (complete) {
+            tr.className = "eliminated";
+          }
           tr.innerHTML =
             '<td class="st-team">' +
             r.team +
+            chip +
             "</td><td>" +
             r.p +
             "</td><td>" +
@@ -2540,22 +2625,100 @@
         return wrap;
       }
 
+      // The ranked best-third table, shown once the group stage is done so the
+      // full qualification picture (the 8 thirds that also went through) is
+      // visible in one place — the piece that was previously "not shown here".
+      function buildBestThirdsTable(thirds) {
+        const wrap = document.createElement("div");
+        wrap.className = "standings-group bestthirds";
+        const head = document.createElement("div");
+        head.className = "standings-head";
+        head.textContent = "Best third-placed teams · top " +
+          BEST_THIRDS_QUALIFY + " advance";
+        wrap.appendChild(head);
+
+        const scroll = document.createElement("div");
+        scroll.className = "standings-scroll";
+        const table = document.createElement("table");
+        table.className = "standings-table";
+        table.innerHTML =
+          "<thead><tr>" +
+          "<th>#</th>" +
+          '<th class="st-team">Team</th>' +
+          "<th>Grp</th><th>P</th><th>GD</th><th>GF</th><th>Pts</th>" +
+          '<th class="st-q">Status</th>' +
+          "</tr></thead>";
+        const tbody = document.createElement("tbody");
+        thirds.forEach((r, i) => {
+          const through = i < BEST_THIRDS_QUALIFY;
+          const tr = document.createElement("tr");
+          tr.className = through ? "best3" : "eliminated";
+          // Visual cut line right after the qualification boundary.
+          if (i === BEST_THIRDS_QUALIFY) tr.classList.add("cutline");
+          tr.innerHTML =
+            "<td>" +
+            (i + 1) +
+            '</td><td class="st-team">' +
+            r.team +
+            "</td><td>" +
+            r.group.replace("Group ", "") +
+            "</td><td>" +
+            r.p +
+            "</td><td>" +
+            (r.gd > 0 ? "+" + r.gd : r.gd) +
+            "</td><td>" +
+            r.gf +
+            '</td><td class="st-pts">' +
+            r.pts +
+            '</td><td class="st-q">' +
+            (through
+              ? '<span class="qmark b3">✓ in</span>'
+              : '<span class="qmark out">✗ out</span>') +
+            "</td>";
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        scroll.appendChild(table);
+        wrap.appendChild(scroll);
+        return wrap;
+      }
+
       function renderStandings(q) {
+        const standings = computeStandings();
+        const complete = groupStageComplete();
+        const thirds = complete ? rankThirds(standings) : [];
+        const qThirds = new Set(
+          thirds.slice(0, BEST_THIRDS_QUALIFY).map((r) => r.team),
+        );
+
         const note = document.createElement("div");
         note.className = "sectionhead";
+        const blurb = complete
+          ? "Group stage complete — final tables. <b class=\"k-adv\">Green</b> = group winner/runner-up, <b class=\"k-b3\">gold</b> = best third-placed team — both through to the Round of 32. The twelve third-placed teams are ranked against each other below; the top " +
+            BEST_THIRDS_QUALIFY +
+            " advance. Ties beyond points → goal difference → goals scored are ordered alphabetically — head-to-head and disciplinary tiebreakers aren’t applied."
+          : "Updates live as results come in. Top 2 in each group (green edge) advance to the Round of 32, plus the 8 best third-placed teams across all 12 groups. Ties beyond points → goal difference → goals scored are ordered alphabetically — head-to-head and disciplinary tiebreakers aren’t applied.";
         note.innerHTML =
-          "Group Standings" +
+          (complete ? "Final Group Standings" : "Group Standings") +
           '<button class="refreshbtn" onclick="fetchScores()">↻ Refresh scores</button>' +
-          '<small class="standings-note">Updates live as results come in. Top 2 in each group (green edge) advance to the Round of 32, plus the 8 best third-placed teams across all 12 groups (not shown here). Ties beyond points → goal difference → goals scored are ordered alphabetically — head-to-head and disciplinary tiebreakers aren’t applied.</small>';
+          '<small class="standings-note">' +
+          blurb +
+          "</small>";
         list.appendChild(note);
 
-        const standings = computeStandings();
         let shownGroups = 0;
         for (const g of GROUP_LABELS) {
           const matches = M.filter((m) => m.s === g);
           if (q && !matches.some((m) => matchesQuery(m, q))) continue;
-          list.appendChild(buildStandingsTable(g, standings[g]));
+          list.appendChild(
+            buildStandingsTable(g, standings[g], qThirds, complete),
+          );
           shownGroups++;
+        }
+        // Show the best-third ranking only when the stage is done and the user
+        // isn't filtering to a specific group.
+        if (complete && !q && thirds.length) {
+          list.appendChild(buildBestThirdsTable(thirds));
         }
         empty.hidden = shownGroups > 0;
         empty.textContent = "No groups match your search.";
