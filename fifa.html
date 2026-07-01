@@ -113,11 +113,12 @@
 
       .tabs {
         display: flex;
+        flex-wrap: wrap;
         gap: 8px;
         margin-bottom: 20px;
       }
       .tab {
-        flex: 1;
+        flex: 1 1 132px;
         font: inherit;
         font-size: 15px;
         font-weight: 700;
@@ -141,6 +142,23 @@
       }
       .tab.active .count {
         opacity: 0.85;
+      }
+      .livedot {
+        display: inline-block;
+        background: #1a7a3a;
+        color: #fff;
+        border-radius: 6px;
+        padding: 1px 6px;
+        margin-left: 2px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        opacity: 1;
+        vertical-align: baseline;
+      }
+      .tab.active .livedot {
+        background: #fff;
+        color: #1a7a3a;
       }
 
       .dayhead {
@@ -280,6 +298,121 @@
       }
       .standings-note .k-b3 {
         color: #b8860b;
+      }
+
+      /* ---- Knockout bracket ---- */
+      .bracket {
+        display: flex;
+        flex-direction: column;
+        gap: 26px;
+      }
+      .bround-head {
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #8a1538;
+        margin: 0 0 12px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #ecdff0;
+      }
+      .bgrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 12px;
+      }
+      .bcell {
+        border: 1px solid #e2ddd2;
+        border-left: 4px solid #d8cfc0;
+        border-radius: 10px;
+        background: #fff;
+        padding: 10px 12px;
+      }
+      .bcell.live {
+        border-left-color: #1a7a3a;
+        box-shadow: 0 0 0 1px rgba(26, 122, 58, 0.25);
+      }
+      .bcell.done {
+        border-left-color: #b8860b;
+        background: #fffdf7;
+      }
+      .bteam {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 3px 0;
+      }
+      .bteam .bname {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1d1d1f;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .bteam.win .bname {
+        font-weight: 800;
+      }
+      .bteam.ph .bname {
+        font-weight: 500;
+        font-style: italic;
+        color: #9b93a0;
+      }
+      .bcell.done .bteam:not(.win):not(.ph) .bname {
+        color: #a49a8c;
+      }
+      .bteam .bscore {
+        font-size: 15px;
+        font-weight: 800;
+        color: #1d1d1f;
+        font-variant-numeric: tabular-nums;
+        flex: 0 0 auto;
+      }
+      .bcell.live .bteam .bscore {
+        color: #1a7a3a;
+      }
+      .bteam .bpen {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8a1538;
+        margin-left: 3px;
+      }
+      .bteam .bpen::before {
+        content: "(";
+      }
+      .bteam .bpen::after {
+        content: ")";
+      }
+      .bfoot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 6px;
+        padding-top: 6px;
+        border-top: 1px solid #f0ede5;
+      }
+      .bno {
+        font-size: 11px;
+        font-weight: 700;
+        color: #b3ab9e;
+      }
+      .bstat {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #8a7d68;
+        letter-spacing: 0.02em;
+      }
+      .bstat.blive {
+        color: #1a7a3a;
+        letter-spacing: 0.03em;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .bstat.blive {
+          animation: livepulse 2s ease-in-out infinite;
+          border-radius: 4px;
+        }
       }
 
       .card {
@@ -553,7 +686,29 @@
         color: #777;
         line-height: 1.6;
       }
-    </style>
+
+      /* Phone tuning — the page is viewed mostly on phones. */
+      @media (max-width: 480px) {
+        .wrap {
+          padding: 16px 12px 64px;
+        }
+        h1 {
+          font-size: 22px;
+        }
+        .card {
+          padding: 14px;
+        }
+        .teams {
+          font-size: 18px;
+        }
+        .bgrid {
+          grid-template-columns: 1fr;
+        }
+        .tab {
+          font-size: 14px;
+          padding: 10px 8px;
+        }
+      }
   </head>
   <body>
     <div class="wrap">
@@ -593,6 +748,15 @@
           aria-selected="false"
         >
           Completed <span class="count" id="count-done"></span>
+        </button>
+        <button
+          class="tab"
+          id="tab-bracket"
+          type="button"
+          role="tab"
+          aria-selected="false"
+        >
+          Bracket
         </button>
         <button
           class="tab"
@@ -1808,10 +1972,17 @@
       // (still showing bracket placeholders) match on their unique kickoff instant.
       function apiState(m) {
         if (!STATE) return null;
+        // Match on the RESOLVED teams, not m.a/m.b — a knockout's schedule
+        // entry keeps its bracket placeholders ("Group A winners") even after
+        // the feed fills in the real teams, so keying on m.a/m.b would miss and
+        // wrongly fall through to the time-window fallback (a finished game
+        // would keep showing LIVE for hours). teamsFor(m) is the feed-resolved
+        // pairing; for group games it's just {m.a, m.b}.
+        const t = teamsFor(m);
         return (
-          STATE[scoreKey(m.a, m.b)] ||
-          STATE[scoreKey(m.b, m.a)] ||
-          attributeState(m, STATE_TS[kickoffUTC(m).getTime()]) ||
+          STATE[scoreKey(t.a, t.b)] ||
+          STATE[scoreKey(t.b, t.a)] ||
+          attributeState(t, STATE_TS[kickoffUTC(m).getTime()]) ||
           null
         );
       }
@@ -1865,6 +2036,7 @@
       const searchEl = document.getElementById("search");
       const tabActiveBtn = document.getElementById("tab-active");
       const tabDoneBtn = document.getElementById("tab-done");
+      const tabBracketBtn = document.getElementById("tab-bracket");
       const tabStandingsBtn = document.getElementById("tab-standings");
       const countActive = document.getElementById("count-active");
       const countDone = document.getElementById("count-done");
@@ -1931,9 +2103,12 @@
       }
       function scoreFor(m) {
         if (!SCORES || SCORES === "error") return null;
+        // Resolved teams, same reasoning as apiState (for group games this is
+        // just {m.a, m.b}). Callers still re-attribute via attributeScore.
+        const t = teamsFor(m);
         return (
-          SCORES[scoreKey(m.a, m.b)] ||
-          SCORES[scoreKey(m.b, m.a)] ||
+          SCORES[scoreKey(t.a, t.b)] ||
+          SCORES[scoreKey(t.b, t.a)] ||
           SCORES_TS[kickoffUTC(m).getTime()] ||
           null
         );
@@ -2059,8 +2234,30 @@
         const t = Date.parse(s);
         return isNaN(t) ? null : t;
       }
+      // Knockout kickoff times in our schedule come from the post-draw
+      // provisional schedule; the feed's exact instant can differ by a few
+      // minutes if FIFA nudged a time. Prefer an exact timestamp match, but
+      // fall back to the nearest feed entry within a tolerance window — only
+      // when it's unambiguous (exactly one candidate in the window), so we
+      // never risk pinning a different tie's teams onto this slot.
+      const KO_TS_TOLERANCE_MS = 20 * 60 * 1000;
       function koInfo(m) {
-        return KO[kickoffUTC(m).getTime()] || null;
+        const target = kickoffUTC(m).getTime();
+        if (KO[target]) return KO[target];
+        let best = null,
+          bestDelta = Infinity,
+          candidates = 0;
+        for (const k in KO) {
+          const delta = Math.abs(Number(k) - target);
+          if (delta <= KO_TS_TOLERANCE_MS) {
+            candidates++;
+            if (delta < bestDelta) {
+              bestDelta = delta;
+              best = KO[k];
+            }
+          }
+        }
+        return candidates === 1 ? best : null;
       }
       // Display teams for a match: real names once a knockout tie is resolved,
       // bracket slots otherwise.
@@ -2074,8 +2271,12 @@
           pb = PLAYERS[b];
         if (!pa && !pb) return "";
         let inner = "";
-        if (pa) inner += "<div><b>" + a + ":</b> " + pa.join(", ") + "</div>";
-        if (pb) inner += "<div><b>" + b + ":</b> " + pb.join(", ") + "</div>";
+        if (pa)
+          inner +=
+            "<div><b>" + esc(a) + ":</b> " + esc(pa.join(", ")) + "</div>";
+        if (pb)
+          inner +=
+            "<div><b>" + esc(b) + ":</b> " + esc(pb.join(", ")) + "</div>";
         return (
           '<details class="players"><summary>Key players</summary><div class="psquad">' +
           inner +
@@ -2128,8 +2329,13 @@
         const ko = isKnockout(m) ? koInfo(m) : null;
         let scoreLine = "";
         if (pendingKO) {
+          // Use the actual round name ("Round of 32", "Quarter-final", …) so
+          // the copy isn't wrong on later rounds.
+          const roundName = esc(m.s.split(" · ")[0]);
           scoreLine =
-            '<div class="scorenote muted">Teams and result to be confirmed — this Round of 32 slot fills in automatically from the live feed once the qualifiers are decided.</div>';
+            '<div class="scorenote muted">Teams and result to be confirmed — this ' +
+            roundName +
+            " tie fills in automatically from the live feed once the qualifiers are decided.</div>";
         }
         if (st === "done") {
           // Knockout: koInfo() already keys ko.a/ko.b to t.a/t.b, so its sa/sb
@@ -2233,9 +2439,9 @@
         card.innerHTML =
           tag +
           '<div class="teams">' +
-          t.a +
+          esc(t.a) +
           '<span class="vs">vs</span>' +
-          t.b +
+          esc(t.b) +
           '<span class="official-time">' +
           officialTimeStr(m) +
           "</span>" +
@@ -2429,14 +2635,17 @@
         currentTab = tab;
         tabActiveBtn.classList.toggle("active", tab === "active");
         tabDoneBtn.classList.toggle("active", tab === "done");
+        tabBracketBtn.classList.toggle("active", tab === "bracket");
         tabStandingsBtn.classList.toggle("active", tab === "standings");
         tabActiveBtn.setAttribute("aria-selected", tab === "active");
         tabDoneBtn.setAttribute("aria-selected", tab === "done");
+        tabBracketBtn.setAttribute("aria-selected", tab === "bracket");
         tabStandingsBtn.setAttribute("aria-selected", tab === "standings");
         render();
       }
       tabActiveBtn.addEventListener("click", () => setTab("active"));
       tabDoneBtn.addEventListener("click", () => setTab("done"));
+      tabBracketBtn.addEventListener("click", () => setTab("bracket"));
       tabStandingsBtn.addEventListener("click", () => setTab("standings"));
 
       // Timezone picker — auto-detect by default, any IANA zone on demand
@@ -2635,7 +2844,7 @@
           }
           tr.innerHTML =
             '<td class="st-team">' +
-            r.team +
+            esc(r.team) +
             chip +
             "</td><td>" +
             r.p +
@@ -2696,9 +2905,9 @@
             "<td>" +
             (i + 1) +
             '</td><td class="st-team">' +
-            r.team +
+            esc(r.team) +
             "</td><td>" +
-            r.group.replace("Group ", "") +
+            esc(r.group.replace("Group ", "")) +
             "</td><td>" +
             r.p +
             "</td><td>" +
@@ -2718,6 +2927,130 @@
         scroll.appendChild(table);
         wrap.appendChild(scroll);
         return wrap;
+      }
+
+      // ---- Knockout bracket ----
+      // Rounds in order; each pulls its fixtures from M by the stage prefix.
+      const BRACKET_ROUNDS = [
+        { key: "Round of 32", label: "Round of 32" },
+        { key: "Round of 16", label: "Round of 16" },
+        { key: "Quarter-final", label: "Quarter-finals" },
+        { key: "Semi-final", label: "Semi-finals" },
+        { key: "Third-place", label: "Third-place play-off" },
+        { key: "World Cup Final", label: "Final" },
+      ];
+      function bracketMatchNo(m) {
+        const mm = /Match (\d+)/.exec(m.s);
+        return mm ? parseInt(mm[1], 10) : 0;
+      }
+      // One tie in the bracket: two team rows (resolved or bracket-slot), the
+      // live/final score, a shootout tally when relevant, and a status line.
+      function buildBracketCell(m, now) {
+        const t = teamsFor(m);
+        const st = status(m, now);
+        const mt = metaFor(m);
+        const aPh = PLACEHOLDER_RE.test(t.a);
+        const bPh = PLACEHOLDER_RE.test(t.b);
+        let sa = null,
+          sb = null,
+          shA = null,
+          shB = null;
+        if (st === "done") {
+          const ko = koInfo(m);
+          if (ko && ko.sa != null && ko.sb != null) {
+            sa = ko.sa;
+            sb = ko.sb;
+          }
+          if (mt) {
+            shA = mt.aShootout;
+            shB = mt.bShootout;
+          }
+        } else if (st === "live" && mt && mt.aScore != null && mt.bScore != null) {
+          sa = mt.aScore;
+          sb = mt.bScore;
+        }
+        const haveScore = sa != null && sb != null;
+        const pens = shA != null && shB != null;
+        let winA = false,
+          winB = false;
+        if (st === "done" && haveScore) {
+          if (sa > sb) winA = true;
+          else if (sb > sa) winB = true;
+          else if (pens) {
+            winA = shA > shB;
+            winB = shB > shA;
+          }
+        }
+        function side(name, ph, score, sh, win) {
+          return (
+            '<div class="bteam' +
+            (win ? " win" : "") +
+            (ph ? " ph" : "") +
+            '"><span class="bname">' +
+            esc(name) +
+            '</span><span class="bscore">' +
+            (score != null ? score : "") +
+            (sh != null ? '<span class="bpen">' + sh + "</span>" : "") +
+            "</span></div>"
+          );
+        }
+        let statusLbl;
+        if (st === "live")
+          statusLbl =
+            '<span class="bstat blive">● LIVE' +
+            (mt && mt.detail ? " " + esc(mt.detail) : "") +
+            "</span>";
+        else if (st === "done")
+          statusLbl =
+            '<span class="bstat">FT' +
+            (haveScore && sa === sb && pens ? " · pens" : "") +
+            "</span>";
+        else if (isKnockout(m) && !teamsResolved(m) && now >= kickoffUTC(m))
+          statusLbl = '<span class="bstat">awaiting teams</span>';
+        else statusLbl = '<span class="bstat">' + esc(officialTimeStr(m)) + "</span>";
+        const cell = document.createElement("div");
+        cell.className =
+          "bcell" + (st === "live" ? " live" : st === "done" ? " done" : "");
+        cell.innerHTML =
+          side(t.a, aPh, sa, shA, winA) +
+          side(t.b, bPh, sb, shB, winB) +
+          '<div class="bfoot"><span class="bno">#' +
+          bracketMatchNo(m) +
+          "</span>" +
+          statusLbl +
+          "</div>";
+        return cell;
+      }
+      function renderBracket(now) {
+        const note = document.createElement("div");
+        note.className = "sectionhead";
+        note.innerHTML =
+          "Knockout Bracket" +
+          '<button class="refreshbtn" onclick="fetchScores()">↻ Refresh scores</button>' +
+          '<small class="standings-note">The road to the final. Teams and scores fill in live from the feed as each tie is decided; a slot shows its bracket position until then. Kickoff times are UTC. Winners advance to the right.</small>';
+        list.appendChild(note);
+
+        const wrap = document.createElement("div");
+        wrap.className = "bracket";
+        for (const r of BRACKET_ROUNDS) {
+          const ms = M.filter((m) => m.s.indexOf(r.key) === 0).sort(
+            (a, b) => bracketMatchNo(a) - bracketMatchNo(b),
+          );
+          if (!ms.length) continue;
+          const round = document.createElement("section");
+          round.className = "bround";
+          const h = document.createElement("h2");
+          h.className = "bround-head";
+          h.textContent = r.label;
+          round.appendChild(h);
+          const grid = document.createElement("div");
+          grid.className = "bgrid";
+          for (const m of ms) grid.appendChild(buildBracketCell(m, now));
+          round.appendChild(grid);
+          wrap.appendChild(round);
+        }
+        list.appendChild(wrap);
+        empty.hidden = true;
       }
 
       function renderStandings(q) {
@@ -2820,11 +3153,25 @@
           (st === "done" ? done : active).push({ m, st });
         }
 
-        countActive.textContent = "(" + active.length + ")";
+        const liveCount = active.filter((x) => x.st === "live").length;
+        countActive.innerHTML =
+          "(" +
+          active.length +
+          ")" +
+          (liveCount
+            ? ' <span class="livedot">' +
+              liveCount +
+              " live</span>"
+            : "");
         countDone.textContent = "(" + done.length + ")";
 
         if (currentTab === "standings") {
           renderStandings(q);
+          return;
+        }
+
+        if (currentTab === "bracket") {
+          renderBracket(now);
           return;
         }
 
@@ -2935,6 +3282,12 @@
       // ESPN status state ("pre" | "in" | "post") → our feed states.
       function espnState(ev) {
         const t = (ev && ev.status && ev.status.type) || {};
+        // Postponed / cancelled / abandoned / suspended: don't call it "done"
+        // just because ESPN files it under a post-ish state — fall back to the
+        // time window (which will leave it upcoming) rather than showing a
+        // phantom FULL TIME with no score.
+        const label = ((t.name || "") + " " + (t.description || "")).toLowerCase();
+        if (/postpon|cancel|abandon|suspend|delay|await/.test(label)) return null;
         if (t.state === "post" || t.completed === true) return "done";
         if (t.state === "in") return "live";
         return null; // "pre"/unknown → let the time window decide
@@ -3219,15 +3572,32 @@
         render();
       }
 
-      // Auto-fetch on open
+      // Auto-fetch on open, then re-fetch on an adaptive cadence: poll quickly
+      // while a match is live or about to kick off (so scores don't sit stale
+      // for 15 minutes during a live knockout), and back off when nothing is
+      // happening. Self-scheduling so the interval always reflects the current
+      // state; fetchScores() already no-ops when a request is in flight.
+      let fetchTimer = null;
+      function nextFetchDelay() {
+        const now = new Date();
+        const live = M.some((m) => status(m, now) === "live");
+        if (live) return 60 * 1000;
+        const soon = M.some((m) => {
+          const k = kickoffUTC(m).getTime() - now.getTime();
+          return k > 0 && k < 20 * 60 * 1000; // kicks off within 20 min
+        });
+        if (soon) return 2 * 60 * 1000;
+        return 12 * 60 * 1000;
+      }
+      function scheduleNextFetch() {
+        clearTimeout(fetchTimer);
+        fetchTimer = setTimeout(async () => {
+          await fetchScores();
+          scheduleNextFetch();
+        }, nextFetchDelay());
+      }
       fetchScores();
-      // Re-fetch every 15 minutes so newly finished matches pick up scores
-      setInterval(
-        () => {
-          fetchScores();
-        },
-        15 * 60 * 1000,
-      );
+      scheduleNextFetch();
     </script>
 
     <!-- Defer Analytics -->
