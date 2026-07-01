@@ -2209,6 +2209,9 @@
       // Until the qualified teams are confirmed, knockout cards keep showing
       // their bracket slots ("Group A runners-up", "Winner Match 73").
       let KO = {};
+      // Same resolved-knockout records keyed by "venueKey|localDay" — the
+      // location-based fallback koInfo() uses when kickoff timestamps drift.
+      let KO_CITY = {};
       const PLACEHOLDER_RE =
         /winner|runner|loser|3rd place|group [a-l]\b|match \d|tbc|tbd|to be/i;
 
@@ -2242,6 +2245,50 @@
       // when it's unambiguous (exactly one candidate in the window), so we
       // never risk pinning a different tie's teams onto this slot.
       const KO_TS_TOLERANCE_MS = 20 * 60 * 1000;
+      // Map the venue city ESPN reports to our schedule's venue key, so a tie
+      // can be matched by WHERE it's played even when the kickoff time drifted
+      // beyond the timestamp tolerance (our knockout times are from the
+      // post-draw schedule; FIFA finalizes/moves them). ESPN uses the actual
+      // stadium municipality, which differs from our label for a few venues.
+      const ESPN_CITY_TO_VENUE = {
+        "mexico city": "Mexico City",
+        zapopan: "Zapopan",
+        guadalajara: "Zapopan",
+        guadalupe: "Guadalupe",
+        monterrey: "Guadalupe",
+        toronto: "Toronto",
+        vancouver: "Vancouver",
+        seattle: "Seattle",
+        "santa clara": "Santa Clara",
+        "los angeles": "Los Angeles",
+        inglewood: "Los Angeles",
+        "kansas city": "Kansas City",
+        arlington: "Arlington",
+        dallas: "Arlington",
+        houston: "Houston",
+        atlanta: "Atlanta",
+        miami: "Miami",
+        "miami gardens": "Miami",
+        foxborough: "Foxborough",
+        boston: "Foxborough",
+        philadelphia: "Philadelphia",
+        "new jersey": "New Jersey",
+        "east rutherford": "New Jersey",
+        "new york": "New Jersey",
+      };
+      function venueKeyFromCity(city) {
+        const c = (city || "").trim().toLowerCase();
+        return ESPN_CITY_TO_VENUE[c] || null;
+      }
+      // A stadium hosts at most one World Cup match per LOCAL day, so
+      // venue + stadium-local date is a unique key that survives any
+      // kickoff-time change. Local day = UTC instant shifted by the venue's
+      // fixed June–July offset.
+      function venueLocalDay(ts, venueKey) {
+        const off = OFF[venueKey];
+        if (off == null) return null;
+        return new Date(ts + off * 3600 * 1000).toISOString().slice(0, 10);
+      }
       function koInfo(m) {
         const target = kickoffUTC(m).getTime();
         if (KO[target]) return KO[target];
@@ -2258,7 +2305,16 @@
             }
           }
         }
-        return candidates === 1 ? best : null;
+        if (candidates === 1) return best;
+        if (candidates > 1) return null;
+        // Timestamp missed entirely — resolve by venue + stadium-local day.
+        // KO_CITY holds exactly one record per (venue, local day) or "x" when
+        // the feed reported two (never expected; treated as unresolvable so we
+        // can't pin the wrong tie onto this slot).
+        const day = venueLocalDay(target, m.v);
+        if (!day) return null;
+        const rec = KO_CITY[m.v + "|" + day];
+        return rec && rec !== "x" ? rec : null;
       }
       // Display teams for a match: real names once a knockout tie is resolved,
       // bracket slots otherwise.
@@ -2331,12 +2387,19 @@
         let scoreLine = "";
         if (pendingKO) {
           // Use the actual round name ("Round of 32", "Quarter-final", …) so
-          // the copy isn't wrong on later rounds.
+          // the copy isn't wrong on later rounds. If kickoff is long past, the
+          // qualifiers were clearly decided — the honest message is that we
+          // haven't matched this tie in the feed yet.
           const roundName = esc(m.s.split(" · ")[0]);
-          scoreLine =
-            '<div class="scorenote muted">Teams and result to be confirmed — this ' +
-            roundName +
-            " tie fills in automatically from the live feed once the qualifiers are decided.</div>";
+          const longPast =
+            new Date().getTime() - kickoffUTC(m).getTime() > 6 * 3600 * 1000;
+          scoreLine = longPast
+            ? '<div class="scorenote muted">We haven’t been able to match this ' +
+              roundName +
+              " tie in the live feed yet — the teams and result will fill in as soon as it lines up. Try Refresh above.</div>"
+            : '<div class="scorenote muted">Teams and result to be confirmed — this ' +
+              roundName +
+              " tie fills in automatically from the live feed once the qualifiers are decided.</div>";
         }
         if (st === "done") {
           // Knockout: koInfo() already keys ko.a/ko.b to t.a/t.b, so its sa/sb
@@ -3405,6 +3468,7 @@
         const map = {},
           mapTs = {},
           ko = {},
+          koCity = {},
           state = {},
           stateTs = {},
           meta = {},
@@ -3450,17 +3514,30 @@
             !PLACEHOLDER_RE.test(f.home) &&
             !PLACEHOLDER_RE.test(f.away)
           ) {
-            ko[f.ts] = {
+            const rec = {
               a: displayName(f.home),
               b: displayName(f.away),
               sa: finalScore ? f.sa : null,
               sb: finalScore ? f.sb : null,
             };
+            ko[f.ts] = rec;
+            // Location key for the kickoff-drift fallback: one record per
+            // (venue, stadium-local day); two records → "x" (unresolvable),
+            // so a drifted timestamp can never pull in the wrong tie.
+            const vk = venueKeyFromCity(f.city);
+            if (vk) {
+              const day = venueLocalDay(f.ts, vk);
+              if (day) {
+                const ck = vk + "|" + day;
+                koCity[ck] = koCity[ck] ? "x" : rec;
+              }
+            }
           }
         }
         SCORES = map;
         SCORES_TS = mapTs;
         KO = ko;
+        KO_CITY = koCity;
         STATE = state;
         STATE_TS = stateTs;
         META = meta;
@@ -3486,7 +3563,8 @@
             shA = null,
             shB = null,
             detail = "",
-            attendance = null;
+            attendance = null,
+            city = null;
           try {
             const goals = espnGoals(comp, t.home, t.away);
             scA = goals.scA;
@@ -3496,6 +3574,10 @@
             detail = espnDetail(ev);
             const att = comp && comp.attendance;
             attendance = typeof att === "number" && att > 0 ? att : null;
+            const venue = comp && comp.venue;
+            city =
+              (venue && venue.address && venue.address.city) ||
+              null;
           } catch (e) {
             /* keep core fields; drop the flourishes */
           }
@@ -3512,6 +3594,7 @@
             shB: shB,
             detail: detail,
             attendance: attendance,
+            city: city,
           };
         });
       }
