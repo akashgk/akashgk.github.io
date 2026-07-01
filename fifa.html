@@ -301,7 +301,8 @@
         background: #f5f2ec;
       }
       .livetag,
-      .fttag {
+      .fttag,
+      .pendtag {
         display: inline-block;
         font-size: 12px;
         font-weight: 800;
@@ -331,6 +332,11 @@
       .fttag {
         background: #9b958a;
         color: #fff;
+      }
+      .pendtag {
+        background: #efe6d0;
+        color: #8a6d1a;
+        border: 1px solid #e0d3a8;
       }
       .stage {
         font-size: 13.5px;
@@ -2090,6 +2096,16 @@
           m.s.indexOf("Group ") === 0 ? "Group Stage · " + m.s : m.s;
         const t = teamsFor(m);
         const mt = metaFor(m);
+        // A knockout slot whose kickoff has passed but whose teams the feed
+        // still hasn't resolved: it can't be a normal "upcoming" card (its time
+        // is in the past) and it isn't done — flag it as awaiting the bracket
+        // so it doesn't masquerade as a forthcoming fixture.
+        const pendingKO =
+          st !== "done" &&
+          st !== "live" &&
+          isKnockout(m) &&
+          !teamsResolved(m) &&
+          new Date() >= kickoffUTC(m);
         const liveSuffix =
           st === "live" && mt && mt.detail ? " · " + esc(mt.detail) : "";
         // "FT"/"Full Time" is already conveyed by the tag; only append a detail
@@ -2106,9 +2122,15 @@
             ? '<span class="livetag">LIVE NOW' + liveSuffix + "</span>"
             : st === "done"
               ? '<span class="fttag">FULL TIME' + doneSuffix + "</span>"
-              : "";
+              : pendingKO
+                ? '<span class="pendtag">AWAITING TEAMS</span>'
+                : "";
         const ko = isKnockout(m) ? koInfo(m) : null;
         let scoreLine = "";
+        if (pendingKO) {
+          scoreLine =
+            '<div class="scorenote muted">Teams and result to be confirmed — this Round of 32 slot fills in automatically from the live feed once the qualifiers are decided.</div>';
+        }
         if (st === "done") {
           // Knockout: koInfo() already keys ko.a/ko.b to t.a/t.b, so its sa/sb
           // need no re-attribution. Group stage: attributeScore() confirms which
