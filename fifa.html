@@ -113,11 +113,12 @@
 
       .tabs {
         display: flex;
+        flex-wrap: wrap;
         gap: 8px;
         margin-bottom: 20px;
       }
       .tab {
-        flex: 1;
+        flex: 1 1 132px;
         font: inherit;
         font-size: 15px;
         font-weight: 700;
@@ -141,6 +142,23 @@
       }
       .tab.active .count {
         opacity: 0.85;
+      }
+      .livedot {
+        display: inline-block;
+        background: #1a7a3a;
+        color: #fff;
+        border-radius: 6px;
+        padding: 1px 6px;
+        margin-left: 2px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        opacity: 1;
+        vertical-align: baseline;
+      }
+      .tab.active .livedot {
+        background: #fff;
+        color: #1a7a3a;
       }
 
       .dayhead {
@@ -668,7 +686,29 @@
         color: #777;
         line-height: 1.6;
       }
-    </style>
+
+      /* Phone tuning — the page is viewed mostly on phones. */
+      @media (max-width: 480px) {
+        .wrap {
+          padding: 16px 12px 64px;
+        }
+        h1 {
+          font-size: 22px;
+        }
+        .card {
+          padding: 14px;
+        }
+        .teams {
+          font-size: 18px;
+        }
+        .bgrid {
+          grid-template-columns: 1fr;
+        }
+        .tab {
+          font-size: 14px;
+          padding: 10px 8px;
+        }
+      }
   </head>
   <body>
     <div class="wrap">
@@ -3113,7 +3153,16 @@
           (st === "done" ? done : active).push({ m, st });
         }
 
-        countActive.textContent = "(" + active.length + ")";
+        const liveCount = active.filter((x) => x.st === "live").length;
+        countActive.innerHTML =
+          "(" +
+          active.length +
+          ")" +
+          (liveCount
+            ? ' <span class="livedot">' +
+              liveCount +
+              " live</span>"
+            : "");
         countDone.textContent = "(" + done.length + ")";
 
         if (currentTab === "standings") {
@@ -3523,15 +3572,32 @@
         render();
       }
 
-      // Auto-fetch on open
+      // Auto-fetch on open, then re-fetch on an adaptive cadence: poll quickly
+      // while a match is live or about to kick off (so scores don't sit stale
+      // for 15 minutes during a live knockout), and back off when nothing is
+      // happening. Self-scheduling so the interval always reflects the current
+      // state; fetchScores() already no-ops when a request is in flight.
+      let fetchTimer = null;
+      function nextFetchDelay() {
+        const now = new Date();
+        const live = M.some((m) => status(m, now) === "live");
+        if (live) return 60 * 1000;
+        const soon = M.some((m) => {
+          const k = kickoffUTC(m).getTime() - now.getTime();
+          return k > 0 && k < 20 * 60 * 1000; // kicks off within 20 min
+        });
+        if (soon) return 2 * 60 * 1000;
+        return 12 * 60 * 1000;
+      }
+      function scheduleNextFetch() {
+        clearTimeout(fetchTimer);
+        fetchTimer = setTimeout(async () => {
+          await fetchScores();
+          scheduleNextFetch();
+        }, nextFetchDelay());
+      }
       fetchScores();
-      // Re-fetch every 15 minutes so newly finished matches pick up scores
-      setInterval(
-        () => {
-          fetchScores();
-        },
-        15 * 60 * 1000,
-      );
+      scheduleNextFetch();
     </script>
 
     <!-- Defer Analytics -->
