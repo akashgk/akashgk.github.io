@@ -1733,9 +1733,24 @@
       function status(m, now) {
         const fs = apiState(m);
         if (fs) return fs;
+        // Never let the time-based fallback call a knockout "live" or "done"
+        // while its teams are still bracket placeholders — we can't mark a
+        // match full-time when we don't even know who's playing yet. Such a
+        // fixture stays upcoming until the live feed resolves the pairing
+        // (otherwise it lands in Completed as "Group A winners vs 3rd place…"
+        // with no score, which just looks broken).
+        if (isKnockout(m) && !teamsResolved(m)) return "upcoming";
         if (now >= endUTC(m)) return "done";
         if (now >= kickoffUTC(m)) return "live";
         return "upcoming";
+      }
+      // Whether we actually know both teams for a match. Group games always do;
+      // a knockout only does once the feed (or a hardcoded pairing) has filled
+      // in real names for its bracket slots.
+      function teamsResolved(m) {
+        if (!isKnockout(m)) return true;
+        const t = teamsFor(m);
+        return !PLACEHOLDER_RE.test(t.a) && !PLACEHOLDER_RE.test(t.b);
       }
       // Map TheSportsDB's strStatus into our states. Anything we don't recognise
       // (not started, postponed, cancelled, blank) returns null so the caller
