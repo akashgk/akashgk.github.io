@@ -1808,10 +1808,17 @@
       // (still showing bracket placeholders) match on their unique kickoff instant.
       function apiState(m) {
         if (!STATE) return null;
+        // Match on the RESOLVED teams, not m.a/m.b — a knockout's schedule
+        // entry keeps its bracket placeholders ("Group A winners") even after
+        // the feed fills in the real teams, so keying on m.a/m.b would miss and
+        // wrongly fall through to the time-window fallback (a finished game
+        // would keep showing LIVE for hours). teamsFor(m) is the feed-resolved
+        // pairing; for group games it's just {m.a, m.b}.
+        const t = teamsFor(m);
         return (
-          STATE[scoreKey(m.a, m.b)] ||
-          STATE[scoreKey(m.b, m.a)] ||
-          attributeState(m, STATE_TS[kickoffUTC(m).getTime()]) ||
+          STATE[scoreKey(t.a, t.b)] ||
+          STATE[scoreKey(t.b, t.a)] ||
+          attributeState(t, STATE_TS[kickoffUTC(m).getTime()]) ||
           null
         );
       }
@@ -1931,9 +1938,12 @@
       }
       function scoreFor(m) {
         if (!SCORES || SCORES === "error") return null;
+        // Resolved teams, same reasoning as apiState (for group games this is
+        // just {m.a, m.b}). Callers still re-attribute via attributeScore.
+        const t = teamsFor(m);
         return (
-          SCORES[scoreKey(m.a, m.b)] ||
-          SCORES[scoreKey(m.b, m.a)] ||
+          SCORES[scoreKey(t.a, t.b)] ||
+          SCORES[scoreKey(t.b, t.a)] ||
           SCORES_TS[kickoffUTC(m).getTime()] ||
           null
         );
@@ -2059,8 +2069,30 @@
         const t = Date.parse(s);
         return isNaN(t) ? null : t;
       }
+      // Knockout kickoff times in our schedule come from the post-draw
+      // provisional schedule; the feed's exact instant can differ by a few
+      // minutes if FIFA nudged a time. Prefer an exact timestamp match, but
+      // fall back to the nearest feed entry within a tolerance window — only
+      // when it's unambiguous (exactly one candidate in the window), so we
+      // never risk pinning a different tie's teams onto this slot.
+      const KO_TS_TOLERANCE_MS = 20 * 60 * 1000;
       function koInfo(m) {
-        return KO[kickoffUTC(m).getTime()] || null;
+        const target = kickoffUTC(m).getTime();
+        if (KO[target]) return KO[target];
+        let best = null,
+          bestDelta = Infinity,
+          candidates = 0;
+        for (const k in KO) {
+          const delta = Math.abs(Number(k) - target);
+          if (delta <= KO_TS_TOLERANCE_MS) {
+            candidates++;
+            if (delta < bestDelta) {
+              bestDelta = delta;
+              best = KO[k];
+            }
+          }
+        }
+        return candidates === 1 ? best : null;
       }
       // Display teams for a match: real names once a knockout tie is resolved,
       // bracket slots otherwise.
@@ -2074,8 +2106,12 @@
           pb = PLAYERS[b];
         if (!pa && !pb) return "";
         let inner = "";
-        if (pa) inner += "<div><b>" + a + ":</b> " + pa.join(", ") + "</div>";
-        if (pb) inner += "<div><b>" + b + ":</b> " + pb.join(", ") + "</div>";
+        if (pa)
+          inner +=
+            "<div><b>" + esc(a) + ":</b> " + esc(pa.join(", ")) + "</div>";
+        if (pb)
+          inner +=
+            "<div><b>" + esc(b) + ":</b> " + esc(pb.join(", ")) + "</div>";
         return (
           '<details class="players"><summary>Key players</summary><div class="psquad">' +
           inner +
@@ -2128,8 +2164,13 @@
         const ko = isKnockout(m) ? koInfo(m) : null;
         let scoreLine = "";
         if (pendingKO) {
+          // Use the actual round name ("Round of 32", "Quarter-final", …) so
+          // the copy isn't wrong on later rounds.
+          const roundName = esc(m.s.split(" · ")[0]);
           scoreLine =
-            '<div class="scorenote muted">Teams and result to be confirmed — this Round of 32 slot fills in automatically from the live feed once the qualifiers are decided.</div>';
+            '<div class="scorenote muted">Teams and result to be confirmed — this ' +
+            roundName +
+            " tie fills in automatically from the live feed once the qualifiers are decided.</div>";
         }
         if (st === "done") {
           // Knockout: koInfo() already keys ko.a/ko.b to t.a/t.b, so its sa/sb
@@ -2233,9 +2274,9 @@
         card.innerHTML =
           tag +
           '<div class="teams">' +
-          t.a +
+          esc(t.a) +
           '<span class="vs">vs</span>' +
-          t.b +
+          esc(t.b) +
           '<span class="official-time">' +
           officialTimeStr(m) +
           "</span>" +
@@ -2635,7 +2676,7 @@
           }
           tr.innerHTML =
             '<td class="st-team">' +
-            r.team +
+            esc(r.team) +
             chip +
             "</td><td>" +
             r.p +
@@ -2696,9 +2737,9 @@
             "<td>" +
             (i + 1) +
             '</td><td class="st-team">' +
-            r.team +
+            esc(r.team) +
             "</td><td>" +
-            r.group.replace("Group ", "") +
+            esc(r.group.replace("Group ", "")) +
             "</td><td>" +
             r.p +
             "</td><td>" +
@@ -2935,6 +2976,12 @@
       // ESPN status state ("pre" | "in" | "post") → our feed states.
       function espnState(ev) {
         const t = (ev && ev.status && ev.status.type) || {};
+        // Postponed / cancelled / abandoned / suspended: don't call it "done"
+        // just because ESPN files it under a post-ish state — fall back to the
+        // time window (which will leave it upcoming) rather than showing a
+        // phantom FULL TIME with no score.
+        const label = ((t.name || "") + " " + (t.description || "")).toLowerCase();
+        if (/postpon|cancel|abandon|suspend|delay|await/.test(label)) return null;
         if (t.state === "post" || t.completed === true) return "done";
         if (t.state === "in") return "live";
         return null; // "pre"/unknown → let the time window decide
