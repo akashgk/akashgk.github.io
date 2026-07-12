@@ -33,13 +33,15 @@ npx serve .
 
 **Main page (`index.html` + `styles.css` + `script.js`)** is a single-page portfolio with these sections (in order): Hero → Marquee strip → Stats Bar → About → Experience → Skills (bento grid) → Open Source → Playground (canvas arcade game) → Contact → Footer.
 
-**Design system** (Apple-inspired, defined in `styles.css` `:root`):
-- Alternating section rhythm like apple.com: dark sections (`#000`, cards `#1d1d1f`) and light sections (`.section-light`, `#f5f5f7`, white cards)
-- Accents: Apple blue (`--blue: #2997ff` on dark, `--blue-deep: #0066cc` on light), pill buttons (`.btn-pill`, `#0071e3`), chevron text links (`.link-arrow`)
-- Signature gradient (`--grad`, Apple Intelligence-style blue→purple→pink→orange) used for the hero headline span, eyebrows, stat numbers, and logo dot
-- Shared `.card` class: 28px radius, hover lift + scale with `--ease-out` (expo-out)
+**Design system** ("Midnight Aurora", defined in `styles.css` `:root`):
+- One cohesive deep-ink dark theme (`--bg: #07070b`); `.section-light` sections are subtly elevated panels (`--bg-elev: #0c0c14`) framed by hairline borders instead of a light/dark alternation
+- Accents: indigo (`--accent: #818cf8`, `--accent-soft: #a5b4fc` for links), white pill CTAs (`.btn-pill`, white bg + indigo glow on hover), chevron text links (`.link-arrow`)
+- Signature aurora gradient (`--grad`, cyan→indigo→violet→fuchsia) used for the hero headline span, stat numbers, logo dot, and scroll-progress hairline
+- Shared `.card` class: translucent glass surface + 1px hairline border, 24px radius, hover lift + border glow, mouse-tracked spotlight (`.card::before` reads `--mx`/`--my` set from JS) and a sheen sweep (`.card::after`). Exception: `.xp-card` uses an opaque background (`#10101a`) because the deck cards overlap while stacking
+- Mono microtype: eyebrows are uppercase `ui-monospace` labels auto-numbered with CSS counters (`01`–`06`); marquee, stat labels, fact labels, and bento labels share the mono treatment
 - Fonts: System font stacks only (SF Pro / Segoe UI / Roboto, `ui-monospace` for mono) — no webfonts are loaded, by design, for performance
-- Motion: transform/opacity only; `.reveal` blur-up rise animation; glass navbar (`saturate(180%) blur(20px)`)
+- Motion: transform/opacity only; `.reveal` blur-up rise animation; glass navbar (`saturate(160%) blur(20px)`); gradient scroll-progress hairline (`.scroll-progress`, element injected by JS) pinned to the top of the viewport
+- Hero: faint radially-masked dot grid (`.hero::before`) beneath drifting aurora blobs
 
 **Scroll choreography** (single rAF handler in `script.js` drives everything):
 - Pinned hero scrollytelling: `.hero-stage` (185vh) pins `.hero`; JS sets `--hp` (0→1) and CSS `calc()` rules parallax-dissolve each layer at different speeds. `.settled` class (added after the entry reveal finishes) switches elements from transition-driven to scroll-driven
@@ -54,7 +56,8 @@ npx serve .
 - Mobile menu toggle (full-screen glass overlay with staggered link reveal)
 - Typed role cycling (`#typed-role`); live "time in Doha" clock (`#doha-time`)
 - Stats counter animation + springy `.pop` scale-in (`data-count` spans)
-- Canvas arcade game ("Dynamic Bounce") in the Playground section, recolored to Apple system colors
+- Card spotlight: fine-pointer devices get a cursor-tracked radial highlight on `.card` hover (JS sets `--mx`/`--my`)
+- Canvas arcade game ("Dynamic Bounce") in the Playground section, colored with the aurora palette
 - All scroll effects respect `prefers-reduced-motion` (pin, deck, and word-lighting all degrade to static layout)
 
 **Icons**: Inline SVGs using Feather icon paths (stroke-based, `class="icon"`). Static icons are inlined directly in `index.html`; icons set dynamically by JS come from the `ICONS` map at the top of `script.js`. No icon CDN — the page makes zero third-party requests on the critical path.
