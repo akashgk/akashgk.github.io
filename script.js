@@ -39,9 +39,9 @@ document.getElementById("year").textContent = new Date().getFullYear();
 const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
 
 // =====================================================
-// Confetti — Apple-colored micro-celebration
+// Confetti — aurora-colored micro-celebration
 // =====================================================
-const CONFETTI_COLORS = ["#0894ff", "#c959dd", "#ff2e54", "#ff9004", "#30d158"];
+const CONFETTI_COLORS = ["#67e8f9", "#818cf8", "#c084fc", "#f0abfc", "#34d399"];
 function confettiBurst(x, y, count = 90) {
   if (reducedMotion) return;
   const cv = document.createElement("canvas");
@@ -90,9 +90,9 @@ document.getElementById("nav-logo").addEventListener("click", (e) => {
 // Console easter egg for fellow developers
 console.log(
   "%cAGK%c Designed in Doha. Built with vanilla everything — no frameworks, no fonts, no fluff.\n%c→ github.com/akashgk",
-  "font-weight:700;font-size:13px;background:linear-gradient(90deg,#0894ff,#ff2e54);color:#fff;padding:3px 9px;border-radius:6px",
-  "color:#86868b;font-size:12px",
-  "color:#2997ff;font-size:12px"
+  "font-weight:700;font-size:13px;background:linear-gradient(90deg,#67e8f9,#e879f9);color:#0a0a12;padding:3px 9px;border-radius:6px",
+  "color:#9c9ca7;font-size:12px",
+  "color:#a5b4fc;font-size:12px"
 );
 
 // =====================================================
@@ -102,6 +102,10 @@ console.log(
 // · iPhone 3D entrance
 // =====================================================
 const navbar = document.querySelector(".navbar");
+const scrollProgress = document.createElement("div");
+scrollProgress.className = "scroll-progress";
+scrollProgress.setAttribute("aria-hidden", "true");
+document.body.appendChild(scrollProgress);
 const navIndicator = document.querySelector(".nav-indicator");
 const links = document.querySelectorAll(".nav-link");
 const sections = document.querySelectorAll("section[id]");
@@ -177,6 +181,10 @@ function onScrollFrame() {
   const vh = window.innerHeight;
 
   navbar.classList.toggle("scrolled", y > 40);
+
+  const scrollMax = document.documentElement.scrollHeight - vh;
+  scrollProgress.style.transform =
+    `scaleX(${scrollMax > 0 ? clamp(y / scrollMax, 0, 1).toFixed(4) : 0})`;
 
   // 1. Pinned hero scrub — one CSS var drives all parallax layers
   if (heroStage && !reducedMotion) {
@@ -287,6 +295,20 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
 
 document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+
+// =====================================================
+// Card spotlight — CSS radial highlight tracks the cursor
+// (.card::before reads --mx/--my; desktop pointers only)
+// =====================================================
+if (window.matchMedia("(pointer: fine)").matches) {
+  document.querySelectorAll(".card").forEach((card) => {
+    card.addEventListener("pointermove", (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", `${(e.clientX - r.left).toFixed(1)}px`);
+      card.style.setProperty("--my", `${(e.clientY - r.top).toFixed(1)}px`);
+    }, { passive: true });
+  });
+}
 
 // =====================================================
 // Mobile drawer menu
@@ -402,13 +424,13 @@ if (statsBar) {
   let highscore = parseInt(localStorage.getItem("db-highscore") || "0", 10);
   highscoreVal.textContent = highscore;
 
-  // Career milestones — Apple system colors
+  // Career milestones — aurora palette
   const milestones = [
-    { id: "cbq", title: "CBQ Portal Live", subtitle: "Mobile Architecture Lead (8+ Devs)", badge: "Architect", icon: "briefcase", color: "#2997ff" },
-    { id: "pyjama", title: "PyjamaHR Mobile", subtitle: "App Built from Scratch (Flutter)", badge: "Flutter", icon: "smartphone", color: "#30d158" },
-    { id: "packages", title: "dartapi CLI", subtitle: "+50k Pub Downloads globally", badge: "Packages", icon: "package", color: "#ff9f0a" },
-    { id: "qatar", title: "Fintech Architect", subtitle: "Secure Clean Code in Qatar", badge: "FinTech", icon: "shield", color: "#bf5af2" },
-    { id: "developer", title: "Expert Flutter SDE", subtitle: "BLoC & Riverpod Stack Lead", badge: "Dart/Swift", icon: "cpu", color: "#ff375f" }
+    { id: "cbq", title: "CBQ Portal Live", subtitle: "Mobile Architecture Lead (8+ Devs)", badge: "Architect", icon: "briefcase", color: "#818cf8" },
+    { id: "pyjama", title: "PyjamaHR Mobile", subtitle: "App Built from Scratch (Flutter)", badge: "Flutter", icon: "smartphone", color: "#34d399" },
+    { id: "packages", title: "dartapi CLI", subtitle: "+50k Pub Downloads globally", badge: "Packages", icon: "package", color: "#fbbf24" },
+    { id: "qatar", title: "Fintech Architect", subtitle: "Secure Clean Code in Qatar", badge: "FinTech", icon: "shield", color: "#c084fc" },
+    { id: "developer", title: "Expert Flutter SDE", subtitle: "BLoC & Riverpod Stack Lead", badge: "Dart/Swift", icon: "cpu", color: "#fb7185" }
   ];
   let unlockedMilestones = new Set();
 
@@ -558,7 +580,7 @@ if (statsBar) {
     vx: 2.2,
     vy: -4.5,
     radius: 6,
-    color: "#2997ff",
+    color: "#818cf8",
     draw() {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
