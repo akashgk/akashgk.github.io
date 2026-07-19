@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="slip">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Apple &amp; the Olive Tree — the Trojan War and the Odyssey from zero</title>
+<meta name="description" content="An interactive single-file guide to the complete Trojan War myth cycle — from the golden apple to Odysseus's homecoming — with a vase-frieze timeline, character web, journey map, misconception deck and quiz.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏺</text></svg>">
+<style>
+/* ==========================================================================
+   1. DESIGN TOKENS — Attic black-figure pottery palette.
+   Default theme: dark "slip" (near-black ground, clay figures).
+   Toggle theme:  "clay" (fired-clay ground, near-black slip figures).
+   ========================================================================== */
+:root{
+  --bg:#15100c;            /* page ground */
+  --bg2:#1c1714;           /* slightly lifted ground */
+  --surface:#211a15;       /* card ground */
+  --surface2:#2a211a;      /* raised card ground */
+  --ink:#efe5d6;           /* body text: off-white "incised" */
+  --muted:#c4b096;         /* secondary text */
+  --faint:rgba(239,229,214,.16);   /* hairlines */
+  --fainter:rgba(239,229,214,.07);
+  --clay:#c46a3a;          /* fired clay */
+  --clay2:#d97d4f;         /* bright clay */
+  --wine:#5e1f1f;          /* deep wine, sparing */
+  --wine2:#9c4437;         /* wine readable on dark */
+  --good:#8fae72;          /* quiz-correct (muted olive) */
+  --focus:#d97d4f;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+[data-theme="clay"]{
+  --bg:#c2673a;
+  --bg2:#bb6034;
+  --surface:#cd7847;
+  --surface2:#d58553;
+  --ink:#1c1714;
+  --muted:#48332a;
+  --faint:rgba(28,23,20,.28);
+  --fainter:rgba(28,23,20,.10);
+  --clay:#1c1714;          /* "figures" become slip-black on clay ground */
+  --clay2:#2b211b;
+  --wine:#5e1f1f;
+  --wine2:#5e1f1f;
+  --good:#3f5a2a;
+  --focus:#1c1714;
+  --shadow:0 10px 30px rgba(60,25,10,.25);
+  color-scheme:light;
+}
+
+/* ==========================================================================
+   2. BASE / RESET / TYPOGRAPHY
+   ========================================================================== */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+h1,h2,h3,h4{
+  font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  font-weight:600;line-height:1.2;margin:0 0 .5em;letter-spacing:.01em;
+}
+h1{font-size:clamp(2rem,8vw,3.2rem)}
+h2{font-size:clamp(1.5rem,5.5vw,2.1rem)}
+h3{font-size:1.25rem}
+p{margin:.7em 0}
+img,svg{max-width:100%}
+.wrap{max-width:720px;margin-inline:auto;padding-inline:16px}
+.wide{max-width:860px}
+/* small-caps utility (captions, eyebrows) */
+.caps{
+  font-family:system-ui,sans-serif;font-size:.68rem;font-weight:650;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+}
+.accent{color:var(--clay2)}
+/* visible focus everywhere, keyboard-first */
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:3px}
+.skip-link{
+  position:absolute;left:8px;top:-48px;z-index:200;padding:.5em 1em;
+  background:var(--clay);color:#efe5d6;border-radius:0 0 8px 8px;transition:top .15s;
+}
+[data-theme="clay"] .skip-link{color:#efe5d6;background:#1c1714}
+.skip-link:focus{top:0}
+
+/* ==========================================================================
+   3. GREEK-KEY DIVIDERS (meander pattern defined once in hidden SVG defs)
+   ========================================================================== */
+.keyline{display:block;width:100%;height:14px;color:var(--clay);opacity:.75}
+[data-theme="clay"] .keyline{opacity:.85}
+.mp{stroke:var(--clay);fill:none;stroke-width:1.8}
+
+/* ==========================================================================
+   4. STICKY JUMP NAV + THEME TOGGLE
+   ========================================================================== */
+.jump{
+  position:sticky;top:0;z-index:100;background:var(--bg2);
+  border-bottom:1px solid var(--faint);
+}
+.jump-inner{
+  display:flex;align-items:center;gap:4px;max-width:860px;margin-inline:auto;
+  padding:6px 10px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.jump-inner::-webkit-scrollbar{display:none}
+.jump-link{
+  flex:0 0 auto;color:var(--muted);text-decoration:none;font-size:.82rem;
+  padding:.45em .75em;border-radius:8px;border:1px solid transparent;white-space:nowrap;
+}
+.jump-link:hover{color:var(--ink);border-color:var(--faint)}
+.jump-brand{
+  flex:0 0 auto;font-family:Georgia,serif;color:var(--clay2);font-size:1.05rem;
+  padding-right:6px;text-decoration:none;
+}
+#themeBtn{margin-left:auto;flex:0 0 auto}
+
+/* ==========================================================================
+   5. BUTTONS / PANELS / SHARED CHROME
+   ========================================================================== */
+.btn{
+  display:inline-block;font:inherit;font-size:.9rem;cursor:pointer;
+  color:var(--ink);background:var(--surface2);border:1px solid var(--faint);
+  border-radius:9px;padding:.55em 1.05em;
+}
+.btn:hover{border-color:var(--clay)}
+.btn.primary{background:var(--clay);border-color:var(--clay);color:#f7efe2}
+[data-theme="clay"] .btn.primary{background:#1c1714;border-color:#1c1714;color:#efe5d6}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--muted)}
+.btn.small{font-size:.78rem;padding:.4em .7em}
+.btn[aria-pressed="true"]{background:var(--clay);border-color:var(--clay);color:#f7efe2}
+[data-theme="clay"] .btn[aria-pressed="true"]{background:#1c1714;color:#efe5d6}
+.panel{
+  background:var(--surface);border:1px solid var(--faint);border-radius:12px;
+  padding:16px 18px;
+}
+.block{padding:44px 0 8px}
+.block-head{margin-bottom:18px}
+.block-head .caps{display:block;margin-bottom:.5em;color:var(--clay2)}
+.block-head p.intro{color:var(--muted);max-width:60ch}
+
+/* ==========================================================================
+   6. HERO
+   ========================================================================== */
+.hero{padding:56px 0 30px;text-align:left}
+.hero .caps{color:var(--clay2);display:block;margin-bottom:14px}
+.hero h1 span{color:var(--clay2)}
+.lede{font-size:1.06rem;color:var(--muted);max-width:58ch}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{
+  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid var(--faint);border-radius:999px;padding:.35em .8em;color:var(--muted);
+}
+
+/* ==========================================================================
+   7. STORY MODE — acts, beats, progressive disclosure
+   ========================================================================== */
+.act{
+  background:var(--surface);border:1px solid var(--faint);border-radius:14px;
+  padding:20px 18px 16px;margin:26px 0;
+}
+.act-eyebrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.homer-chip{
+  font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--wine);color:#efe5d6;border-radius:6px;padding:.35em .6em;
+}
+.act h3{font-size:clamp(1.35rem,5vw,1.7rem);margin-bottom:.2em}
+.act-sub{color:var(--muted);font-size:.95rem;margin-top:0}
+.beat{border-left:2px solid var(--faint);padding:2px 0 2px 14px;margin:16px 0}
+.beat p{margin:.4em 0}
+.beat.flag{border-left-color:var(--wine2)}
+.beat .aside{font-size:.86rem;color:var(--muted)}
+.act-controls{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.act-outro{border-top:1px dashed var(--faint);margin-top:18px;padding-top:14px}
+.act-outro .caps{color:var(--clay2)}
+.act-outro .why{margin:.35em 0 .9em;font-family:Georgia,serif;font-size:1.02rem}
+.hook{color:var(--muted);font-size:.92rem}
+.hook a{color:var(--clay2)}
+/* one orchestrated reveal per act (scroll-in), nothing ambient */
+@media (prefers-reduced-motion:no-preference){
+  .act{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+  .act.inview{opacity:1;transform:none}
+  .beat.shown{animation:rise .4s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
+
+/* ==========================================================================
+   8. GLOSSARY TERMS + POPOVER
+   ========================================================================== */
+button.term{
+  font:inherit;color:inherit;background:none;border:none;padding:0;cursor:pointer;
+  border-bottom:1px dotted var(--clay2);border-radius:0;
+}
+button.term:hover{color:var(--clay2)}
+.popover{
+  position:fixed;z-index:150;width:min(300px,calc(100vw - 16px));
+  background:var(--surface2);border:1px solid var(--clay);border-radius:10px;
+  padding:12px 36px 12px 14px;box-shadow:var(--shadow);
+}
+.popover h4{margin:0 0 .25em;font-size:1rem;color:var(--clay2)}
+.popover p{margin:0;font-size:.88rem;color:var(--ink)}
+.pop-close{
+  position:absolute;top:4px;right:4px;width:30px;height:30px;border:none;cursor:pointer;
+  background:none;color:var(--muted);font-size:1rem;border-radius:6px;
+}
+.pop-close:hover{color:var(--ink)}
+
+/* ==========================================================================
+   9. TIMELINE FRIEZE + SCRUBBER
+   ========================================================================== */
+.frieze-box{margin:8px 0 4px}
+#frieze{display:block;width:100%;touch-action:none;cursor:ew-resize}
+#frieze text{font-family:system-ui,sans-serif}
+.tl-band{fill:var(--surface)}
+.tl-war{fill:var(--fainter)}
+.tl-iliad{fill:var(--wine2)}
+.tl-ody{fill:var(--clay);opacity:.22}
+.tl-odyline{stroke:var(--clay2);stroke-width:1.4;stroke-dasharray:4 3;fill:none}
+.tl-tick{fill:var(--muted)}
+.tl-tick.lit{fill:var(--clay2)}
+.tl-play{stroke:var(--clay2);stroke-width:2}
+.tl-handle{fill:var(--clay2);stroke:var(--bg);stroke-width:1.5}
+.tl-lbl{fill:var(--muted);font-size:10px;letter-spacing:.12em}
+.tl-lbl.strong{fill:var(--ink)}
+.tl-bracket{stroke:var(--muted);stroke-width:1;fill:none}
+/* the range input is the accessible control, styled to sit under the band */
+#tlRange{
+  -webkit-appearance:none;appearance:none;width:100%;height:26px;margin:2px 0 0;
+  background:transparent;cursor:ew-resize;
+}
+#tlRange::-webkit-slider-runnable-track{height:4px;background:var(--faint);border-radius:2px}
+#tlRange::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:22px;height:22px;margin-top:-9px;
+  border-radius:50%;background:var(--clay2);border:2px solid var(--bg);
+}
+#tlRange::-moz-range-track{height:4px;background:var(--faint);border-radius:2px}
+#tlRange::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;background:var(--clay2);border:2px solid var(--bg);
+}
+.tl-readout{min-height:118px;margin-top:10px}
+.tl-readout .tl-era{color:var(--clay2)}
+.tl-readout p{margin:.35em 0 0}
+.tl-note{font-size:.85rem;color:var(--muted);margin-top:10px}
+.tl-note strong{color:var(--ink)}
+
+/* ==========================================================================
+   10. CHARACTER WEB
+   ========================================================================== */
+.cw-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+#charweb{display:block;width:100%;height:auto}
+#charweb text{font-family:system-ui,sans-serif}
+.cw-edge{stroke:var(--faint);stroke-width:1.2;fill:none}
+.cw-edge.kin{stroke:var(--muted);opacity:.45}
+.cw-edge.lovers{stroke:var(--clay2);stroke-dasharray:5 4;opacity:.55}
+.cw-edge.killed{stroke:var(--wine2);stroke-width:1.6;opacity:.6}
+.cw-edge.enemies{stroke:var(--wine2);stroke-dasharray:2 4;opacity:.55}
+.cw-edge.bond{stroke:var(--muted);stroke-dasharray:1 4;opacity:.5}
+.cw-edge.dim{opacity:.08}
+.cw-edge.hi{opacity:1;stroke-width:2.2}
+.cw-elbl{fill:var(--ink);font-size:9.5px;paint-order:stroke;stroke:var(--bg);stroke-width:3.5px;display:none}
+.cw-elbl.hi{display:block}
+.cw-node{cursor:pointer}
+.cw-node circle.dot{fill:var(--surface2);stroke-width:2}
+.cw-node.greek circle.dot{stroke:var(--clay2)}
+.cw-node.trojan circle.dot{stroke:var(--wine2)}
+.cw-node.god circle.dot{stroke:var(--muted)}
+.cw-node text{fill:var(--ink);font-size:10px;text-anchor:middle}
+.cw-node .initial{font-family:Georgia,serif;font-size:13px;fill:var(--ink)}
+.cw-node.faded{opacity:.15;pointer-events:none}
+.cw-node.sel circle.dot{fill:var(--clay);stroke:var(--ink)}
+.cw-node.sel .initial{fill:#f7efe2}
+[data-theme="clay"] .cw-node.sel .initial{fill:#efe5d6}
+.cw-node:focus{outline:none}
+.cw-node:focus-visible circle.dot{stroke:var(--focus);stroke-width:3.5}
+.cw-detail{min-height:120px;margin-top:12px}
+.cw-detail h4{margin:0 0 2px}
+.cw-detail .caps{display:block;margin-bottom:6px}
+.cw-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:.78rem;color:var(--muted)}
+.cw-legend span::before{content:"";display:inline-block;width:14px;height:0;border-top:2px solid var(--muted);margin-right:5px;vertical-align:middle}
+.cw-legend .lg-kin::before{border-color:var(--muted)}
+.cw-legend .lg-lovers::before{border-top-style:dashed;border-color:var(--clay2)}
+.cw-legend .lg-killed::before{border-color:var(--wine2)}
+.cw-legend .lg-enemies::before{border-top-style:dotted;border-color:var(--wine2)}
+
+/* ==========================================================================
+   11. JOURNEY MAP
+   ========================================================================== */
+#voyageMap{display:block;width:100%;height:auto}
+#voyageMap text{font-family:system-ui,sans-serif}
+.vg-sea{fill:var(--surface)}
+.vg-frame{fill:none;stroke:var(--faint)}
+.vg-route{fill:none;stroke:var(--muted);stroke-width:1.4;stroke-dasharray:2 5;opacity:.6}
+.vg-route.done{stroke:var(--clay2);stroke-dasharray:none;opacity:.9}
+.vg-stop{cursor:pointer}
+.vg-stop circle{fill:var(--surface2);stroke:var(--muted);stroke-width:1.6}
+.vg-stop text.num{fill:var(--ink);font-size:10.5px;text-anchor:middle;font-weight:600}
+.vg-stop text.name{fill:var(--muted);font-size:9.5px}
+.vg-stop.active circle{fill:var(--clay);stroke:var(--ink)}
+.vg-stop.active text.num{fill:#f7efe2}
+[data-theme="clay"] .vg-stop.active text.num{fill:#efe5d6}
+.vg-stop.visited circle{stroke:var(--clay2)}
+.vg-stop:focus{outline:none}
+.vg-stop:focus-visible circle{stroke:var(--focus);stroke-width:3}
+.vg-panel{min-height:230px;margin-top:12px}
+.vg-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.vg-head h4{margin:0;flex:1 1 auto}
+.vg-nav{display:flex;gap:8px;margin-top:12px}
+.ships-row{display:flex;gap:4px;align-items:flex-end;margin:10px 0 2px;min-height:14px}
+.ship{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:12px solid var(--clay2)}
+.ship.lost{border-bottom-color:var(--faint)}
+.vg-count{font-size:.85rem;color:var(--muted)}
+.vg-count b{color:var(--ink)}
+.vg-note{font-size:.76rem;color:var(--muted);opacity:.8}
+
+/* ==========================================================================
+   12. MYTH vs MOVIE
+   ========================================================================== */
+.film-grid{display:grid;gap:14px;margin-top:6px}
+.film-card{padding:14px 16px}
+.film-card h4{margin:0 0 8px;font-size:1.05rem}
+.seg{display:inline-flex;border:1px solid var(--faint);border-radius:9px;overflow:hidden;margin-bottom:10px}
+.seg button{
+  font:inherit;font-size:.78rem;padding:.4em .9em;border:none;cursor:pointer;
+  background:transparent;color:var(--muted);
+}
+.seg button[aria-pressed="true"]{background:var(--clay);color:#f7efe2}
+[data-theme="clay"] .seg button[aria-pressed="true"]{background:#1c1714;color:#efe5d6}
+.film-panel{font-size:.92rem;margin:0}
+.film-panel .caps{display:block;margin-bottom:3px}
+.film-panel.myth .caps{color:var(--clay2)}
+.film-panel[hidden]{display:none}
+@media (min-width:700px){
+  .film-grid{grid-template-columns:1fr 1fr}
+  .film-card .seg{display:none}
+  .film-card .film-panel[hidden]{display:block}
+  .film-panel + .film-panel{margin-top:10px;border-top:1px dashed var(--faint);padding-top:10px}
+}
+
+/* ==========================================================================
+   13. MISCONCEPTIONS DECK (flip cards)
+   ========================================================================== */
+.flip-grid{display:grid;gap:14px;margin-top:6px}
+@media (min-width:700px){.flip-grid{grid-template-columns:1fr 1fr}}
+.flip{perspective:900px;cursor:pointer;border:none;background:none;padding:0;text-align:left;font:inherit;color:inherit}
+.flip-inner{
+  position:relative;display:grid;transform-style:preserve-3d;
+  transition:transform .5s ease;border-radius:12px;
+}
+.flip[aria-pressed="true"] .flip-inner{transform:rotateY(180deg)}
+.flip-face{
+  grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  background:var(--surface);border:1px solid var(--faint);border-radius:12px;
+  padding:16px;display:flex;flex-direction:column;gap:6px;min-height:150px;
+}
+.flip-face .caps{color:var(--clay2)}
+.flip-front p{font-family:Georgia,serif;font-size:1.05rem;margin:0}
+.flip-back{transform:rotateY(180deg);background:var(--surface2)}
+.flip-back p{font-size:.9rem;margin:0}
+.flip-hint{margin-top:auto;font-size:.72rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){
+  .flip-inner{transition:none}
+  .flip[aria-pressed="true"] .flip-inner{transform:none}
+  .flip[aria-pressed="true"] .flip-front{visibility:hidden}
+  .flip:not([aria-pressed="true"]) .flip-back{visibility:hidden}
+  .flip .flip-back{transform:none}
+}
+
+/* ==========================================================================
+   14. QUIZ
+   ========================================================================== */
+.quiz-box{min-height:340px}
+.q-progress{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.q-meter{flex:1;height:3px;background:var(--fainter);border-radius:2px;overflow:hidden}
+.q-meter i{display:block;height:100%;background:var(--clay2);width:0;transition:width .3s}
+.q-title{font-family:Georgia,serif;font-size:1.12rem;margin:0 0 14px}
+.q-options{display:grid;gap:8px}
+.opt{
+  font:inherit;font-size:.95rem;text-align:left;cursor:pointer;color:var(--ink);
+  background:var(--surface2);border:1px solid var(--faint);border-radius:10px;padding:.7em .9em;
+}
+.opt:hover:not(:disabled){border-color:var(--clay)}
+.opt:disabled{cursor:default;opacity:.75}
+.opt.correct{border-color:var(--good);background:color-mix(in srgb,var(--good) 16%,var(--surface2));opacity:1}
+.opt.wrong{border-color:var(--wine2);background:color-mix(in srgb,var(--wine2) 14%,var(--surface2));opacity:1}
+.quiz-explain{
+  border-left:3px solid var(--clay);background:var(--surface2);border-radius:0 10px 10px 0;
+  padding:10px 14px;margin-top:14px;font-size:.92rem;
+}
+.quiz-explain .caps{display:block;margin-bottom:2px}
+.ord-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ord-item{
+  display:flex;align-items:center;gap:8px;background:var(--surface2);
+  border:1px solid var(--faint);border-radius:10px;padding:.5em .6em .5em .9em;font-size:.92rem;
+}
+.ord-item .txt{flex:1}
+.ord-item .pos{font-size:.72rem;color:var(--muted);min-width:52px;text-align:right}
+.ord-item.ok{border-color:var(--good)}
+.ord-item.bad{border-color:var(--wine2)}
+.ord-btns{display:flex;gap:4px}
+.ord-btns .btn{padding:.25em .6em;font-size:.9rem;line-height:1.2}
+.q-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.q-final{text-align:center;padding:30px 10px}
+.q-final .score{font-family:Georgia,serif;font-size:2.6rem;color:var(--clay2);margin:.2em 0}
+.q-round-note{background:var(--wine);color:#efe5d6;border-radius:8px;padding:.5em .9em;font-size:.85rem;display:inline-block;margin-bottom:12px}
+
+/* ==========================================================================
+   15. MOTIF TRACKER (persistent FAB + panel + toast)
+   ========================================================================== */
+.motif-fab{
+  position:fixed;right:14px;bottom:14px;z-index:120;cursor:pointer;
+  display:flex;align-items:center;gap:8px;font:inherit;font-size:.8rem;
+  background:var(--surface2);color:var(--ink);border:1px solid var(--clay);
+  border-radius:999px;padding:.55em 1em;box-shadow:var(--shadow);
+}
+.motif-fab .dots{display:inline-flex;gap:3px}
+.motif-fab .dots i{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.motif-fab .dots i.lit{background:var(--clay2)}
+@media (prefers-reduced-motion:no-preference){
+  .motif-fab.pulse{animation:pulse .6s ease}
+  @keyframes pulse{50%{transform:scale(1.08)}}
+}
+.motif-panel{
+  position:fixed;right:14px;bottom:64px;z-index:120;width:min(340px,calc(100vw - 28px));
+  background:var(--surface2);border:1px solid var(--clay);border-radius:14px;
+  padding:14px 16px;box-shadow:var(--shadow);
+}
+.motif-panel h4{margin:0 0 4px;color:var(--clay2)}
+.motif-panel > p{font-size:.8rem;color:var(--muted);margin:0 0 10px}
+.motif-arc{margin:10px 0}
+.motif-arc .caps{color:var(--ink);letter-spacing:.1em}
+.m-stages{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px}
+.m-stage{display:flex;gap:8px;align-items:center;font-size:.83rem;color:var(--muted);opacity:.55}
+.m-stage::before{content:"";flex:0 0 8px;height:8px;border-radius:50%;border:1.5px solid var(--muted)}
+.m-stage.lit{opacity:1;color:var(--ink)}
+.m-stage.lit::before{background:var(--clay2);border-color:var(--clay2)}
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:64px;z-index:130;
+  background:var(--clay);color:#f7efe2;border-radius:10px;padding:.6em 1em;
+  font-size:.85rem;box-shadow:var(--shadow);max-width:calc(100vw - 28px);text-align:center;
+}
+[data-theme="clay"] .toast{background:#1c1714;color:#efe5d6}
+
+/* ==========================================================================
+   16. FOOTER + MISC
+   ========================================================================== */
+.colophon{border-top:1px solid var(--faint);margin-top:50px;padding:26px 0 90px;color:var(--muted);font-size:.85rem}
+.colophon p{max-width:64ch}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+/* reduced motion: kill everything ambient/orchestrated */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<!-- ======================================================================
+     HIDDEN SVG DEFS — the Greek-key (meander) pattern, referenced by every
+     .keyline divider and by the timeline frieze borders.
+     ====================================================================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="meander" width="16" height="14" patternUnits="userSpaceOnUse">
+      <path class="mp" d="M0 11 H12 V3 H4 V7 H8"/>
+    </pattern>
+  </defs>
+</svg>
+
+<a class="skip-link" href="#story">Skip to the story</a>
+
+<!-- ====================================================================== -->
+<!-- STICKY JUMP NAV + THEME TOGGLE                                          -->
+<!-- ====================================================================== -->
+<nav class="jump" aria-label="Sections">
+  <div class="jump-inner">
+    <a class="jump-brand" href="#top" aria-label="Top of page">🏺</a>
+    <a class="jump-link" href="#story">Story</a>
+    <a class="jump-link" href="#timeline">Timeline</a>
+    <a class="jump-link" href="#characters">Characters</a>
+    <a class="jump-link" href="#voyage">Voyage</a>
+    <a class="jump-link" href="#film">Film&nbsp;vs&nbsp;Myth</a>
+    <a class="jump-link" href="#misconceptions">Misconceptions</a>
+    <a class="jump-link" href="#quiz">Quiz</a>
+    <button class="btn small" id="themeBtn" aria-pressed="false">Clay&nbsp;◐</button>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- ==================================================================== -->
+  <!-- HERO                                                                  -->
+  <!-- ==================================================================== -->
+  <header class="hero wrap">
+    <span class="caps">The Trojan War &amp; the Odyssey · from zero</span>
+    <h1>The Apple &amp;<br>the <span>Olive Tree</span></h1>
+    <p class="lede">One golden apple starts the greatest war in myth. Twenty years later, one
+    immovable bed ends it. This page teaches the whole cycle — the causes of the Trojan War,
+    the war itself, the fall of Troy, and Odysseus's long road home — assuming you know
+    nothing at all.</p>
+    <p class="lede">Read the nine acts in order, tapping <em>Continue</em> to advance. Any
+    <button type="button" class="term" data-term="Odysseus">Odysseus</button>-style dotted name can be
+    tapped for a one-line reminder. The tools after the story — timeline, character web,
+    journey map — are for exploring and revising. Finish with the quiz.</p>
+    <div class="hero-meta">
+      <span class="chip">9 acts</span>
+      <span class="chip">20 years of story</span>
+      <span class="chip">3 hidden threads</span>
+      <span class="chip">15-question quiz</span>
+    </div>
+  </header>
+
+  <svg class="keyline wrap" aria-hidden="true" focusable="false"><rect width="100%" height="14" fill="url(#meander)"/></svg>
+
+  <!-- ==================================================================== -->
+  <!-- COMPONENT 1 · STORY MODE — nine acts, progressive disclosure          -->
+  <!-- Beats are authored in HTML (semantic, works without JS via noscript); -->
+  <!-- JS hides all but the first beat per act and adds Continue controls.   -->
+  <!-- data-motif="arc.stage" attributes light the Motif Tracker.            -->
+  <!-- ==================================================================== -->
+  <section id="story" class="block wrap" aria-labelledby="story-h">
+    <div class="block-head">
+      <span class="caps">01 · Story Mode</span>
+      <h2 id="story-h">The whole cycle, in nine acts</h2>
+      <p class="intro">Each act is short. Read in order the first time — the acts set up
+      debts, bargains and tricks that pay off much later, and the little
+      <strong>Threads</strong> tracker (bottom-right) lights up when a payoff lands.</p>
+      <button class="btn small ghost" id="revealAll">Revision mode: reveal the whole story</button>
+    </div>
+
+    <!-- ACT 1 ............................................................ -->
+    <article class="act" id="act1" data-glossify aria-labelledby="act1-h">
+      <div class="act-eyebrow"><span class="caps">Act 1</span></div>
+      <h3 id="act1-h">The Rigged Choice</h3>
+      <p class="act-sub">A wedding, an uninvited guest, and a question with no safe answer.</p>
+
+      <div class="beat"><p>Start with the gods. Zeus has decided the earth needs a great
+      war — one lost poem says the point was to thin out the age of heroes. The mechanism
+      he permits is small: a wedding invitation list with one name missing.</p></div>
+
+      <div class="beat" hidden><p>At the wedding of the sea-goddess Thetis to the mortal
+      Peleus, Eris — Strife — arrives uninvited and rolls a golden apple into the feast,
+      inscribed <em>for the fairest</em>. Hera, Athena and Aphrodite all claim it. Zeus, far
+      too shrewd to judge three goddesses, dumps the verdict on a mortal herdsman named
+      Paris.</p></div>
+
+      <div class="beat" hidden><p>Paris is more than he looks. He is a Trojan prince,
+      abandoned at birth because of a prophecy that he would one day burn Troy, and raised
+      among herdsmen. He has a lover, Oenone.</p></div>
+
+      <div class="beat" hidden><p>The goddesses do not argue their case; they bid. Hera
+      offers empire. Athena offers victory in war. Aphrodite offers the most beautiful
+      woman in the world. Paris picks desire — and abandons Oenone.</p></div>
+
+      <div class="beat" hidden><p>Notice the trap: this is a character test with no safe
+      answer. Whichever goddess he crowns, the other two walk away humiliated — and become
+      Troy's sworn enemies. The city's fate is sealed before anyone has mentioned
+      love.</p></div>
+
+      <div class="act-outro" hidden>
+        <span class="caps">Why it matters</span>
+        <p class="why">The war's first cause is not a runaway queen; it is divine politics —
+        two of heaven's three most powerful goddesses now want Troy destroyed.</p>
+        <p class="hook">Next: the most beautiful woman in the world is already married. <a href="#act2">Act 2 ↓</a></p>
+      </div>
+    </article>
+
+    <!-- ACT 2 ............................................................ -->
+    <article class="act" id="act2" data-glossify aria-labelledby="act2-h">
+      <div class="act-eyebrow"><span class="caps">Act 2</span></div>
+      <h3 id="act2-h">The Oath</h3>
+      <p class="act-sub">How one elopement drafts every king in Greece.</p>
+
+      <div class="beat"><p>Aphrodite's prize has a name: Helen — and she is already queen
+      of Sparta, married to King Menelaus. Paris arrives in Sparta as a guest, and leaves
+      with her.</p></div>
+
+      <div class="beat" hidden data-motif="cunning.0"><p>Rewind some years. Every powerful
+      king in Greece had courted Helen, and her family feared the losers would start a war.
+      So one clever suitor — Odysseus — invented the Oath of Tyndareus: all suitors swear
+      to defend her marriage, whoever wins it. Now that oath detonates. It drafts every
+      Greek king into Menelaus's war.</p></div>
+
+      <div class="beat" hidden><p>There is colder fuel under the romance: Troy is rich
+      because it taxes the shipping that passes its straits. A war of honour that might
+      also crack open the wealthiest toll-gate in the region finds many volunteers.</p></div>
+
+      <div class="beat" hidden><p>And Helen herself? Versions differ, and the ancients knew
+      it. Some say she went willingly; some say she was taken. One tradition insists a
+      phantom Helen went to Troy — while the real one sat out the entire war in
+      Egypt.</p></div>
+
+      <div class="act-outro" hidden>
+        <span class="caps">Why it matters</span>
+        <p class="why">A private wrong becomes everyone's war because of a legal trick —
+        and the man who invented it will pay for it with twenty years of his life.</p>
+        <p class="hook">Next: rounding up the heroes — including two who really do not want to go. <a href="#act3">Act 3 ↓</a></p>
+      </div>
+    </article>
+
+    <!-- ACT 3 ............................................................ -->
+    <article class="act" id="act3" data-glossify aria-labelledby="act3-h">
+      <div class="act-eyebrow"><span class="caps">Act 3</span></div>
+      <h3 id="act3-h">The Coalition</h3>
+      <p class="act-sub">Three kinds of power, two draft-dodgers, one unbearable price.</p>
+
+      <div class="beat"><p>The coalition runs on three kinds of power. Agamemnon,
+      Menelaus's brother, holds <em>positional</em> power: the richest king in Greece, a
+      hundred ships, the wronged family's claim. Achilles holds <em>merit</em> power: the
+      best warrior alive. Odysseus holds <em>intellect</em> power: only twelve ships from
+      rocky Ithaca, but he is the indispensable fixer every plan will need.</p></div>
+
+      <div class="beat" hidden data-motif="bargain.0"><p>Achilles carries a prophecy shaped
+      like a bargain: go to Troy and live a short, blazing, famous life — or stay home for
+      a long, comfortable, forgotten one. He chooses fame. Hold that choice; the story will
+      come back for it.</p></div>
+
+      <div class="beat" hidden><p>Both stars dodge the draft. Odysseus feigns madness,
+      plowing a field and sowing it with salt — until his infant son is set down in front
+      of the plow, and he swerves. Achilles is hidden in a royal household, disguised as a
+      girl — until he alone grabs a spear planted among gifts.</p></div>
+
+      <div class="beat flag" hidden data-motif="debt.0"><p>The armada gathers at Aulis —
+      and the wind dies. The price of sailing proves unbearable: Agamemnon sacrifices his
+      own daughter, Iphigenia. The fleet gets its wind.</p>
+      <p class="aside">Mark this moment. It is a debt — and in this story, debts are always
+      repaid.</p></div>
+
+      <div class="act-outro" hidden>
+        <span class="caps">Why it matters</span>
+        <p class="why">Rank, merit and brains are welded into one army that already resents
+        itself — and at Aulis the expedition takes on a blood debt.</p>
+        <p class="hook">Next: why the greatest siege in myth took ten years. <a href="#act4">Act 4 ↓</a></p>
+      </div>
+    </article>
+
+    <!-- ACT 4 ............................................................ -->
+    <article class="act" id="act4" data-glossify aria-labelledby="act4-h">
+      <div class="act-eyebrow"><span class="caps">Act 4</span></div>
+      <h3 id="act4-h">Ten Years of Siege</h3>
+      <p class="act-sub">Not incompetence — geometry.</p>
+
+      <div class="beat"><p>Ten years is not incompetence. Troy's walls were built by gods
+      and cannot be stormed. Allies keep streaming in from across Asia Minor. And the gods
+      themselves fight on both sides: Aphrodite, Apollo and Ares for Troy; Hera, Athena and
+      Poseidon for the Greeks.</p></div>
+
+      <div class="beat" hidden><p>So the Greeks wage the unglamorous war instead: raiding
+      the towns around Troy, stripping the coast, strangling the supply lines that feed the
+      city.</p></div>
+
+      <div class="beat" hidden><p>Inside the walls, Troy's assembly debates simply giving
+      Helen back and ending it. The elder Antenor argues yes. Paris refuses. Pride wins the
+      vote.</p></div>
+
+      <div class="act-outro" hidden>
+        <span class="caps">Why it matters</span>
+        <p class="why">A city that cannot be stormed can only be starved or tricked —
+        remember that when a wooden horse appears.</p>
+        <p class="hook">Next: in year ten the Greek army nearly destroys itself. That slice is Homer's <em>Iliad</em>. <a href="#act5">Act 5 ↓</a></p>
+      </div>
+    </article>
+
+    <!-- ACT 5 ............................................................ -->
+    <article class="act homer" id="act5" data-glossify aria-labelledby="act5-h">
+      <div class="act-eyebrow"><span class="caps">Act 5</span><span class="homer-chip">This slice = Homer's Iliad</span></div>
+      <h3 id="act5-h">The Wrath of Achilles</h3>
+      <p class="act-sub">A few weeks of year ten — and the whole of Homer's first poem.</p>
+
+      <div class="beat"><p>Everything in this act happens in a few weeks of year ten. This
+      thin slice — not the whole war — is what Homer's Iliad actually tells.</p></div>
+
+      <div class="beat" hidden><p>Agamemnon must give back a captive woman to her father, a
+      priest. He recoups the loss by seizing Briseis — Achilles's own prize. Understand
+      what this is: rank publicly demoting merit; the commander showing the best warrior
+      exactly where power sits.</p></div>
+
+      <div class="beat" hidden><p>But Achilles is not a subordinate. He is a sovereign king
+      who cannot be ordered — so he withdraws himself and his men from the war entirely.
+      The result is immediate: Hector, Troy's great defender, drives the Greeks back onto
+      the beach, to their burning ships.</p></div>
+
+      <div class="beat" hidden><p>Patroclus, Achilles's beloved companion, cannot watch it.
+      (What were they to each other? Homer leaves the bond ambiguous; later Greeks read
+      them as lovers; it has been debated for 2,500 years — and the debate itself is the
+      honest answer.) He borrows Achilles's armor to drive the Trojans back, overreaches —
+      and Hector kills him.</p></div>
+
+      <div class="beat" hidden><p>Achilles returns to battle in annihilating grief. He
+      kills Hector — then drags the corpse behind his chariot for days.</p></div>
+
+      <div class="beat" hidden><p>Then the tradition's most humane scene. Old King Priam
+      slips into the enemy camp by night, kisses the hands that killed his son, and begs
+      for Hector's body. Achilles weeps with him — and relents.</p></div>
+
+      <div class="beat flag" hidden><p>The Iliad ends there, at Hector's funeral. Read that
+      again: inside Homer's poem there is <em>no wooden horse, no fall of Troy, no death of
+      Achilles</em>. Those belong to other, later parts of the tradition.</p></div>
+
+      <div class="act-outro" hidden>
+        <span class="caps">Why it matters</span>
+        <p class="why">The Iliad is not "the war" — it is a study of wrath and grief a few
+        weeks long, and it ends with two enemies weeping together.</p>
+        <p class="hook">Next: how Troy actually falls — to a trick, not a hero. <a href="#act6">Act 6 ↓</a></p>
+      </div>
+    </article>
+
+    <!-- ACT 6 ............................................................ -->
+    <article class="act" id="act6" data-glossify aria-labelledby="act6-h">
+      <div class="act-eyebrow"><span class="caps">Act 6</span></div>
+      <h3 id="act6-h">The Fall</h3>
+      <p class="act-sub">Cunning finishes what force could not — and goes too far.</p>
+
+      <div class="beat"><p>The prophecy collects. Paris kills Achilles with an arrow guided
+      by Apollo. (Note: the invulnerable "heel" is a later, non-Homeric addition — in the
+      older telling, a god's aim is explanation enough.)</p></div>
+
+      <div class="beat" hidden><p>Philoctetes shoots Paris. Dying, Paris crawls back to
+      Oenone — the lover he abandoned for Helen — and begs her to heal him. She refuses. He
+      dies; in grief, she hangs herself.</p></div>
+
+      <div class="beat" hidden data-motif="cunning.1"><p>Achilles's divine armor is put up
+      as a prize for the army's best man. It is awarded to Odysseus — over the giant Ajax,
+      the strongest Greek left alive. Ajax kills himself in shame. The tradition has
+      delivered its verdict: from here on, cunning outranks force.</p></div>
+
+      <div class="beat" hidden data-motif="cunning.2"><p>Odysseus devises the wooden horse.
+      The Greeks burn their camp and pretend to sail for home, leaving one man behind —
+      Sinon — to sell the lie.</p></div>
+
+      <div class="beat" hidden><p>Troy's truth-tellers are silenced on cue. The priest
+      Laocoon warns against the horse and is strangled by sea serpents. Cassandra — cursed
+      to prophesy truly and never be believed — is ignored as always. Troy breaches its own
+      wall to bring the horse inside.</p></div>
+
+      <div class="beat flag" hidden><p>Night falls, and the trap closes. In the sack, old
+      Priam is butchered at his own altar; Cassandra is dragged from Athena's temple. The
+      sacrilege matters: the gods now turn against the victors.</p></div>
+
+      <div class="act-outro" hidden>
+        <span class="caps">Why it matters</span>
+        <p class="why">Troy falls to a lie in wooden form — and the winners' cruelty in
+        victory costs them the gods' favour on the way home.</p>
+        <p class="hook">Next: the homecomings — where the debt from Aulis is finally repaid. <a href="#act7">Act 7 ↓</a></p>
+      </div>
+    </article>
+
+    <!-- ACT 7 ............................................................ -->
+    <article class="act" id="act7" data-glossify aria-labelledby="act7-h">
+      <div class="act-eyebrow"><span class="caps">Act 7</span></div>
+      <h3 id="act7-h">Homecomings</h3>
+      <p class="act-sub">Nobody simply sails home.</p>
+
+      <div class="beat"><p>Storms scatter the victorious fleet across the sea. For the
+      Greeks, winning the war turns out to be the easy part.</p></div>
+
+      <div class="beat" hidden><p>Menelaus raises his sword over Helen — and drops it. He
+      then wanders for years, by way of Egypt, before finally bringing her home to Sparta
+      and a quiet, unglamorous reconciliation.</p></div>
+
+      <div class="beat flag" hidden data-motif="debt.1"><p>Agamemnon returns home in
+      triumph — and is murdered in his bath by his queen, Clytemnestra. Ten years late, the
+      debt for Iphigenia is repaid in full.</p></div>
+
+      <div class="beat" hidden><p>Their son Orestes avenges his father — and vengeance
+      breeds vengeance, until Athena ends the blood feud by inventing something entirely
+      new: the jury trial. The cycle of payback is handed to a courtroom.</p></div>
+
+      <div class="act-outro" hidden>
+        <span class="caps">Why it matters</span>
+        <p class="why">The aftermath completes the moral ledger: the man who sacrificed his
+        daughter does not get to enjoy his victory.</p>
+        <p class="hook">Next: one king's homecoming becomes its own ten-year epic — Homer's <em>Odyssey</em>. <a href="#act8">Act 8 ↓</a></p>
+      </div>
+    </article>
+
+    <!-- ACT 8 ............................................................ -->
+    <article class="act homer" id="act8" data-glossify aria-labelledby="act8-h">
+      <div class="act-eyebrow"><span class="caps">Act 8</span><span class="homer-chip">This slice = Homer's Odyssey</span></div>
+      <h3 id="act8-h">The Cursed Voyage</h3>
+      <p class="act-sub">Not lost — cursed, precisely.</p>
+
+      <div class="beat"><p>First, correct the famous misconception: Odysseus is not
+      "lost at sea for ten years." He is cursed — and the curse is precise. Roughly three
+      years of catastrophe, then seven years as a prisoner.</p></div>
+
+      <div class="beat" hidden><p>The curse has an author. Trapped in a cave by the cyclops
+      Polyphemus, who eats his men, Odysseus tells the giant his name is <em>Nobody</em> —
+      then blinds him and escapes hidden under the sheep. When Polyphemus roars that
+      "Nobody" has attacked him, no help comes.</p></div>
+
+      <div class="beat flag" hidden><p>Then the fatal flex: from his ship, Odysseus shouts
+      his real name. Polyphemus is a son of Poseidon, and he prays an exact curse: let this
+      man come home <em>late, broken, alone, on a stranger's ship, to a house in chaos</em>.
+      The rest of the poem fulfills that prayer line by line.</p></div>
+
+      <div class="beat" hidden><p>The stops, in order: the Cicones raid; the Lotus-Eaters,
+      whose fruit erases the longing for home; the Cyclops; Aeolus's bag of winds, opened
+      by the greedy crew within sight of Ithaca; the Laestrygonian cannibals, who destroy
+      eleven of the twelve ships.</p>
+      <p class="aside">Walk every stop on the <a href="#voyage">Journey Map</a> below — and
+      watch the crew counter fall.</p></div>
+
+      <div class="beat" hidden data-motif="bargain.1"><p>Circe turns his men to pigs until,
+      armed with a divine herb, he beats her spell. Then the Underworld. His mother is
+      among the dead — she died of grief, waiting. Achilles's ghost recants the great
+      bargain: better a living farmhand, he says, than king of all the dead. And
+      Agamemnon's ghost gives hard advice: go home in disguise.</p></div>
+
+      <div class="beat" hidden><p>Homeward arithmetic: past the Sirens, tied to the mast;
+      then a commander's choice between Scylla and Charybdis — lose six men to the monster,
+      or risk the whole ship in the whirlpool. He loses the six. Then the starving crew
+      eats the Sun god's cattle, and Zeus sinks the ship. One man survives.</p></div>
+
+      <div class="beat" hidden data-motif="bargain.2"><p>Calypso keeps that one man on her
+      island for seven years — and offers him the ultimate prize: immortality, with her,
+      forever. He refuses it, for a mortal wife and a rocky island. It is the exact inverse
+      of Achilles's bargain. At last the Phaeacians ferry him home, asleep, on one of their
+      own ships.</p></div>
+
+      <div class="act-outro" hidden>
+        <span class="caps">Why it matters</span>
+        <p class="why">Twenty years after Aulis the curse is complete: late, broken, alone,
+        on a stranger's ship — to a house in chaos.</p>
+        <p class="hook">Next: what, exactly, is waiting in that house. <a href="#act9">Act 9 ↓</a></p>
+      </div>
+    </article>
+
+    <!-- ACT 9 ............................................................ -->
+    <article class="act" id="act9" data-glossify aria-labelledby="act9-h">
+      <div class="act-eyebrow"><span class="caps">Act 9</span></div>
+      <h3 id="act9-h">Ithaca</h3>
+      <p class="act-sub">A beggar, a bow, and a bed that cannot be moved.</p>
+
+      <div class="beat"><p>The chaos has a number: 108 suitors — young nobles occupying the
+      palace, eating the estate bare, each demanding that Penelope choose one of them as
+      husband and king.</p></div>
+
+      <div class="beat" hidden><p>Why can't she just refuse? Count her prison bars: there
+      is no proof Odysseus is dead; she has no force able to expel armed nobles;
+      remarriage would strip her son Telemachus of his inheritance — and the suitors are
+      plotting to murder the boy anyway. Every exit is blocked.</p></div>
+
+      <div class="beat" hidden><p>So she filibusters. She will choose a husband, she
+      announces, when she finishes weaving a funeral shroud — and every night she secretly
+      unpicks the day's work. The trick holds for three years, until a maid betrays
+      her.</p></div>
+
+      <div class="beat" hidden><p>Odysseus lands — and takes the ghost's advice, entering
+      his own palace disguised as a beggar. His dying dog Argos knows him instantly, with
+      strength left for a single wag of the tail. His old nurse knows him by a boar scar
+      from his youth.</p></div>
+
+      <div class="beat" hidden><p>Penelope announces a contest: she will marry whichever
+      man can string Odysseus's great bow and shoot an arrow through twelve axe heads.
+      Suitor after suitor fails. Only the shabby beggar can do it.</p></div>
+
+      <div class="beat flag" hidden><p>He turns the bow on the suitors. With Telemachus at
+      his side, he kills all 108 — in the world of the poem, justice for attempted murder
+      and years of pillage. The disloyal maids are hanged too. The myth does not sanitize
+      its homecoming, and neither should we.</p></div>
+
+      <div class="beat" hidden data-motif="cunning.3"><p>One test left — and it is hers.
+      Penelope orders their marriage bed moved out of the bedroom for the stranger. He
+      erupts: impossible — he built that bed himself around a <em>living olive tree</em>;
+      it cannot be moved. Only her husband could know that. Twenty years end.</p></div>
+
+      <div class="beat" hidden><p>Athena imposes peace on the feuding families. And a
+      prophecy grants Odysseus what Achilles never wanted: a long life, and a gentle death
+      far from the sea, in old age.</p></div>
+
+      <div class="act-outro" hidden>
+        <span class="caps">Why it matters</span>
+        <p class="why">The epic ends not with a battle but with a marriage of equals — the
+        bed test is cunning recognizing cunning — and all three long threads close.</p>
+        <p class="hook">You now know the whole cycle. Prove it in the <a href="#quiz">quiz ↓</a> — or explore the tools below first.</p>
+      </div>
+    </article>
+  </section>
+
+  <svg class="keyline wrap" aria-hidden="true" focusable="false"><rect width="100%" height="14" fill="url(#meander)"/></svg>
+
+  <!-- ==================================================================== -->
+  <!-- COMPONENT 2 · TIMELINE SCRUBBER — the vase-frieze band.               -->
+  <!-- SVG is built by JS to the container's real pixel width; the range     -->
+  <!-- input is the accessible control (arrow keys work), and the band       -->
+  <!-- itself accepts pointer drags.                                         -->
+  <!-- ==================================================================== -->
+  <section id="timeline" class="block wrap" aria-labelledby="tl-h">
+    <div class="block-head">
+      <span class="caps">02 · Timeline Scrubber</span>
+      <h2 id="tl-h">Twenty years on one band</h2>
+      <p class="intro">Drag the frieze (or use arrow keys on the slider). The two marked
+      slices are the parts Homer actually wrote — far thinner than most people think.</p>
+    </div>
+    <div class="frieze-box" aria-hidden="true"><svg id="frieze" role="presentation"></svg></div>
+    <label class="sr-only" for="tlRange">Scrub through the twenty-year chronology</label>
+    <input type="range" id="tlRange" min="-30" max="200" step="1" value="-30"
+           aria-describedby="tl-readout">
+    <div class="tl-readout panel" id="tl-readout" aria-live="polite">
+      <span class="caps tl-era" id="tlEra">Prelude</span>
+      <p id="tlText">Drag to begin.</p>
+    </div>
+    <p class="tl-note"><strong>The point of this band:</strong> the <em>Iliad</em> covers a
+    few weeks of the war's tenth year — no horse, no fall of Troy. The <em>Odyssey</em>
+    covers only the return. Neither poem tells "the whole war."</p>
+  </section>
+
+  <svg class="keyline wrap" aria-hidden="true" focusable="false"><rect width="100%" height="14" fill="url(#meander)"/></svg>
+
+  <!-- ==================================================================== -->
+  <!-- COMPONENT 3 · CHARACTER WEB — static-positioned SVG graph, JS-built.  -->
+  <!-- ==================================================================== -->
+  <section id="characters" class="block wrap" aria-labelledby="cw-h">
+    <div class="block-head">
+      <span class="caps">03 · Character Web</span>
+      <h2 id="cw-h">Who is who — and who kills whom</h2>
+      <p class="intro">Tap a name for a two-line biography and allegiance; its
+      relationships light up with labels. Filter by side.</p>
+    </div>
+    <div class="cw-filters" role="group" aria-label="Filter characters by side">
+      <button class="btn small" data-cwf="all" aria-pressed="true">All</button>
+      <button class="btn small" data-cwf="greek" aria-pressed="false">Greeks</button>
+      <button class="btn small" data-cwf="trojan" aria-pressed="false">Trojans</button>
+      <button class="btn small" data-cwf="god" aria-pressed="false">Gods</button>
+    </div>
+    <svg id="charweb" viewBox="0 0 440 640" role="group" aria-label="Character relationship graph"></svg>
+    <div class="cw-legend" aria-hidden="true">
+      <span class="lg-kin">kin</span><span class="lg-lovers">lovers / companions</span>
+      <span class="lg-killed">killed by</span><span class="lg-enemies">enemies</span>
+    </div>
+    <div class="cw-detail panel" id="cwDetail" aria-live="polite" data-glossify>
+      <span class="caps">Selected figure</span>
+      <p>Nothing selected yet — tap any node above.</p>
+    </div>
+  </section>
+
+  <svg class="keyline wrap" aria-hidden="true" focusable="false"><rect width="100%" height="14" fill="url(#meander)"/></svg>
+
+  <!-- ==================================================================== -->
+  <!-- COMPONENT 4 · JOURNEY MAP — stylized Mediterranean, JS-built SVG.     -->
+  <!-- ==================================================================== -->
+  <section id="voyage" class="block wrap" aria-labelledby="vg-h">
+    <div class="block-head">
+      <span class="caps">04 · Journey Map</span>
+      <h2 id="vg-h">The cursed voyage, stop by stop</h2>
+      <p class="intro">Act 8 as a map. Step through the stops and watch twelve ships and
+      six hundred men collapse to a single swimmer.</p>
+    </div>
+    <svg id="voyageMap" viewBox="0 0 400 380" role="group" aria-label="Stylized map of Odysseus's voyage"></svg>
+    <div class="vg-panel panel" id="vgPanel" aria-live="polite" data-glossify></div>
+  </section>
+
+  <svg class="keyline wrap" aria-hidden="true" focusable="false"><rect width="100%" height="14" fill="url(#meander)"/></svg>
+
+  <!-- ==================================================================== -->
+  <!-- COMPONENT 5 · MYTH vs MOVIE                                           -->
+  <!-- ==================================================================== -->
+  <section id="film" class="block wrap wide" aria-labelledby="film-h">
+    <div class="block-head">
+      <span class="caps">05 · Myth vs Movie</span>
+      <h2 id="film-h">What <em>Troy</em> (2004) changed</h2>
+      <p class="intro">If the Brad Pitt film is your mental picture of this story, these
+      are the edits to undo. Tap each card's toggle to compare.</p>
+    </div>
+    <div class="film-grid" id="filmGrid" data-glossify>
+
+      <div class="film-card panel">
+        <h4>Agamemnon's death</h4>
+        <div class="seg" role="group" aria-label="Choose version"><button aria-pressed="true">In the film</button><button aria-pressed="false">In the myth</button></div>
+        <p class="film-panel movie"><span class="caps">In the film</span>Agamemnon is killed
+        during the sack of Troy.</p>
+        <p class="film-panel myth" hidden><span class="caps">In the myth</span>He survives the
+        war and returns home in triumph — where Clytemnestra murders him in his bath. His
+        death is the whole point of the homecoming story, not a battlefield footnote.</p>
+      </div>
+
+      <div class="film-card panel">
+        <h4>Menelaus's death</h4>
+        <div class="seg" role="group" aria-label="Choose version"><button aria-pressed="true">In the film</button><button aria-pressed="false">In the myth</button></div>
+        <p class="film-panel movie"><span class="caps">In the film</span>Hector kills Menelaus
+        mid-war.</p>
+        <p class="film-panel myth" hidden><span class="caps">In the myth</span>Menelaus
+        survives, raises his sword over Helen, drops it — and after years of wandering via
+        Egypt brings her home to a quiet reconciliation.</p>
+      </div>
+
+      <div class="film-card panel">
+        <h4>Achilles at the horse</h4>
+        <div class="seg" role="group" aria-label="Choose version"><button aria-pressed="true">In the film</button><button aria-pressed="false">In the myth</button></div>
+        <p class="film-panel movie"><span class="caps">In the film</span>Achilles is alive for
+        the sack, dying inside Troy.</p>
+        <p class="film-panel myth" hidden><span class="caps">In the myth</span>Paris's arrow —
+        guided by Apollo — kills Achilles <em>before the horse exists</em>. The horse is
+        built precisely because the Greeks' best warrior is gone and force has failed.</p>
+      </div>
+
+      <div class="film-card panel">
+        <h4>The gods, deleted</h4>
+        <div class="seg" role="group" aria-label="Choose version"><button aria-pressed="true">In the film</button><button aria-pressed="false">In the myth</button></div>
+        <p class="film-panel movie"><span class="caps">In the film</span>No gods appear; the
+        war is purely human politics.</p>
+        <p class="film-panel myth" hidden><span class="caps">In the myth</span>Remove the gods
+        and the logic breaks: the apple starts the war, gods hold the walls, Apollo guides
+        the fatal arrow, and Poseidon's curse shapes the entire journey home.</p>
+      </div>
+
+      <div class="film-card panel">
+        <h4>Patroclus the "young cousin"</h4>
+        <div class="seg" role="group" aria-label="Choose version"><button aria-pressed="true">In the film</button><button aria-pressed="false">In the myth</button></div>
+        <p class="film-panel movie"><span class="caps">In the film</span>Patroclus is a boyish
+        cousin under Achilles's protection.</p>
+        <p class="film-panel myth" hidden><span class="caps">In the myth</span>He is Achilles's
+        beloved companion — the one person whose death unmakes him. Homer leaves the bond
+        unlabeled; antiquity debated it for centuries. "Cousin" is the one reading with no
+        ancient support.</p>
+      </div>
+
+      <div class="film-card panel">
+        <h4>Ajax's end</h4>
+        <div class="seg" role="group" aria-label="Choose version"><button aria-pressed="true">In the film</button><button aria-pressed="false">In the myth</button></div>
+        <p class="film-panel movie"><span class="caps">In the film</span>Hector kills Ajax in
+        battle.</p>
+        <p class="film-panel myth" hidden><span class="caps">In the myth</span>Ajax outlives
+        Hector. He dies by his own hand, in shame, after Achilles's armor is awarded to
+        Odysseus — the tradition's verdict that cunning now outranks force.</p>
+      </div>
+
+      <div class="film-card panel">
+        <h4>Nolan's <em>The Odyssey</em> (2026)</h4>
+        <div class="seg" role="group" aria-label="Choose version"><button aria-pressed="true">The film</button><button aria-pressed="false">The poem</button></div>
+        <p class="film-panel movie"><span class="caps">The film</span>Broadly faithful to the
+        poem, told nonlinearly.</p>
+        <p class="film-panel myth" hidden><span class="caps">The poem</span>Nonlinear is
+        Homer's own structure: the <em>Odyssey</em> starts near the end, with the wanderings
+        delivered as a flashback. A jumbled telling is the authentic one.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <svg class="keyline wrap" aria-hidden="true" focusable="false"><rect width="100%" height="14" fill="url(#meander)"/></svg>
+
+  <!-- ==================================================================== -->
+  <!-- COMPONENT 6 · MISCONCEPTIONS DECK — flip cards.                       -->
+  <!-- ==================================================================== -->
+  <section id="misconceptions" class="block wrap wide" aria-labelledby="mc-h">
+    <div class="block-head">
+      <span class="caps">06 · Misconceptions</span>
+      <h2 id="mc-h">Five things "everyone knows" that are wrong</h2>
+      <p class="intro">Tap a card to flip it.</p>
+    </div>
+    <div class="flip-grid">
+
+      <button type="button" class="flip" aria-pressed="false">
+        <span class="flip-inner">
+          <span class="flip-face flip-front"><span class="caps">The claim</span>
+            <p>"Odysseus was lost at sea for ten years."</p>
+            <span class="flip-hint">Tap to flip ↺</span></span>
+          <span class="flip-face flip-back"><span class="caps">The correction</span>
+            <p>He was cursed, not lost — and seven of those ten years were spent as
+            Calypso's captive on one island. Only about three years were actual wandering,
+            every disaster scripted by Polyphemus's prayer to Poseidon.</p></span>
+        </span>
+      </button>
+
+      <button type="button" class="flip" aria-pressed="false">
+        <span class="flip-inner">
+          <span class="flip-face flip-front"><span class="caps">The claim</span>
+            <p>"Achilles was gay."</p>
+            <span class="flip-hint">Tap to flip ↺</span></span>
+          <span class="flip-face flip-back"><span class="caps">The correction</span>
+            <p>Homer shows a bond with Patroclus deeper than any other and never labels it.
+            Later Greeks read them as lovers; others disagreed — the argument is 2,500
+            years old. Ancient categories don't map cleanly onto modern ones; the honest
+            answer is the debate itself.</p></span>
+        </span>
+      </button>
+
+      <button type="button" class="flip" aria-pressed="false">
+        <span class="flip-inner">
+          <span class="flip-face flip-front"><span class="caps">The claim</span>
+            <p>"The <em>Iliad</em> tells the story of the Trojan War."</p>
+            <span class="flip-hint">Tap to flip ↺</span></span>
+          <span class="flip-face flip-back"><span class="caps">The correction</span>
+            <p>It covers a few weeks of year ten — the wrath of Achilles — and ends at
+            Hector's funeral. No judgment of Paris, no horse, no fall of Troy, no death of
+            Achilles. Check the Timeline band above to see how thin the slice is.</p></span>
+        </span>
+      </button>
+
+      <button type="button" class="flip" aria-pressed="false">
+        <span class="flip-inner">
+          <span class="flip-face flip-front"><span class="caps">The claim</span>
+            <p>"Achilles died from an arrow to his one weak spot — his heel."</p>
+            <span class="flip-hint">Tap to flip ↺</span></span>
+          <span class="flip-face flip-back"><span class="caps">The correction</span>
+            <p>The heel is a later, non-Homeric addition. In the older tradition Paris
+            simply kills him with an arrow guided by Apollo — and the death doesn't happen
+            in the <em>Iliad</em> at all.</p></span>
+        </span>
+      </button>
+
+      <button type="button" class="flip" aria-pressed="false">
+        <span class="flip-inner">
+          <span class="flip-face flip-front"><span class="caps">The claim</span>
+            <p>"Helen ran off with Paris. Definitely."</p>
+            <span class="flip-hint">Tap to flip ↺</span></span>
+          <span class="flip-face flip-back"><span class="caps">The correction</span>
+            <p>Versions differ, and the ancients said so themselves. Willingly, abducted —
+            or, in one tradition, never there at all: a phantom went to Troy while the real
+            Helen waited out the war in Egypt.</p></span>
+        </span>
+      </button>
+
+    </div>
+  </section>
+
+  <svg class="keyline wrap" aria-hidden="true" focusable="false"><rect width="100%" height="14" fill="url(#meander)"/></svg>
+
+  <!-- ==================================================================== -->
+  <!-- COMPONENT 7 · QUIZ MODE — 15 questions, wrong answers requeue once.   -->
+  <!-- ==================================================================== -->
+  <section id="quiz" class="block wrap" aria-labelledby="qz-h">
+    <div class="block-head">
+      <span class="caps">07 · Quiz</span>
+      <h2 id="qz-h">Can you retell it now?</h2>
+      <p class="intro">Thirteen multiple-choice questions plus two order-the-events.
+      Instant explanations. Anything you miss comes back once at the end.</p>
+    </div>
+    <div class="quiz-box panel" id="quizBox">
+      <div class="q-final">
+        <p class="caps">15 questions · no timer</p>
+        <p>Score is kept in memory only — refreshing the page resets everything.</p>
+        <button class="btn primary" id="quizStart">Start the quiz</button>
+      </div>
+    </div>
+    <p class="sr-only" role="status" aria-live="polite" id="quizLive"></p>
+  </section>
+
+</main>
+
+<!-- ====================================================================== -->
+<!-- FOOTER                                                                  -->
+<!-- ====================================================================== -->
+<footer class="colophon wrap">
+  <p><strong>A note on accuracy.</strong> Greek myth is a braid of variants, not one text.
+  Where the ancients disagreed — Helen's willingness, the nature of Achilles and
+  Patroclus's bond — this page shows the disagreement instead of resolving it. Details the
+  movies made famous (the heel, Achilles inside the horse) are flagged where they are
+  later additions rather than Homer.</p>
+  <p>Single HTML file · no frameworks, no trackers, no external requests · works offline
+  once loaded. Progress lives in memory and resets on refresh, by design.</p>
+</footer>
+
+<!-- ====================================================================== -->
+<!-- MOTIF TRACKER — persistent FAB, panel, toast (Component: motif arcs)    -->
+<!-- ====================================================================== -->
+<button class="motif-fab" id="motifFab" aria-expanded="false" aria-controls="motifPanel">
+  <span>Threads</span>
+  <span class="dots" id="motifDots" aria-hidden="true"></span>
+  <span class="sr-only" id="motifCount">0 of 9 payoffs reached</span>
+</button>
+<div class="motif-panel" id="motifPanel" hidden role="region" aria-label="Story threads tracker">
+  <h4>Three long threads</h4>
+  <p>These arcs span the whole cycle. Stages light up as you reach each payoff in the story.</p>
+  <div id="motifArcs"></div>
+</div>
+<p class="sr-only" role="status" aria-live="polite" id="motifLive"></p>
+
+<!-- ====================================================================== -->
+<!-- COMPONENT 8 · GLOSSARY POPOVER (single reusable element)                -->
+<!-- ====================================================================== -->
+<div class="popover" id="popover" hidden role="dialog" aria-modal="false" aria-labelledby="popTitle">
+  <h4 id="popTitle"></h4>
+  <p id="popBody"></p>
+  <button class="pop-close" id="popClose" aria-label="Close definition">✕</button>
+</div>
+
+<noscript>
+  <style>
+    .beat[hidden],.act-outro[hidden],.film-panel[hidden]{display:block!important}
+    .motif-fab,.frieze-box,#tlRange,#quizBox .q-final button{display:none}
+  </style>
+</noscript>
+
+<script>
+/* ==========================================================================
+   APP SCRIPT — all state lives in JS memory (no localStorage by design:
+   this page must run inside sandboxed artifact iframes). Sections:
+   A. helpers · B. data · C. theme · D. glossary · E. motifs · F. story
+   G. timeline · H. character web · I. journey map · J. film cards
+   K. quiz · L. scroll reveal
+   ========================================================================== */
+(function(){
+'use strict';
+
+/* ---------- A. HELPERS -------------------------------------------------- */
+const $  = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const SVGNS = 'http://www.w3.org/2000/svg';
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function svgEl(tag, attrs, parent){
+  const el = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(el);
+  return el;
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ---------- B. DATA ------------------------------------------------------ */
+
+/* B1 · Glossary: every proper noun on the page, one-line reminders. */
+const GLOSS = {
+  "Zeus": "King of the gods. Planned the great war, then dumped the apple verdict on Paris.",
+  "Hera": "Queen of the gods. Offered Paris empire, lost — backs the Greeks.",
+  "Athena": "Goddess of wisdom and war. Offered victory, lost — backs the Greeks; later invents the jury trial.",
+  "Aphrodite": "Goddess of desire. Won the apple by promising Helen — backs Troy.",
+  "Eris": "Goddess of strife. Uninvited, she threw the golden apple 'for the fairest.'",
+  "Paris": "Trojan prince raised as a herdsman. Judged the goddesses, took Helen, kills Achilles.",
+  "Peleus": "Mortal hero. His wedding to the goddess Thetis hosted the golden apple.",
+  "Thetis": "Sea-goddess, mother of Achilles.",
+  "Oenone": "Paris's first love, abandoned for Helen. Later refuses to heal him.",
+  "Helen": "Queen of Sparta, the apple's promised prize. Went willingly? Versions differ.",
+  "Menelaus": "King of Sparta, Helen's husband, Agamemnon's brother. Survives the war.",
+  "Sparta": "Menelaus's kingdom in southern Greece — where Helen was queen.",
+  "Troy": "Wealthy walled city in Asia Minor, rich from taxing ships through the straits.",
+  "Odysseus": "King of rocky Ithaca. The coalition's fixer: the oath, the horse, the homecoming.",
+  "Tyndareus": "Helen's earthly father; the suitors' oath bears his name.",
+  "Oath of Tyndareus": "Sworn by all Helen's suitors — defend her marriage, whoever wins. Odysseus's invention.",
+  "Agamemnon": "Richest Greek king, 100 ships, the commander. Murdered in his bath on his return.",
+  "Achilles": "Best warrior alive. Chose a short famous life over a long forgotten one.",
+  "Ithaca": "Odysseus's rocky island kingdom in western Greece.",
+  "Iphigenia": "Agamemnon's daughter, sacrificed at Aulis for a sailing wind.",
+  "Aulis": "The harbor where the Greek fleet gathered — windless until the sacrifice.",
+  "Apollo": "Archer god, backs Troy. Guides the arrow that kills Achilles.",
+  "Ares": "God of war, fights for Troy.",
+  "Poseidon": "God of the sea. Backs the Greeks at Troy — then curses Odysseus for blinding his son.",
+  "Antenor": "Trojan elder who argued for giving Helen back. Paris refused.",
+  "Briseis": "Captive prize of Achilles, seized by Agamemnon — the spark of the wrath.",
+  "Hector": "Troy's greatest defender, Priam's son. Kills Patroclus; killed by Achilles.",
+  "Patroclus": "Achilles's beloved companion — a bond debated for 2,500 years. Killed by Hector.",
+  "Priam": "Old king of Troy. Ransoms Hector's body with a kiss on the killer's hands.",
+  "Philoctetes": "Greek archer whose arrow kills Paris.",
+  "Ajax": "The Greek giant. Loses Achilles's armor to Odysseus and takes his own life.",
+  "Sinon": "The Greek left behind to sell the Trojans the lie of the horse.",
+  "Laocoon": "Trojan priest who warned against the horse — strangled by sea serpents.",
+  "Cassandra": "Trojan prophetess cursed to be always right and never believed.",
+  "Clytemnestra": "Agamemnon's queen. Kills him in his bath — the debt for Iphigenia repaid.",
+  "Orestes": "Son of Agamemnon. Avenges him; the feud ends at Athena's first jury trial.",
+  "Polyphemus": "One-eyed giant, son of Poseidon. Blinded by 'Nobody', he prays the exact curse.",
+  "Cicones": "First landfall after Troy — a raid that costs six men from every ship.",
+  "Lotus-Eaters": "Their fruit erases the longing for home.",
+  "Aeolus": "Keeper of the winds. His gift — a bag of storms — is opened in sight of Ithaca.",
+  "Laestrygonians": "Giant cannibals who destroy eleven of the twelve ships.",
+  "Circe": "Witch-goddess who turns men to pigs — beaten with a divine herb.",
+  "Sirens": "Their song lures sailors to the rocks. Odysseus hears it lashed to the mast.",
+  "Scylla": "Six-headed cliff monster. The six-man toll.",
+  "Charybdis": "Ship-swallowing whirlpool opposite Scylla.",
+  "Calypso": "Nymph who holds Odysseus seven years and offers immortality. He refuses.",
+  "Phaeacians": "Master sailors who ferry Odysseus home asleep — a stranger's ship.",
+  "Penelope": "Odysseus's wife and equal in cunning: the shroud trick and the bed test are hers.",
+  "Telemachus": "Son of Odysseus and Penelope. The suitors plot his murder; he fights beside his father.",
+  "Argos": "Odysseus's old dog. Knows his master instantly — one wag of the tail.",
+  "Homer": "The poet to whom the Iliad and Odyssey are credited.",
+  "Iliad": "Homer's poem of the wrath of Achilles — a few weeks of the war's tenth year.",
+  "Odyssey": "Homer's poem of Odysseus's ten-year return, told out of order.",
+  "Egypt": "Menelaus wanders here for years — and in one version, the real Helen waited here.",
+  "Asia Minor": "The region around Troy; its allies streamed into the city for ten years."
+};
+/* singular/adjective aliases that should match the same entries */
+const ALIAS = {
+  "Laestrygonian": "Laestrygonians",
+  "Phaeacian": "Phaeacians",
+  "Siren": "Sirens",
+  "Trojans": "Troy"
+};
+
+/* B2 · Motif tracker: three long arcs, lit stage by stage. */
+const MOTIFS = {
+  debt: { name: "The Debt", stages: [
+    "Iphigenia sacrificed at Aulis",
+    "Repaid: Clytemnestra's bath" ] },
+  bargain: { name: "The Bargain", stages: [
+    "Achilles chooses short fame",
+    "His ghost recants in the Underworld",
+    "Odysseus refuses immortality" ] },
+  cunning: { name: "Cunning over Force", stages: [
+    "Odysseus invents the Oath",
+    "Wins Achilles's armor",
+    "The wooden horse",
+    "The bed test" ] }
+};
+
+/* B3 · Timeline events. Year scale: -3 (prelude) … 0 (war starts) … 10 (fall)
+       … 20 (homecoming). The Iliad/Odyssey overlays mark Homer's actual slices. */
+const TL_EVENTS = [
+  [-3,  "Years before the war: Helen's suitors swear the Oath of Tyndareus — Odysseus's invention. Whoever wins her, all must defend the marriage."],
+  [-2,  "The wedding of Peleus and Thetis. Eris, uninvited, throws a golden apple 'for the fairest.' Hera, Athena and Aphrodite all claim it."],
+  [-1.4,"The Judgment of Paris: he takes Aphrodite's bribe — the most beautiful woman in the world — and two goddesses become Troy's enemies."],
+  [-0.7,"Paris leaves Sparta with Helen. The oath detonates, drafting every Greek king into Menelaus's war."],
+  [0,   "The fleet gathers at Aulis. No wind — until Agamemnon sacrifices his daughter Iphigenia. The war begins."],
+  [2,   "The siege, the long way: Troy's god-built walls cannot be stormed, so the Greeks raid the coast and strangle supply lines."],
+  [5,   "Gods fight on both sides — Aphrodite, Apollo and Ares for Troy; Hera, Athena and Poseidon for the Greeks. Allies stream in from Asia Minor."],
+  [8,   "Troy's assembly debates handing Helen back. The elder Antenor says yes; Paris refuses. Pride wins."],
+  [9.55,"THE ILIAD — a few weeks of year ten: Briseis seized, Achilles withdraws, Patroclus falls, Hector falls. It ends at Hector's funeral."],
+  [10,  "Year ten: Paris's arrow (Apollo's aim) kills Achilles. The armor goes to Odysseus; Ajax dies by his own hand. The horse. Troy burns."],
+  [10.7,"Storms scatter the victors. Agamemnon reaches home in triumph — and is murdered in his bath. Menelaus begins years of wandering via Egypt."],
+  [11.3,"Odysseus's disasters begin: Cicones, Lotus-Eaters, the Cyclops — and Poseidon's curse — then the bag of winds, opened in sight of Ithaca."],
+  [12.2,"Laestrygonian cannibals destroy eleven of twelve ships. Circe turns men to pigs. In the Underworld, Achilles's ghost recants his bargain."],
+  [13,  "Sirens, then Scylla's six-man toll. The starving crew eats the Sun god's cattle; Zeus sinks the ship. Sole survivor: Odysseus."],
+  [13.5,"Calypso's island: held captive seven years. She offers immortality; he refuses it for a mortal wife and home."],
+  [19,  "On Ithaca, 108 suitors besiege Penelope. Her shroud trick — woven by day, unpicked by night — holds them off three years, until a maid betrays her."],
+  [20,  "Year twenty: the Phaeacians land Odysseus home asleep. The beggar, the bow, the twelve axes, the reckoning, the bed test. Reunion."]
+];
+
+/* B4 · Character web: static positions on a 440×640 canvas. */
+const CHARS = [
+  { id:"hera",       name:"Hera",        side:"god",    x:70,  y:42,  alle:"Backs the Greeks (snubbed)", bio:"Queen of the gods. Offered Paris empire — and lost the apple." },
+  { id:"zeus",       name:"Zeus",        side:"god",    x:165, y:42,  alle:"Above the fray — nudging everyone", bio:"King of the gods. Plans the great war, then dumps the apple verdict on Paris." },
+  { id:"athena",     name:"Athena",      side:"god",    x:260, y:42,  alle:"Backs the Greeks (snubbed)", bio:"Offered Paris victory in war — and lost. At the very end, invents the jury trial." },
+  { id:"aphrodite",  name:"Aphrodite",   side:"god",    x:360, y:42,  alle:"Backs Troy", bio:"Goddess of desire. Won the apple by promising Paris the most beautiful woman alive." },
+  { id:"poseidon",   name:"Poseidon",    side:"god",    x:70,  y:110, alle:"Greeks at Troy — then Odysseus's curse", bio:"God of the sea, father of the cyclops Polyphemus. His grudge shapes the entire voyage home." },
+  { id:"eris",       name:"Eris",        side:"god",    x:165, y:110, alle:"Chaos itself", bio:"Strife. Uninvited to the wedding, she throws the golden apple 'for the fairest.'" },
+  { id:"apollo",     name:"Apollo",      side:"god",    x:260, y:110, alle:"Backs Troy", bio:"The archer god. Guides the arrow of Paris that kills Achilles." },
+  { id:"thetis",     name:"Thetis",      side:"god",    x:360, y:110, alle:"For her son", bio:"Sea-goddess whose wedding to Peleus hosted the apple. Mother of Achilles." },
+
+  { id:"agamemnon",  name:"Agamemnon",   side:"greek",  x:90,  y:215, alle:"Greek — the commander", bio:"Positional power: richest king, 100 ships. Sacrifices Iphigenia at Aulis; seizes Briseis at Troy." },
+  { id:"clytemnestra",name:"Clytemnestra",side:"greek", x:200, y:215, alle:"Her own side", bio:"Agamemnon's queen. Waits ten years, then repays the debt for Iphigenia in the bath." },
+  { id:"priam",      name:"Priam",       side:"trojan", x:360, y:215, alle:"Trojan — the old king", bio:"Kisses the hands that killed his son to ransom Hector's body. Butchered at his own altar." },
+
+  { id:"iphigenia",  name:"Iphigenia",   side:"greek",  x:48,  y:288, alle:"Greek — the debt", bio:"Agamemnon's daughter, sacrificed at Aulis so the fleet could sail." },
+  { id:"orestes",    name:"Orestes",     side:"greek",  x:140, y:288, alle:"Greek", bio:"Avenges his murdered father. The blood feud ends only at Athena's first jury trial." },
+  { id:"menelaus",   name:"Menelaus",    side:"greek",  x:232, y:288, alle:"Greek — Sparta", bio:"Helen's husband. Raises his sword over her, drops it; years later, a quiet reconciliation." },
+  { id:"hector",     name:"Hector",      side:"trojan", x:310, y:288, alle:"Trojan — the defender", bio:"Troy's best. Kills Patroclus; killed by Achilles. His funeral is the Iliad's last scene." },
+  { id:"paris",      name:"Paris",       side:"trojan", x:392, y:288, alle:"Trojan", bio:"Judged the goddesses; took Helen; refused to return her. Kills Achilles; dies of Philoctetes's arrow." },
+
+  { id:"achilles",   name:"Achilles",    side:"greek",  x:90,  y:362, alle:"Greek — merit power", bio:"Best warrior alive. Chose a short famous life over a long forgotten one. His wrath is the Iliad." },
+  { id:"helen",      name:"Helen",       side:"greek",  x:232, y:362, alle:"Contested", bio:"Queen of Sparta and the apple's prize. Willing or taken? The ancients themselves disagreed." },
+  { id:"cassandra",  name:"Cassandra",   side:"trojan", x:310, y:362, alle:"Trojan", bio:"Prophesies truly, believed never. Dragged from Athena's temple in the sack." },
+  { id:"oenone",     name:"Oenone",      side:"trojan", x:392, y:362, alle:"Trojan side", bio:"Paris's first love, abandoned for Helen. Refuses to heal him; hangs herself in grief." },
+
+  { id:"patroclus",  name:"Patroclus",   side:"greek",  x:48,  y:435, alle:"Greek", bio:"Achilles's beloved companion — the bond debated for 2,500 years. Dies in borrowed armor." },
+  { id:"briseis",    name:"Briseis",     side:"trojan", x:160, y:435, alle:"Captive", bio:"Achilles's captive prize, seized by Agamemnon — the insult that starts the wrath." },
+  { id:"ajax",       name:"Ajax",        side:"greek",  x:260, y:435, alle:"Greek", bio:"The giant, strongest Greek after Achilles. Loses the armor to Odysseus; dies by his own hand." },
+
+  { id:"odysseus",   name:"Odysseus",    side:"greek",  x:90,  y:508, alle:"Greek — Ithaca", bio:"Intellect power: 12 ships and every decisive trick — the oath, the horse, the homecoming." },
+  { id:"penelope",   name:"Penelope",    side:"greek",  x:200, y:508, alle:"Ithaca", bio:"Holds the palace with cunning alone: the shroud filibuster, then the bed test." },
+  { id:"telemachus", name:"Telemachus",  side:"greek",  x:310, y:508, alle:"Ithaca", bio:"Son of Odysseus. The suitors plot his murder; he stands beside his father at the reckoning." }
+];
+const EDGES = [
+  ["zeus","hera","married","kin"],
+  ["thetis","achilles","mother","kin"],
+  ["zeus","paris","dumps the verdict on him","bond"],
+  ["aphrodite","paris","promised him Helen","bond"],
+  ["poseidon","odysseus","curses him","enemies"],
+  ["apollo","paris","guides his arrow","bond"],
+  ["agamemnon","menelaus","brothers","kin"],
+  ["agamemnon","clytemnestra","married — his killer","killed"],
+  ["clytemnestra","iphigenia","mother","kin"],
+  ["clytemnestra","orestes","mother","kin"],
+  ["iphigenia","agamemnon","sacrificed by","killed"],
+  ["orestes","agamemnon","avenges","kin"],
+  ["menelaus","helen","married","kin"],
+  ["helen","paris","lovers? versions differ","lovers"],
+  ["paris","oenone","abandoned lover","lovers"],
+  ["priam","hector","father","kin"],
+  ["priam","paris","father","kin"],
+  ["priam","cassandra","father","kin"],
+  ["achilles","patroclus","companions — debated","lovers"],
+  ["achilles","briseis","his prize","bond"],
+  ["agamemnon","briseis","seizes her","enemies"],
+  ["patroclus","hector","killed by","killed"],
+  ["hector","achilles","killed by","killed"],
+  ["achilles","paris","killed by (Apollo's aim)","killed"],
+  ["ajax","odysseus","loses the armor to","enemies"],
+  ["odysseus","penelope","married","kin"],
+  ["penelope","telemachus","mother","kin"],
+  ["odysseus","telemachus","father","kin"]
+];
+
+/* B5 · Journey map stops (counts are the tradition's, approximate). */
+const STOPS = [
+  { name:"Troy", x:352, y:58, ships:12, men:"~600", delta:"the fleet sails for home",
+    text:"Twelve ships leave fallen Troy for Ithaca — a voyage of weeks, in a fair sea." },
+  { name:"Cicones", x:288, y:42, ships:12, men:"~528", delta:"−72 men — six from every ship",
+    text:"First landfall: a raid on the Cicones. It goes wrong, and six men from every ship are killed on the beach." },
+  { name:"Lotus-Eaters", x:214, y:64, ships:12, men:"~528", delta:"no losses — barely",
+    text:"The lotus fruit erases the longing for home. The scouts who taste it must be dragged back to the ships by force." },
+  { name:"The Cyclops", x:148, y:42, ships:12, men:"~522", delta:"−6 men, eaten — and a curse",
+    text:"Trapped in Polyphemus's cave, Odysseus says his name is 'Nobody', blinds the giant, and escapes under the sheep. Then, from his ship, he shouts his real name — and the cyclops prays to his father Poseidon for an exact, terrible curse: come home late, broken, alone, on a stranger's ship, to a house in chaos." },
+  { name:"Aeolus", x:84, y:70, ships:12, men:"~522", delta:"no losses — blown all the way back",
+    text:"The wind-king bags every contrary wind as a parting gift. Within sight of Ithaca, the crew opens the bag hunting for treasure — and the storm hurls them back across the sea." },
+  { name:"Laestrygonians", x:44, y:130, ships:1, men:"~44", delta:"−11 ships, with their crews",
+    text:"Giant cannibals smash the anchored fleet and spear the crews. Eleven of twelve ships are destroyed. Only Odysseus's own ship, moored outside the harbor, escapes." },
+  { name:"Circe", x:110, y:166, ships:1, men:"~44", delta:"no losses",
+    text:"The witch-goddess turns the landing party into pigs. Armed with a divine herb, Odysseus withstands her spell and wins his men back." },
+  { name:"The Underworld", x:44, y:222, ships:1, men:"~44", delta:"no losses — but hard truths", motif:"bargain.1",
+    text:"Among the dead: his mother, who died of grief waiting for him. Achilles's ghost recants the great bargain — better a living farmhand than king of all the dead. And Agamemnon's ghost warns: go home in disguise." },
+  { name:"Sirens", x:118, y:256, ships:1, men:"~44", delta:"no losses",
+    text:"Their song pulls sailors onto the rocks. The crew rows with wax-stopped ears; Odysseus, lashed to the mast, hears the song and lives." },
+  { name:"Scylla & Charybdis", x:192, y:230, ships:1, men:"~38", delta:"−6 men",
+    text:"A commander's arithmetic: hug Scylla's cliff and lose six men, or risk Charybdis's whirlpool and lose the ship. He chooses. Six are taken." },
+  { name:"Cattle of the Sun", x:262, y:262, ships:0, men:"1", delta:"the ship — and every man but one",
+    text:"Becalmed and starving, the crew slaughters the Sun god's sacred cattle. At sea, Zeus answers with a thunderbolt and sinks the ship. Sole survivor: Odysseus." },
+  { name:"Calypso", x:322, y:306, ships:0, men:"1", delta:"seven years, captive", motif:"bargain.2",
+    text:"The nymph keeps the one survivor on her island for seven years — and offers him immortality. He refuses it, for a mortal wife and a rocky kingdom: the exact inverse of Achilles's bargain." },
+  { name:"Phaeacians", x:238, y:340, ships:0, men:"1", delta:"homeward at last",
+    text:"Master sailors hear his whole story and ferry him to Ithaca asleep — on a stranger's ship, exactly as the curse demanded." },
+  { name:"Ithaca", x:146, y:326, ships:0, men:"1 of ~600", delta:"twenty years, total",
+    text:"Late, broken, alone, to a house in chaos: the curse is complete. One man returns of the ~600 who sailed — and the palace is full of suitors." }
+];
+
+/* B6 · Quiz: 13 multiple-choice + 2 order-the-events. */
+const QUIZ = [
+  { t:"mc", q:"Eris throws a golden apple 'for the fairest.' Why does Paris award it to Aphrodite?",
+    opts:["She threatens to curse his family","She offers him the most beautiful woman in the world","She offers him empire over great kingdoms","She offers him victory in every war"],
+    a:1, ex:"Empire was Hera's bribe and victory was Athena's. Paris picks desire — and because two goddesses lose either way, Troy gains two divine enemies. The choice was rigged from the start." },
+  { t:"mc", q:"Helen leaves Sparta with Paris. Why must ALL the Greek kings go to war over one man's marriage?",
+    opts:["Zeus commands every king to sail","Menelaus hires them with Troy's own gold","They all swore the Oath of Tyndareus to defend Helen's marriage","Troy attacked the Greek mainland first"],
+    a:2, ex:"Years earlier, every suitor swore the oath — invented by Odysseus — to defend Helen's marriage, whoever won it. The elopement detonates that oath. (Troy's wealth from taxing the straits made volunteers easier to find.)" },
+  { t:"mc", q:"The fleet is stuck at Aulis with no wind. What gets it sailing?",
+    opts:["Odysseus negotiates with the winds' keeper","Agamemnon sacrifices his daughter Iphigenia","Achilles rows the fleet out himself","The Greeks wait a season for spring"],
+    a:1, ex:"Agamemnon pays for wind with his own daughter. File it as a debt — Clytemnestra will repay it, in a bath, ten years later." },
+  { t:"mc", q:"Why does the siege of Troy take ten years?",
+    opts:["The Greek kings are incompetent and disorganized","Troy's walls are god-built, its allies keep coming, and gods defend both sides","The Greeks sail home every winter","Helen keeps escaping and restarting the war"],
+    a:1, ex:"Not incompetence: the walls cannot be stormed, allies stream in from Asia Minor, and gods fight on both sides. So the Greeks raid and strangle supply lines — and Troy can only fall to a trick." },
+  { t:"mc", q:"What starts the wrath of Achilles — the quarrel that opens the Iliad?",
+    opts:["Hector kills Patroclus","Paris wounds Achilles with an arrow","Odysseus is awarded Achilles's armor","Agamemnon seizes Briseis, Achilles's prize"],
+    a:3, ex:"Forced to give back his own captive, Agamemnon takes Briseis instead: rank publicly demoting merit. Achilles — a sovereign king who cannot be ordered — withdraws from the war." },
+  { t:"mc", q:"Patroclus dies wearing what?",
+    opts:["Achilles's armor, borrowed","His own armor","Hector's captured armor","No armor — he goes unarmed"],
+    a:0, ex:"He borrows Achilles's armor to push the Trojans off the burning ships, overreaches, and Hector kills him — the death that drags Achilles back into the war." },
+  { t:"mc", q:"How does the Iliad end?",
+    opts:["The wooden horse enters Troy","The death of Achilles","Hector's funeral","The fall of the city"],
+    a:2, ex:"Priam kisses the hands that killed his son; Achilles weeps with him and gives back the body. Inside the Iliad there is no horse, no fall of Troy, no death of Achilles." },
+  { t:"mc", q:"How does Achilles die?",
+    opts:["Hector cuts him down in a duel","An arrow from Paris, guided by Apollo","An arrow to his heel — as told in Homer's Iliad","He drowns when Poseidon storms the coast"],
+    a:1, ex:"Paris shoots, Apollo guides. The 'invulnerable except the heel' detail is a later, non-Homeric addition — and the death doesn't happen inside the Iliad at all." },
+  { t:"mc", q:"Achilles's armor is awarded to Odysseus rather than the giant Ajax. What follows?",
+    opts:["Ajax defects to the Trojan side","Ajax kills himself in shame — the tradition's sign that cunning now outranks force","Ajax demands and wins a rematch","Ajax steals the armor and sails home"],
+    a:1, ex:"The army's prize for its 'best man' goes to the schemer over the strongman, and Ajax dies of the shame. The verdict sets up everything after: the horse, and the whole Odyssey." },
+  { t:"mc", q:"What is Cassandra's curse?",
+    opts:["She can speak only in riddles","She sees only the past, never the future","She prophesies truly and is never believed","She must repeat whatever she hears"],
+    a:2, ex:"Troy's truth-tellers are silenced on cue: Laocoon is strangled by sea serpents, Cassandra is ignored — and Troy breaches its own wall to wheel the horse inside." },
+  { t:"mc", q:"Agamemnon comes home in triumph. Then what?",
+    opts:["He rules for long years in peace","Orestes exiles him for the war's crimes","The suitors of Penelope ambush him","Clytemnestra murders him in his bath"],
+    a:3, ex:"The debt from Aulis, repaid in full. Orestes then avenges his father, and the blood feud ends only when Athena invents the jury trial." },
+  { t:"mc", q:"Why is Odysseus's voyage home cursed?",
+    opts:["He blinded Polyphemus, then shouted his real name — and Polyphemus is Poseidon's son","He desecrated Athena's temple during the sack","He stole the Sun god's cattle himself","He refused to sacrifice to Zeus before sailing"],
+    a:0, ex:"The 'Nobody' trick worked perfectly — until pride made him sign his work from the ship. Polyphemus's prayer is precise: late, broken, alone, a stranger's ship, a house in chaos. The plot delivers every clause." },
+  { t:"mc", q:"After the suitors are dead, Penelope tests the stranger one last time. How?",
+    opts:["She asks him to string the great bow once more","She orders their bed moved — and he erupts that it's impossible: he built it around a living olive tree","She asks the old nurse to check him for the boar scar","She demands he name their wedding guests"],
+    a:1, ex:"The scar convinced the nurse; the bed is Penelope's own trap. Only her husband could know it cannot be moved. Cunning recognizing cunning — that's the real reunion." },
+  { t:"ord", q:"Put the war in order — first to last:",
+    items:["The golden apple and the Judgment of Paris","Helen leaves Sparta with Paris","Iphigenia is sacrificed at Aulis","Hector kills Patroclus","Achilles kills Hector","The horse enters Troy; the city falls"],
+    ex:"Apple → elopement → Aulis → and only in year ten the Iliad's few weeks: Patroclus, then Hector. The horse and the fall come after Homer's poem ends." },
+  { t:"ord", q:"Put the voyage in order — first to last:",
+    items:["Polyphemus is blinded — and speaks his curse","The bag of winds is opened in sight of Ithaca","The Laestrygonians destroy eleven ships","The Underworld: Achilles's ghost recants","Scylla takes six men","Zeus sinks the last ship; Calypso keeps the survivor"],
+    ex:"Curse → winds → cannibals → the dead → the six-man toll → sole survivor. After the cattle of the Sun, Odysseus is alone — and seven of his ten years away belong to Calypso's island." }
+];
+
+/* ---------- C. THEME TOGGLE (slip = dark default, clay = light) ---------- */
+const themeBtn = $('#themeBtn');
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  const clay = t === 'clay';
+  themeBtn.textContent = clay ? 'Slip ◑' : 'Clay ◐';
+  themeBtn.setAttribute('aria-pressed', String(clay));
+  themeBtn.setAttribute('aria-label', clay ? 'Switch to slip (dark) theme' : 'Switch to clay (light) theme');
+}
+themeBtn.addEventListener('click', () =>
+  applyTheme(document.documentElement.dataset.theme === 'clay' ? 'slip' : 'clay'));
+applyTheme('slip');
+
+/* ---------- D. GLOSSARY — auto-wrap proper nouns, one shared popover ----- */
+const TERM_NAMES = Object.keys(GLOSS).concat(Object.keys(ALIAS))
+  .sort((a, b) => b.length - a.length)
+  .map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+const TERM_RE = new RegExp('\\b(' + TERM_NAMES.join('|') + ')\\b', 'g');
+
+function glossify(root){
+  const nodes = [];
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+  let n;
+  while ((n = walker.nextNode())){
+    const p = n.parentElement;
+    if (!p || p.closest('button,a,svg,h1,h2,h3,h4,.caps,.homer-chip,.chip,.no-gloss')) continue;
+    TERM_RE.lastIndex = 0;
+    if (TERM_RE.test(n.nodeValue)) nodes.push(n);
+  }
+  nodes.forEach(node => {
+    const s = node.nodeValue, frag = document.createDocumentFragment();
+    let last = 0, m;
+    TERM_RE.lastIndex = 0;
+    while ((m = TERM_RE.exec(s))){
+      frag.appendChild(document.createTextNode(s.slice(last, m.index)));
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'term';
+      b.dataset.term = ALIAS[m[1]] || m[1];
+      b.setAttribute('aria-expanded', 'false');
+      b.textContent = m[1];
+      frag.appendChild(b);
+      last = m.index + m[1].length;
+    }
+    frag.appendChild(document.createTextNode(s.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+}
+$$('[data-glossify]').forEach(glossify);
+
+const pop = $('#popover'), popTitle = $('#popTitle'), popBody = $('#popBody');
+let lastTermBtn = null;
+function openPop(btn){
+  const key = btn.dataset.term, def = GLOSS[key];
+  if (!def) return;
+  if (lastTermBtn) lastTermBtn.setAttribute('aria-expanded', 'false');
+  popTitle.textContent = key;
+  popBody.textContent = def;
+  pop.hidden = false;
+  pop.style.visibility = 'hidden';
+  const r = btn.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
+  let x = Math.min(Math.max(8, r.left + r.width / 2 - pw / 2), innerWidth - pw - 8);
+  let y = r.bottom + 8;
+  if (y + ph > innerHeight - 8) y = r.top - ph - 8;
+  if (y < 8) y = 8;
+  pop.style.left = x + 'px';
+  pop.style.top = y + 'px';
+  pop.style.visibility = '';
+  btn.setAttribute('aria-expanded', 'true');
+  lastTermBtn = btn;
+}
+function closePop(focusBack){
+  if (pop.hidden) return;
+  pop.hidden = true;
+  if (lastTermBtn){
+    lastTermBtn.setAttribute('aria-expanded', 'false');
+    if (focusBack) lastTermBtn.focus();
+  }
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('.term');
+  if (t){
+    if (!pop.hidden && lastTermBtn === t) closePop(false);
+    else openPop(t);
+  } else if (!e.target.closest('#popover')) closePop(false);
+});
+$('#popClose').addEventListener('click', e => { e.stopPropagation(); closePop(true); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape'){ closePop(true); motifPanelHide(); } });
+addEventListener('scroll', () => closePop(false), { passive: true });
+
+/* ---------- E. MOTIF TRACKER --------------------------------------------- */
+const motifState = { debt: [], bargain: [], cunning: [] };  // arrays of lit indexes
+const motifFab = $('#motifFab'), motifPanel = $('#motifPanel'),
+      motifDots = $('#motifDots'), motifArcs = $('#motifArcs'),
+      motifLive = $('#motifLive'), motifCount = $('#motifCount');
+const MOTIF_TOTAL = Object.values(MOTIFS).reduce((s, m) => s + m.stages.length, 0);
+let toastTimer = null;
+
+function renderMotifs(){
+  let lit = 0;
+  motifDots.innerHTML = '';
+  motifArcs.innerHTML = '';
+  for (const key in MOTIFS){
+    const arc = MOTIFS[key];
+    const div = document.createElement('div');
+    div.className = 'motif-arc';
+    const cap = document.createElement('span');
+    cap.className = 'caps'; cap.textContent = arc.name;
+    div.appendChild(cap);
+    const ul = document.createElement('ul');
+    ul.className = 'm-stages';
+    arc.stages.forEach((label, i) => {
+      const on = motifState[key].includes(i);
+      if (on) lit++;
+      const li = document.createElement('li');
+      li.className = 'm-stage' + (on ? ' lit' : '');
+      li.textContent = label;
+      ul.appendChild(li);
+      const dot = document.createElement('i');
+      if (on) dot.className = 'lit';
+      motifDots.appendChild(dot);
+    });
+    div.appendChild(ul);
+    motifArcs.appendChild(div);
+  }
+  motifCount.textContent = lit + ' of ' + MOTIF_TOTAL + ' payoffs reached';
+}
+function toast(msg){
+  let t = $('.toast');
+  if (!t){ t = document.createElement('p'); t.className = 'toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.remove(), 3200);
+}
+function lightMotif(ref, quiet){
+  if (!ref) return;
+  const [key, idxs] = ref.split('.');
+  const idx = +idxs, arc = MOTIFS[key];
+  if (!arc || motifState[key].includes(idx)) return;
+  motifState[key].push(idx);
+  renderMotifs();
+  if (!quiet){
+    toast('Thread lit — ' + arc.name + ': ' + arc.stages[idx]);
+    motifLive.textContent = 'Story thread lit. ' + arc.name + ': ' + arc.stages[idx];
+    motifFab.classList.remove('pulse');
+    void motifFab.offsetWidth;           // restart the pulse animation
+    motifFab.classList.add('pulse');
+  }
+}
+function motifPanelHide(){
+  motifPanel.hidden = true;
+  motifFab.setAttribute('aria-expanded', 'false');
+}
+motifFab.addEventListener('click', () => {
+  const open = motifPanel.hidden;
+  motifPanel.hidden = !open;
+  motifFab.setAttribute('aria-expanded', String(open));
+});
+renderMotifs();
+
+/* ---------- F. STORY MODE — progressive disclosure ----------------------- */
+$$('.act').forEach(act => {
+  const beats = $$('.beat', act);
+  const outro = $('.act-outro', act);
+  const controls = document.createElement('div');
+  controls.className = 'act-controls';
+  const nextBtn = document.createElement('button');
+  nextBtn.type = 'button'; nextBtn.className = 'btn primary';
+  nextBtn.textContent = 'Continue ▾';
+  const allBtn = document.createElement('button');
+  allBtn.type = 'button'; allBtn.className = 'btn ghost small';
+  allBtn.textContent = 'Show whole act';
+  controls.append(nextBtn, allBtn);
+  act.insertBefore(controls, outro);
+
+  function revealBeat(beat, quiet){
+    beat.hidden = false;
+    if (!REDUCED && !quiet) beat.classList.add('shown');
+    lightMotif(beat.dataset.motif, quiet);
+  }
+  function finish(){
+    outro.hidden = false;
+    controls.remove();
+  }
+  nextBtn.addEventListener('click', () => {
+    const next = beats.find(b => b.hidden);
+    if (next){
+      revealBeat(next, false);
+      if (!beats.some(b => b.hidden)) finish();
+      else next.scrollIntoView({ block: 'nearest', behavior: REDUCED ? 'auto' : 'smooth' });
+    } else finish();
+  });
+  allBtn.addEventListener('click', () => {
+    beats.forEach(b => { if (b.hidden) revealBeat(b, true); });
+    finish();
+  });
+  act._revealAll = () => { beats.forEach(b => { if (b.hidden) revealBeat(b, true); }); if (outro.hidden) finish(); };
+});
+$('#revealAll').addEventListener('click', function(){
+  $$('.act').forEach(a => a._revealAll && a._revealAll());
+  this.textContent = 'Whole story revealed — happy revising';
+  this.disabled = true;
+});
+
+/* ---------- G. TIMELINE FRIEZE + SCRUBBER -------------------------------- */
+const YMIN = -3, YMAX = 20;
+const frieze = $('#frieze'), tlRange = $('#tlRange'),
+      tlEra = $('#tlEra'), tlText = $('#tlText');
+let tlTicks = [], tlPlay = null, tlHandle = null, tlX = null;
+
+function buildFrieze(){
+  const W = Math.max(300, frieze.parentElement.clientWidth), H = 150;
+  const PAD = 6;
+  tlX = y => PAD + (y - YMIN) / (YMAX - YMIN) * (W - PAD * 2);
+  frieze.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  frieze.setAttribute('width', W);
+  frieze.setAttribute('height', H);
+  frieze.innerHTML = '';
+  /* greek-key borders top & bottom — the "vase frieze" framing */
+  svgEl('rect', { x:0, y:0, width:W, height:14, fill:'url(#meander)', class:'keyline' }, frieze);
+  svgEl('rect', { x:0, y:H-14, width:W, height:14, fill:'url(#meander)', class:'keyline' }, frieze);
+  svgEl('rect', { x:0, y:14, width:W, height:H-28, class:'tl-band' }, frieze);
+  /* war decade gets a faint panel */
+  svgEl('rect', { x:tlX(0), y:14, width:tlX(10)-tlX(0), height:H-28, class:'tl-war' }, frieze);
+  /* ODYSSEY overlay: the return, years 10–20 */
+  svgEl('rect', { x:tlX(10), y:46, width:tlX(20)-tlX(10), height:74, class:'tl-ody' }, frieze);
+  svgEl('path', { d:'M'+tlX(10)+' 42 V38 H'+tlX(20)+' V42', class:'tl-bracket' }, frieze);
+  const odyLbl = svgEl('text', { x:(tlX(10)+tlX(20))/2, y:34, 'text-anchor':'middle', class:'tl-lbl strong' }, frieze);
+  odyLbl.textContent = 'ODYSSEY · THE RETURN';
+  /* ILIAD overlay: a sliver of weeks in year ten */
+  const ix = tlX(9.55), iw = Math.max(4, tlX(9.75) - tlX(9.55));
+  svgEl('rect', { x:ix, y:46, width:iw, height:74, class:'tl-iliad' }, frieze);
+  svgEl('path', { d:'M'+(ix+iw/2)+' 46 V24', class:'tl-bracket' }, frieze);
+  const ilbl = svgEl('text', { x:ix+iw/2-4, y:27, 'text-anchor':'end', class:'tl-lbl strong' }, frieze);
+  ilbl.textContent = 'ILIAD (weeks)';
+  /* era captions along the bottom of the band */
+  const eras = [[-1.5,'PRELUDE'], [5,'THE WAR · YRS 1–10'], [15,'THE RETURN · YRS 11–20']];
+  eras.forEach(([y, s]) => {
+    const t = svgEl('text', { x:tlX(y), y:H-20, 'text-anchor':'middle', class:'tl-lbl' }, frieze);
+    t.textContent = s;
+  });
+  /* event ticks — little diamonds, lit as the playhead passes them */
+  tlTicks = TL_EVENTS.map(ev => {
+    const x = tlX(ev[0]);
+    return svgEl('path', { d:'M'+x+' 78 l5 8 l-5 8 l-5 -8 Z', class:'tl-tick' }, frieze);
+  });
+  /* playhead */
+  tlPlay = svgEl('line', { x1:tlX(YMIN), y1:16, x2:tlX(YMIN), y2:H-16, class:'tl-play' }, frieze);
+  tlHandle = svgEl('circle', { cx:tlX(YMIN), cy:20, r:6, class:'tl-handle' }, frieze);
+  updateTimeline();
+}
+function updateTimeline(){
+  const y = tlRange.value / 10;
+  const x = tlX(y);
+  tlPlay.setAttribute('x1', x); tlPlay.setAttribute('x2', x);
+  tlHandle.setAttribute('cx', x);
+  tlTicks.forEach((t, i) => t.classList.toggle('lit', TL_EVENTS[i][0] <= y + 0.001));
+  if (y < 0) tlEra.textContent = 'Prelude — before the war';
+  else if (y <= 10) tlEra.textContent = 'The war — year ' + Math.min(10, Math.max(1, Math.ceil(y))) + ' of 10';
+  else tlEra.textContent = 'The return — year ' + Math.min(10, Math.max(1, Math.ceil(y - 10))) + ' of 10';
+  let ev = TL_EVENTS[0];
+  for (const e of TL_EVENTS){ if (e[0] <= y + 0.001) ev = e; else break; }
+  tlText.textContent = ev[1];
+}
+tlRange.addEventListener('input', updateTimeline);
+/* the band itself is draggable (the range input stays the a11y control) */
+function friezePoint(e){
+  const r = frieze.getBoundingClientRect();
+  const y = YMIN + (e.clientX - r.left) / r.width * (YMAX - YMIN);
+  tlRange.value = Math.round(Math.min(YMAX, Math.max(YMIN, y)) * 10);
+  updateTimeline();
+}
+let friezeDrag = false;
+frieze.addEventListener('pointerdown', e => { friezeDrag = true; frieze.setPointerCapture(e.pointerId); friezePoint(e); });
+frieze.addEventListener('pointermove', e => { if (friezeDrag) friezePoint(e); });
+frieze.addEventListener('pointerup',   () => { friezeDrag = false; });
+frieze.addEventListener('pointercancel', () => { friezeDrag = false; });
+let rszTimer = null;
+addEventListener('resize', () => { clearTimeout(rszTimer); rszTimer = setTimeout(buildFrieze, 150); });
+buildFrieze();
+
+/* ---------- H. CHARACTER WEB --------------------------------------------- */
+const cw = $('#charweb'), cwDetail = $('#cwDetail');
+const cwById = {}; CHARS.forEach(c => cwById[c.id] = c);
+let cwSelected = null, cwFilter = 'all';
+const cwEdgeEls = [], cwNodeEls = {};
+
+(function buildWeb(){
+  const gz = svgEl('g', {}, cw);   // edges under nodes
+  /* side captions */
+  const cap1 = svgEl('text', { x:70, y:172, class:'tl-lbl', 'text-anchor':'middle' }, cw);
+  cap1.textContent = 'GREEKS';
+  const cap2 = svgEl('text', { x:376, y:172, class:'tl-lbl', 'text-anchor':'middle' }, cw);
+  cap2.textContent = 'TROJANS';
+  const cap3 = svgEl('text', { x:16, y:20, class:'tl-lbl' }, cw);
+  cap3.textContent = 'GODS';
+  EDGES.forEach(([a, b, label, type]) => {
+    const A = cwById[a], B = cwById[b];
+    const line = svgEl('line', { x1:A.x, y1:A.y, x2:B.x, y2:B.y, class:'cw-edge ' + type }, gz);
+    const txt = svgEl('text', { x:(A.x+B.x)/2, y:(A.y+B.y)/2 - 4, 'text-anchor':'middle', class:'cw-elbl' }, cw);
+    txt.textContent = label;
+    cwEdgeEls.push({ a, b, line, txt });
+  });
+  CHARS.forEach(c => {
+    const g = svgEl('g', { class:'cw-node ' + c.side, tabindex:0, role:'button',
+      'aria-label': c.name + ', ' + c.alle }, cw);
+    svgEl('circle', { cx:c.x, cy:c.y, r:17, class:'dot' }, g);
+    const init = svgEl('text', { x:c.x, y:c.y+4.5, 'text-anchor':'middle', class:'initial' }, g);
+    init.textContent = c.name[0];
+    const lbl = svgEl('text', { x:c.x, y:c.y+31 }, g);
+    lbl.textContent = c.name;
+    g.addEventListener('click', () => selectChar(c.id));
+    g.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); selectChar(c.id); }
+    });
+    cwNodeEls[c.id] = g;
+  });
+})();
+function selectChar(id){
+  cwSelected = id;
+  const c = cwById[id];
+  for (const nid in cwNodeEls) cwNodeEls[nid].classList.toggle('sel', nid === id);
+  cwEdgeEls.forEach(e => {
+    const on = e.a === id || e.b === id;
+    e.line.classList.toggle('hi', on);
+    e.line.classList.toggle('dim', !on);
+    e.txt.classList.toggle('hi', on && e.line.style.display !== 'none');
+  });
+  cwDetail.innerHTML = '<span class="caps">' + c.alle + '</span><h4>' + c.name + '</h4><p>' + c.bio + '</p>';
+  glossify(cwDetail);
+}
+function applyCwFilter(f){
+  cwFilter = f;
+  $$('.cw-filters .btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cwf === f)));
+  CHARS.forEach(c => {
+    const off = f !== 'all' && c.side !== f;
+    const g = cwNodeEls[c.id];
+    g.classList.toggle('faded', off);
+    g.setAttribute('tabindex', off ? -1 : 0);
+    g.setAttribute('aria-hidden', String(off));
+  });
+  cwEdgeEls.forEach(e => {
+    const off = (f !== 'all') && (cwById[e.a].side !== f || cwById[e.b].side !== f);
+    e.line.style.display = off ? 'none' : '';
+    e.txt.style.display = off ? 'none' : '';
+    e.txt.classList.toggle('hi', !off && cwSelected && (e.a === cwSelected || e.b === cwSelected));
+  });
+}
+$$('.cw-filters .btn').forEach(b => b.addEventListener('click', () => applyCwFilter(b.dataset.cwf)));
+
+/* ---------- I. JOURNEY MAP ----------------------------------------------- */
+const vmap = $('#voyageMap'), vgPanel = $('#vgPanel');
+let vgActive = 0;
+const vgStopEls = [];
+let vgDone = null;
+
+(function buildVoyage(){
+  svgEl('rect', { x:1, y:1, width:398, height:378, rx:10, class:'vg-sea' }, vmap);
+  svgEl('rect', { x:1, y:1, width:398, height:378, rx:10, class:'vg-frame' }, vmap);
+  const pts = STOPS.map(s => s.x + ',' + s.y).join(' ');
+  svgEl('polyline', { points:pts, class:'vg-route' }, vmap);
+  vgDone = svgEl('polyline', { points:'', class:'vg-route done' }, vmap);
+  STOPS.forEach((s, i) => {
+    const g = svgEl('g', { class:'vg-stop', tabindex:0, role:'button',
+      'aria-label':'Stop ' + i + ': ' + s.name }, vmap);
+    svgEl('circle', { cx:s.x, cy:s.y, r:13 }, g);
+    const num = svgEl('text', { x:s.x, y:s.y+3.8, class:'num' }, g);
+    num.textContent = (i === 0) ? '⚓' : (i === STOPS.length-1 ? '★' : i);
+    /* label placement: flip to the left edge for right-side stops */
+    const left = s.x > 330, below = s.y > 300;
+    const lbl = svgEl('text', {
+      x: left ? s.x - 17 : s.x + 17,
+      y: s.y + (below ? 14 : 4),
+      class:'name', 'text-anchor': left ? 'end' : 'start' }, g);
+    lbl.textContent = s.name;
+    g.addEventListener('click', () => selectStop(i));
+    g.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); selectStop(i); }
+    });
+    vgStopEls.push(g);
+  });
+})();
+function selectStop(i){
+  vgActive = i;
+  const s = STOPS[i];
+  vgStopEls.forEach((g, j) => {
+    g.classList.toggle('active', j === i);
+    g.classList.toggle('visited', j < i);
+  });
+  vgDone.setAttribute('points', STOPS.slice(0, i + 1).map(p => p.x + ',' + p.y).join(' '));
+  const shipsHtml = Array.from({ length: 12 }, (_, k) =>
+    '<i class="ship' + (k < s.ships ? '' : ' lost') + '"></i>').join('');
+  const stage = i === 0 ? 'Departure' : (i === STOPS.length - 1 ? 'Home' : 'Stop ' + i + ' of 12');
+  vgPanel.innerHTML =
+    '<div class="vg-head"><span class="caps">' + stage + '</span><h4>' + s.name + '</h4></div>' +
+    '<p>' + s.text + '</p>' +
+    '<div class="ships-row" aria-hidden="true">' + shipsHtml + '</div>' +
+    '<p class="vg-count">Ships: <b>' + s.ships + '</b> · Men: <b>' + s.men + '</b> · This stop: <b>' + s.delta + '</b></p>' +
+    '<p class="vg-note">Counts follow the tradition and are approximate.</p>' +
+    '<div class="vg-nav">' +
+      '<button type="button" class="btn small" id="vgPrev"' + (i === 0 ? ' disabled' : '') + '>◀ Previous</button>' +
+      '<button type="button" class="btn small primary" id="vgNext"' + (i === STOPS.length - 1 ? ' disabled' : '') + '>Next stop ▶</button>' +
+    '</div>';
+  glossify(vgPanel);
+  const prev = $('#vgPrev'), next = $('#vgNext');
+  if (prev) prev.addEventListener('click', () => selectStop(vgActive - 1));
+  if (next) next.addEventListener('click', () => selectStop(vgActive + 1));
+  lightMotif(s.motif, false);
+}
+selectStop(0);
+
+/* ---------- J. MYTH vs MOVIE — per-card segmented toggle ----------------- */
+$$('.film-card').forEach(card => {
+  const [bFilm, bMyth] = $$('.seg button', card);
+  const pFilm = $('.film-panel.movie', card), pMyth = $('.film-panel.myth', card);
+  function show(myth){
+    bFilm.setAttribute('aria-pressed', String(!myth));
+    bMyth.setAttribute('aria-pressed', String(myth));
+    pFilm.hidden = myth;
+    pMyth.hidden = !myth;
+  }
+  bFilm.addEventListener('click', () => show(false));
+  bMyth.addEventListener('click', () => show(true));
+});
+
+/* ---------- K. QUIZ ------------------------------------------------------ */
+const quizBox = $('#quizBox'), quizLive = $('#quizLive');
+let qz = null;
+
+function quizStart(){
+  qz = { queue: QUIZ.map((_, i) => i), idx: 0, retry: [], inRetry: false,
+         first: 0, recovered: 0, answeredMain: 0 };
+  renderQuestion();
+}
+function esc(s){ return s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+function renderQuestion(){
+  const qi = qz.queue[qz.idx], q = QUIZ[qi];
+  const num = qz.idx + 1, total = qz.queue.length;
+  let html = '';
+  if (qz.inRetry) html += '<span class="q-round-note">Second look — the ones you missed</span>';
+  html += '<div class="q-progress"><span class="caps">' +
+    (qz.inRetry ? 'Retry ' : 'Question ') + num + ' of ' + total +
+    '</span><span class="q-meter"><i style="width:' + (qz.inRetry ? 100 : Math.round(qz.answeredMain / 15 * 100)) + '%"></i></span></div>';
+  html += '<h3 class="q-title">' + esc(q.q) + '</h3>';
+  if (q.t === 'mc'){
+    html += '<div class="q-options" role="group" aria-label="Answers">';
+    q.opts.forEach((o, i) => { html += '<button type="button" class="opt" data-i="' + i + '">' + esc(o) + '</button>'; });
+    html += '</div>';
+  } else {
+    html += '<p class="caps">Use the arrows, then check</p><ol class="ord-list">';
+    let order = shuffle(q.items.map((_, i) => i));
+    if (order.every((v, i) => v === i)) order.push(order.shift());
+    order.forEach(itemIdx => {
+      html += '<li class="ord-item" data-i="' + itemIdx + '"><span class="txt">' + esc(q.items[itemIdx]) + '</span>' +
+        '<span class="pos" aria-hidden="true"></span>' +
+        '<span class="ord-btns">' +
+        '<button type="button" class="btn up" aria-label="Move up">▲</button>' +
+        '<button type="button" class="btn down" aria-label="Move down">▼</button></span></li>';
+    });
+    html += '</ol><div class="q-actions"><button type="button" class="btn primary" id="ordCheck">Check order</button></div>';
+  }
+  html += '<div id="qResult"></div>';
+  quizBox.innerHTML = html;
+  if (q.t === 'mc'){
+    $$('.opt', quizBox).forEach(btn => btn.addEventListener('click', () => answerMc(q, +btn.dataset.i)));
+  } else {
+    $$('.ord-item .up', quizBox).forEach(b => b.addEventListener('click', () => {
+      const li = b.closest('.ord-item'), prev = li.previousElementSibling;
+      if (prev) li.parentNode.insertBefore(li, prev);
+    }));
+    $$('.ord-item .down', quizBox).forEach(b => b.addEventListener('click', () => {
+      const li = b.closest('.ord-item'), next = li.nextElementSibling;
+      if (next) li.parentNode.insertBefore(next, li);
+    }));
+    $('#ordCheck').addEventListener('click', () => answerOrd(q, qi));
+  }
+}
+function recordAnswer(ok, qi){
+  if (!qz.inRetry){
+    qz.answeredMain++;
+    if (ok) qz.first++;
+    else qz.retry.push(qi);
+  } else if (ok) qz.recovered++;
+}
+function showResult(ok, q){
+  quizLive.textContent = ok ? 'Correct.' : 'Not quite.';
+  $('#qResult').innerHTML =
+    '<div class="quiz-explain"><span class="caps">' + (ok ? '✓ Correct' : '✗ ' + (qz.inRetry ? 'Still tricky' : 'Not quite — it will come back')) +
+    '</span>' + esc(q.ex) + '</div>' +
+    '<div class="q-actions"><button type="button" class="btn primary" id="qNext">' +
+    (qz.idx + 1 < qz.queue.length ? 'Next question ▶' : 'Finish ▶') + '</button></div>';
+  $('#qNext').addEventListener('click', nextQuestion);
+  $('#qNext').focus();
+}
+function answerMc(q, chosen){
+  const qi = qz.queue[qz.idx];
+  const ok = chosen === q.a;
+  $$('.opt', quizBox).forEach(btn => {
+    btn.disabled = true;
+    const i = +btn.dataset.i;
+    if (i === q.a) btn.classList.add('correct');
+    else if (i === chosen) btn.classList.add('wrong');
+  });
+  recordAnswer(ok, qi);
+  showResult(ok, q);
+}
+function answerOrd(q, qi){
+  const lis = $$('.ord-item', quizBox);
+  let ok = true;
+  lis.forEach((li, pos) => {
+    const right = +li.dataset.i === pos;
+    li.classList.add(right ? 'ok' : 'bad');
+    if (!right){ ok = false; $('.pos', li).textContent = 'is #' + (+li.dataset.i + 1); }
+  });
+  $$('.ord-btns .btn', quizBox).forEach(b => b.disabled = true);
+  $('#ordCheck').disabled = true;
+  recordAnswer(ok, qi);
+  showResult(ok, q);
+}
+function nextQuestion(){
+  qz.idx++;
+  if (qz.idx < qz.queue.length){ renderQuestion(); return; }
+  if (!qz.inRetry && qz.retry.length){
+    qz.inRetry = true;
+    qz.queue = qz.retry.slice();
+    qz.idx = 0;
+    renderQuestion();
+    return;
+  }
+  const missed = 15 - qz.first;
+  quizBox.innerHTML =
+    '<div class="q-final"><p class="caps">Final score</p>' +
+    '<p class="score">' + qz.first + ' / 15</p>' +
+    '<p>' + (qz.first === 15 ? 'Perfect — you can retell the whole cycle, apple to olive tree.' :
+      (missed && qz.recovered ? 'Recovered ' + qz.recovered + ' of ' + missed + ' on the second look — that is the spaced repetition doing its job.' :
+       'Score is first-try answers. Skim the acts you missed and run it again.')) + '</p>' +
+    '<div class="q-actions" style="justify-content:center"><button type="button" class="btn primary" id="quizRetry">Take it again</button></div></div>';
+  quizLive.textContent = 'Quiz finished. First-try score ' + qz.first + ' out of 15.';
+  $('#quizRetry').addEventListener('click', quizStart);
+}
+$('#quizStart').addEventListener('click', quizStart);
+
+/* ---------- L. ONE ORCHESTRATED REVEAL PER ACT (scroll-in) --------------- */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (en.isIntersecting){
+      en.target.classList.add('inview');
+      /* light motifs on beats that are visible without any tap */
+      $$('.beat:not([hidden])', en.target).forEach(b => lightMotif(b.dataset.motif, false));
+      io.unobserve(en.target);
+    }
+  });
+}, { rootMargin: '0px 0px -8% 0px' });
+$$('.act').forEach(a => io.observe(a));
+
+})();
+</script>
+</body>
+</html>
