@@ -443,6 +443,25 @@ button.term:hover{color:var(--clay2)}
 [data-theme="clay"] .toast{background:#1c1714;color:#efe5d6}
 
 /* ==========================================================================
+   15b. AUDIO NARRATION — floating listen/pause dock (bottom-left)
+   ========================================================================== */
+.audio-dock{position:fixed;left:14px;bottom:14px;z-index:120;display:flex;gap:8px;align-items:center}
+.audio-fab{
+  cursor:pointer;display:flex;align-items:center;gap:8px;font:inherit;font-size:.8rem;
+  background:var(--surface2);color:var(--ink);border:1px solid var(--clay);
+  border-radius:999px;padding:.55em 1em;box-shadow:var(--shadow);
+  max-width:min(56vw,300px);
+}
+.audio-fab .a-ico{color:var(--clay2);font-size:.72rem;line-height:1}
+.audio-fab .a-lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.audio-stop{
+  cursor:pointer;font:inherit;font-size:.8rem;line-height:1;width:34px;height:34px;
+  background:var(--surface2);color:var(--muted);border:1px solid var(--faint);
+  border-radius:50%;box-shadow:var(--shadow);
+}
+.audio-stop:hover{color:var(--ink);border-color:var(--clay)}
+
+/* ==========================================================================
    16. FOOTER + MISC
    ========================================================================== */
 .colophon{border-top:1px solid var(--faint);margin-top:50px;padding:26px 0 90px;color:var(--muted);font-size:.85rem}
@@ -2024,6 +2043,103 @@ const io = new IntersectionObserver(entries => {
   });
 }, { rootMargin: '0px 0px -8% 0px' });
 $$('.act').forEach(a => io.observe(a));
+
+/* ---------- M. AUDIO NARRATION — floating "Listen" button ---------------- */
+/* Uses the browser's built-in speech synthesis: no files, no network, works
+   offline with the device's local voices. Reads the full nine-act story
+   (including beats not yet revealed on screen), one beat per utterance so
+   mobile browsers don't truncate long speech. Pause remembers the position;
+   ✕ stops and rewinds to Act 1. Hidden entirely if the API is missing.     */
+(function(){
+  if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') return;
+  const synth = speechSynthesis;
+
+  /* build the narration queue from the story DOM */
+  const chunks = [];
+  $$('.act').forEach(act => {
+    const eyebrow = $('.act-eyebrow .caps', act);
+    const title = $('h3', act);
+    const label = (eyebrow ? eyebrow.textContent + ' · ' : '') + (title ? title.textContent : '');
+    if (title) chunks.push({ label, text: (eyebrow ? eyebrow.textContent + '. ' : '') + title.textContent + '.' });
+    $$('.beat p', act).forEach(p => {
+      const t = p.textContent.replace(/\s+/g, ' ').trim();
+      if (t) chunks.push({ label, text: t });
+    });
+    const why = $('.act-outro .why', act);
+    if (why) chunks.push({ label, text: 'Why it matters: ' + why.textContent.replace(/\s+/g, ' ').trim() });
+  });
+  if (!chunks.length) return;
+
+  const dock = document.createElement('div');
+  dock.className = 'audio-dock';
+  const fab = document.createElement('button');
+  fab.type = 'button'; fab.className = 'audio-fab';
+  fab.setAttribute('aria-pressed', 'false');
+  fab.innerHTML = '<span class="a-ico" aria-hidden="true">▶</span><span class="a-lbl">Listen</span>';
+  const stopBtn = document.createElement('button');
+  stopBtn.type = 'button'; stopBtn.className = 'audio-stop';
+  stopBtn.textContent = '✕';
+  stopBtn.setAttribute('aria-label', 'Stop narration and rewind');
+  stopBtn.hidden = true;
+  dock.append(fab, stopBtn);
+  document.body.appendChild(dock);
+  const ico = $('.a-ico', fab), lbl = $('.a-lbl', fab);
+
+  let idx = 0, playing = false, errStreak = 0;
+  function setUi(){
+    if (fab.disabled) return;      /* speech confirmed unavailable — freeze UI */
+    ico.textContent = playing ? '❚❚' : '▶';
+    lbl.textContent = (playing || idx > 0) ? chunks[Math.min(idx, chunks.length - 1)].label : 'Listen';
+    fab.setAttribute('aria-pressed', String(playing));
+    fab.setAttribute('aria-label', playing ? 'Pause narration'
+      : (idx > 0 ? 'Resume narration' : 'Listen to the story read aloud'));
+    stopBtn.hidden = !playing && idx === 0;
+  }
+  function speakNext(){
+    if (!playing) return;
+    if (idx >= chunks.length){ stopAll(); return; }
+    const u = new SpeechSynthesisUtterance(chunks[idx].text);
+    u.rate = 1;
+    /* advance asynchronously — some engines fire events synchronously, and a
+       device with no voices would otherwise recurse through the whole queue */
+    u.onend = () => {
+      errStreak = 0;
+      if (playing){ idx++; setTimeout(speakNext, 0); }
+    };
+    u.onerror = e => {
+      if (!playing || e.error === 'canceled' || e.error === 'interrupted') return;
+      if (++errStreak >= 3){
+        stopAll();
+        fab.disabled = true;
+        ico.textContent = '▶';
+        lbl.textContent = 'Audio unavailable on this device';
+        return;
+      }
+      idx++; setTimeout(speakNext, 0);
+    };
+    synth.speak(u);
+    setUi();
+  }
+  function stopAll(){
+    playing = false; idx = 0;
+    synth.cancel();
+    setUi();
+  }
+  fab.addEventListener('click', () => {
+    if (playing){                       /* pause — keep the position */
+      playing = false;
+      synth.cancel();
+      setUi();
+    } else {                            /* play, or resume from the paused beat */
+      playing = true;
+      synth.cancel();
+      speakNext();
+    }
+  });
+  stopBtn.addEventListener('click', stopAll);
+  addEventListener('beforeunload', () => synth.cancel());
+  setUi();
+})();
 
 })();
 </script>
