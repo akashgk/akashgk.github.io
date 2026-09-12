@@ -1,41 +1,32 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-mode="paper">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Akash G Krishnan - Senior Flutter Developer based in Qatar. Expert in Banking Apps, Clean Architecture, and Digital Transformation."
+      content="Akash G Krishnan — Senior Flutter engineer in Doha, Qatar. Eight years building banking and fintech apps. A working dossier: record, index, catalogue."
     />
-    <title>Akash G Krishnan | Digital Architect</title>
+    <title>Akash G Krishnan | Mobile Engineer, Doha</title>
 
     <meta property="og:type" content="profile" />
     <meta name="google-adsense-account" content="ca-pub-8383761535214883" />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8383761535214883"
      crossorigin="anonymous"></script>
-    <meta
-      property="og:title"
-      content="Akash G Krishnan | Senior Flutter Developer"
-    />
+    <meta property="og:title" content="Akash G Krishnan | Senior Flutter Developer" />
     <meta
       property="og:description"
-      content="Building high-performance banking applications. 8 Years Experience. Currently leading Mobile Architecture at CBQ."
+      content="Banking software that people trust with their money. Eight years, three companies, four published Dart packages."
     />
     <meta property="og:url" content="https://akashgk.com" />
-    <meta
-      property="og:image"
-      content="https://akashgk.com/images/og-banner.jpeg"
-    />
+    <meta property="og:image" content="https://akashgk.com/images/og-banner.jpeg" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Akash G Krishnan | Flutter Architect" />
+    <meta name="twitter:title" content="Akash G Krishnan | Mobile Engineer" />
     <meta
       name="twitter:description"
-      content="Senior Flutter Developer based in Qatar. Specializing in secure banking apps and clean architecture."
+      content="Senior Flutter engineer in Doha. Secure banking apps, clean architecture, open source Dart tooling."
     />
-    <meta
-      name="twitter:image"
-      content="https://akashgk.com/images/og-banner.jpeg"
-    />
+    <meta name="twitter:image" content="https://akashgk.com/images/og-banner.jpeg" />
     <meta
       name="keywords"
       content="Akash G Krishnan, Flutter Developer Qatar, Senior Software Engineer Doha, Dart Expert, Commercial Bank of Qatar, FinTech Developer, Mobile App Architect"
@@ -43,976 +34,523 @@
     <meta name="author" content="Akash G Krishnan" />
     <link rel="canonical" href="https://akashgk.com" />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#07070b" />
+    <meta name="theme-color" content="#f2efe9" id="theme-color" />
 
     <link rel="stylesheet" href="styles.css" />
     <script src="script.js" defer></script>
     <noscript>
       <style>
-        .reveal {
-          opacity: 1 !important;
-          transform: none !important;
-          filter: none !important;
-        }
+        .rise, .type-line > span { opacity: 1 !important; transform: none !important; }
+        .draw { transform: none !important; }
       </style>
     </noscript>
   </head>
   <body>
-    <!-- Floating glass pill navbar -->
-    <nav class="navbar">
-      <a href="#" class="nav-logo" id="nav-logo"
-        >AGK<span class="nav-logo-dot">.</span></a
-      >
-      <div class="nav-links" id="nav-links">
-        <span class="nav-indicator" aria-hidden="true"></span>
-        <a href="#about" class="nav-link">About</a>
-        <a href="#experience" class="nav-link">Experience</a>
-        <a href="#skills" class="nav-link">Stack</a>
-        <a href="#opensource" class="nav-link">Open Source</a>
-        <a href="#playground" class="nav-link">Playground</a>
-        <a href="#contact" class="nav-link">Contact</a>
-      </div>
-      <button
-        class="mobile-toggle"
-        aria-label="Menu"
-        aria-expanded="false"
-        aria-controls="mobile-drawer"
-      >
-        <svg
-          class="icon icon-menu"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <line x1="3" y1="9" x2="21" y2="9" />
-          <line x1="3" y1="15" x2="21" y2="15" />
-        </svg>
-        <svg
-          class="icon icon-close"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
-    </nav>
-
-    <!-- Mobile drawer — sibling of the navbar so position:fixed
-         always means the viewport, never the pill -->
-    <div class="mobile-drawer" id="mobile-drawer">
-      <a href="#about" class="drawer-link">About</a>
-      <a href="#experience" class="drawer-link">Experience</a>
-      <a href="#skills" class="drawer-link">Stack</a>
-      <a href="#opensource" class="drawer-link">Open Source</a>
-      <a href="#playground" class="drawer-link">Playground</a>
-      <a href="#contact" class="drawer-link">Contact</a>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="crosshair" id="crosshair" aria-hidden="true">
+      <span class="crosshair-x"></span><span class="crosshair-y"></span>
+      <span class="crosshair-read" id="crosshair-read"></span>
     </div>
 
-    <!-- Hero — pinned scrollytelling stage -->
-    <div class="hero-stage" id="hero-stage">
-      <section class="hero">
-        <div class="hero-glow" aria-hidden="true">
-          <div class="glow-blob blob-1"></div>
-          <div class="glow-blob blob-2"></div>
-          <div class="glow-blob blob-3"></div>
+    <a href="#opening" class="skip-link">Skip to content</a>
+
+    <!-- ══ Masthead: a drawing title block, not a nav bar ══ -->
+    <header class="masthead">
+      <div class="masthead-row">
+        <a href="#opening" class="mh-name">
+          Akash&nbsp;G&nbsp;Krishnan<span class="mh-caret">_</span>
+        </a>
+
+        <nav class="mh-nav" aria-label="Sections">
+          <a href="#opening"><i>01</i>Opening</a>
+          <a href="#record"><i>02</i>Record</a>
+          <a href="#index"><i>03</i>Index</a>
+          <a href="#catalogue"><i>04</i>Catalogue</a>
+          <a href="#press"><i>05</i>Press</a>
+          <a href="#contact"><i>06</i>Contact</a>
+        </nav>
+
+        <div class="mh-right">
+          <span class="mh-time" id="doha-time" title="Local time in Doha"></span>
+          <button class="mh-lights" id="lights" aria-pressed="false">
+            <span class="lights-lamp" aria-hidden="true"></span>
+            <span class="lights-label">Ink</span>
+          </button>
+          <button class="mh-index-btn" id="index-btn" aria-expanded="false" aria-controls="index-sheet">
+            Index
+          </button>
         </div>
-        <div class="hero-content">
-          <span class="hero-badge reveal">
-            <span class="badge-dot"></span>
-            Open to Opportunities
-            <span class="badge-time" id="doha-time"></span>
-          </span>
-          <p class="hero-eyebrow reveal" style="transition-delay: 60ms">
-            Akash G Krishnan — Doha, Qatar
+      </div>
+
+      <!-- measured rule: reading position as a ruler, not a gradient bar -->
+      <div class="ruler" aria-hidden="true">
+        <div class="ruler-ticks" id="ruler-ticks"></div>
+        <div class="ruler-fill" id="ruler-fill"></div>
+        <span class="ruler-read" id="ruler-read">01 · OPENING</span>
+      </div>
+    </header>
+
+    <!-- Mobile index sheet -->
+    <div class="index-sheet" id="index-sheet" hidden>
+      <a href="#opening"><i>01</i> Opening</a>
+      <a href="#record"><i>02</i> Record</a>
+      <a href="#index"><i>03</i> Index</a>
+      <a href="#catalogue"><i>04</i> Catalogue</a>
+      <a href="#press"><i>05</i> Press</a>
+      <a href="#contact"><i>06</i> Contact</a>
+      <div class="index-sheet-foot">Doha, Qatar · <span id="doha-time-2"></span></div>
+    </div>
+
+    <main>
+      <!-- ══ 01 OPENING ══ -->
+      <section id="opening" class="folio folio-open">
+        <div class="rail" aria-hidden="true">
+          <span class="rail-no">01</span>
+          <span class="rail-label">Opening</span>
+        </div>
+
+        <div class="folio-body">
+          <p class="kicker rise">
+            Senior Mobile Engineer<span class="sep">/</span>Doha, Qatar<span class="sep">/</span>Practising since 2018
           </p>
-          <h1 class="reveal" style="transition-delay: 140ms">
-            Engineering
-            <span class="gradient-text gradient-animate"
-              >Secure &amp; Scalable</span
-            ><br />
-            Mobile Experiences.
+
+          <h1 class="display type-line" data-type>
+            I build banking software that people trust with their money.
           </h1>
-          <p class="hero-meta reveal" style="transition-delay: 240ms">
-            <span id="typed-role"></span>
-            <span class="hero-meta-sep">·</span>
-            <span>8 Years</span>
-          </p>
-          <p class="hero-desc reveal" style="transition-delay: 320ms">
-            Currently leading mobile architecture at
-            <strong>Commercial Bank of Qatar</strong>, building high-performance
-            fintech solutions that serve millions.
-          </p>
-          <div class="hero-cta reveal" style="transition-delay: 400ms">
-            <a href="#contact" class="btn-pill">Start Collaboration</a>
-            <a href="/AKASH_G_KRISHNAN_RESUME.pdf" class="link-arrow" download
-              >Download Résumé <span class="chevron">›</span></a
-            >
+
+          <div class="open-grid">
+            <div class="open-lede">
+              <p class="lede rise">
+                Eight years of it. Currently leading the mobile architecture of the
+                Corporate Trade Portal at <strong>Commercial Bank of Qatar</strong> — the
+                kind of app where a dropped frame is a bug report and a wrong decimal is
+                an incident. Before that: recruiting tools at PyjamaHR, and client work for
+                OneAssist, EZMall and the British Council.
+              </p>
+              <p class="lede rise">
+                I like unglamorous things — clean architecture, boring release trains,
+                tests that fail for the right reason. Good software is invisible.
+                You only notice mine when it isn't there.
+              </p>
+              <div class="open-actions rise">
+                <a href="#contact" class="btn">Start a conversation</a>
+                <a href="/AKASH_G_KRISHNAN_RESUME.pdf" download class="btn btn-ghost">
+                  Résumé <span class="btn-ext">PDF</span>
+                </a>
+              </div>
+            </div>
+
+            <aside class="annot rise" aria-label="Notes">
+              <p class="annot-note">
+                <span class="annot-mark">※</span> Available for senior / lead mobile roles.
+                Replies within a day, usually less.
+              </p>
+              <p class="annot-note">
+                <span class="annot-mark">※</span> Maintainer of the Dart repository at
+                <em>TheAlgorithms</em>, GitHub's largest open-source organisation.
+              </p>
+            </aside>
           </div>
-        </div>
-        <div class="scroll-cue" aria-hidden="true">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+
+          <!-- vitals: a measured strip, no counters-in-cards -->
+          <dl class="vitals">
+            <div class="vital rise">
+              <dt>Years practising</dt>
+              <dd><span data-count="8">0</span><i>+</i></dd>
+            </div>
+            <div class="vital rise">
+              <dt>Engineers led</dt>
+              <dd><span data-count="8">0</span><i>+</i></dd>
+            </div>
+            <div class="vital rise">
+              <dt>Companies</dt>
+              <dd><span data-count="3">0</span></dd>
+            </div>
+            <div class="vital rise">
+              <dt>Packages published</dt>
+              <dd><span data-count="4">0</span></dd>
+            </div>
+          </dl>
         </div>
       </section>
-    </div>
 
-    <!-- Marquee -->
-    <div class="marquee-strip" aria-hidden="true">
-      <div class="marquee-inner">
-        <span>Flutter</span><span class="marquee-sep">·</span> <span>Dart</span
-        ><span class="marquee-sep">·</span> <span>iOS</span
-        ><span class="marquee-sep">·</span> <span>Android</span
-        ><span class="marquee-sep">·</span> <span>React</span
-        ><span class="marquee-sep">·</span> <span>Next.js</span
-        ><span class="marquee-sep">·</span> <span>Python</span
-        ><span class="marquee-sep">·</span> <span>Firebase</span
-        ><span class="marquee-sep">·</span> <span>Clean Architecture</span
-        ><span class="marquee-sep">·</span> <span>BLoC</span
-        ><span class="marquee-sep">·</span> <span>FinTech</span
-        ><span class="marquee-sep">·</span> <span>Banking Apps</span
-        ><span class="marquee-sep">·</span> <span>Docker</span
-        ><span class="marquee-sep">·</span> <span>CI/CD</span
-        ><span class="marquee-sep">·</span>
-        <!-- duplicate for seamless loop -->
-        <span>Flutter</span><span class="marquee-sep">·</span> <span>Dart</span
-        ><span class="marquee-sep">·</span> <span>iOS</span
-        ><span class="marquee-sep">·</span> <span>Android</span
-        ><span class="marquee-sep">·</span> <span>React</span
-        ><span class="marquee-sep">·</span> <span>Next.js</span
-        ><span class="marquee-sep">·</span> <span>Python</span
-        ><span class="marquee-sep">·</span> <span>Firebase</span
-        ><span class="marquee-sep">·</span> <span>Clean Architecture</span
-        ><span class="marquee-sep">·</span> <span>BLoC</span
-        ><span class="marquee-sep">·</span> <span>FinTech</span
-        ><span class="marquee-sep">·</span> <span>Banking Apps</span
-        ><span class="marquee-sep">·</span> <span>Docker</span
-        ><span class="marquee-sep">·</span> <span>CI/CD</span
-        ><span class="marquee-sep">·</span>
-      </div>
-    </div>
-
-    <!-- Stats Bar -->
-    <div class="stats-bar">
-      <div class="container">
-        <div class="stats-grid">
-          <div class="stat-item reveal">
-            <div class="stat-number">
-              <span data-count="8">0</span><span class="suffix">+</span>
-            </div>
-            <div class="stat-label">Years Experience</div>
-          </div>
-          <div class="stat-item reveal" style="transition-delay: 80ms">
-            <div class="stat-number">
-              <span data-count="8">0</span><span class="suffix">+</span>
-            </div>
-            <div class="stat-label">Engineers Led</div>
-          </div>
-          <div class="stat-item reveal" style="transition-delay: 160ms">
-            <div class="stat-number">
-              <span data-count="3">0</span><span class="suffix"></span>
-            </div>
-            <div class="stat-label">Companies</div>
-          </div>
-          <div class="stat-item reveal" style="transition-delay: 240ms">
-            <div class="stat-number">
-              <span data-count="4">0</span><span class="suffix"></span>
-            </div>
-            <div class="stat-label">Open Source Packages</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Statement — Apple-style scroll-lit paragraph -->
-    <section
-      class="statement-section"
-      id="statement"
-      aria-label="About statement"
-    >
-      <div class="container">
-        <p class="statement">
-          With over <strong>8 years</strong> of experience in software
-          development, I bridge the gap between complex backend logic and fluid
-          user interfaces. My focus is on <strong>Scalability</strong>,
-          <strong>Security</strong>, and <strong>Performance</strong>.
-        </p>
-        <p class="statement">
-          I specialize in <strong>Flutter &amp; Dart</strong>, building robust
-          fintech solutions that serve millions of users. I believe great
-          software is invisible — it just works.
-        </p>
-      </div>
-    </section>
-
-    <!-- About — light section -->
-    <section id="about" class="section-light">
-      <div class="container">
-        <div class="section-header section-header-center reveal">
-          <span class="eyebrow">About</span>
-          <h2>Engineering pixel-perfect experiences.</h2>
-        </div>
-        <div class="facts-card card reveal" style="transition-delay: 120ms">
-          <div class="fact-row">
-            <span class="fact-label">Current Role</span>
-            <span class="fact-value">Senior Flutter Developer</span>
-            <span class="fact-sub">Commercial Bank of Qatar</span>
-          </div>
-          <div class="fact-row">
-            <span class="fact-label">Location</span>
-            <span class="fact-value">Doha, Qatar 🇶🇦</span>
-          </div>
-          <div class="fact-row">
-            <span class="fact-label">Nationality</span>
-            <span class="fact-value">Indian 🇮🇳</span>
-          </div>
-          <div class="fact-row">
-            <span class="fact-label">Education</span>
-            <span class="fact-value">B.Tech in Computer Science</span>
-          </div>
-          <div class="fact-row">
-            <span class="fact-label">Status</span>
-            <span class="fact-value fact-status">
-              <span class="status-dot"></span>
-              Open to Opportunities
-            </span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Experience — dark section, sticky stacking deck -->
-    <section id="experience">
-      <div class="container">
-        <div class="section-header reveal">
-          <span class="eyebrow">Experience</span>
-          <h2>Professional journey.</h2>
-        </div>
-        <div class="xp-stack" id="xp-stack">
-          <article class="xp-card card reveal">
-            <div class="xp-top">
-              <span class="xp-date">Jun 2023 — Present</span>
-              <span class="xp-chip">Current</span>
-            </div>
-            <h3>Mobile Application Developer</h3>
-            <p class="xp-company">
-              Commercial Bank of Qatar
-              <span class="xp-via">(via Linnk Group)</span>
-            </p>
-            <p class="xp-desc">
-              End-to-end delivery of the Corporate Trade Portal (CTP), working
-              with a cross-functional team of 8+ developers. Designed scalable
-              Fintech solutions using Flutter and Dart for high-value banking
-              products. Spearheaded transition to Clean Architecture, improving
-              code maintainability and reducing technical debt.
-            </p>
-          </article>
-
-          <article class="xp-card card reveal">
-            <div class="xp-top">
-              <span class="xp-date">Feb 2021 — Jun 2023</span>
-            </div>
-            <h3>Software Development Engineer</h3>
-            <p class="xp-company">PyjamaHR</p>
-            <p class="xp-desc">
-              Engineered the first version of the PyjamaHR mobile app from
-              scratch, handling the full lifecycle from requirements to Store
-              release. Developed a ReactJS Chrome Extension that increased
-              recruiter productivity by enabling direct sourcing from multiple
-              job boards. Optimized sign-up workflows using Google Identity
-              Service, significantly reducing user dropout rates.
-            </p>
-          </article>
-
-          <article class="xp-card card reveal">
-            <div class="xp-top">
-              <span class="xp-date">Sep 2018 — Jan 2021</span>
-            </div>
-            <h3>Software Engineer</h3>
-            <p class="xp-company">InnovationM</p>
-            <p class="xp-desc">
-              Delivered high-impact mobile solutions for clients including
-              OneAssist, EZMall, and British Council (IELTS Prep). Built an
-              automated testing framework that increased code coverage and
-              reduced production defect rates. Developed a Proof of Concept
-              (POC) for an audio social media app using Agora SDK and Flutter.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- Skills — light section, Apple-style bento -->
-    <section id="skills" class="section-light">
-      <div class="container">
-        <div class="section-header reveal">
-          <span class="eyebrow">Stack</span>
-          <h2>Tools of the trade.</h2>
-        </div>
-        <div class="bento-grid">
-          <!-- Flutter — featured (dark card on light, Apple bento style) -->
-          <div class="bento-cell bento-featured card reveal">
-            <span class="bento-label">Primary Stack</span>
-            <h3 class="gradient-text gradient-animate">Flutter &amp; Dart</h3>
-            <p>
-              Building pixel-perfect, high-performance cross-platform apps with
-              clean architecture and state management patterns.
-            </p>
-            <div class="bento-tags">
-              <span class="bento-tag">Flutter</span>
-              <span class="bento-tag">Dart</span>
-              <span class="bento-tag">BLoC</span>
-              <span class="bento-tag">Riverpod</span>
-              <span class="bento-tag">Clean Architecture</span>
-            </div>
-          </div>
-
-          <!-- Mobile Native -->
-          <div class="bento-cell card reveal" style="transition-delay: 80ms">
-            <span class="bento-label">Mobile Native</span>
-            <h3>iOS &amp; Android</h3>
-            <div class="bento-tags">
-              <span class="bento-tag">Swift</span>
-              <span class="bento-tag">iOS</span>
-              <span class="bento-tag">Android</span>
-              <span class="bento-tag">Xcode</span>
-            </div>
-          </div>
-
-          <!-- Web -->
-          <div class="bento-cell card reveal" style="transition-delay: 120ms">
-            <span class="bento-label">Web Frontend</span>
-            <h3>React &amp; Next</h3>
-            <div class="bento-tags">
-              <span class="bento-tag">ReactJS</span>
-              <span class="bento-tag">NextJS</span>
-              <span class="bento-tag">JavaScript</span>
-              <span class="bento-tag">Webpack</span>
-            </div>
-          </div>
-
-          <!-- Backend -->
-          <div class="bento-cell card reveal" style="transition-delay: 160ms">
-            <span class="bento-label">Backend &amp; Cloud</span>
-            <h3>Server-side</h3>
-            <div class="bento-tags">
-              <span class="bento-tag">Python</span>
-              <span class="bento-tag">FastAPI</span>
-              <span class="bento-tag">Node.js</span>
-              <span class="bento-tag">Firebase</span>
-              <span class="bento-tag">Docker</span>
-            </div>
-          </div>
-
-          <!-- DevOps -->
-          <div class="bento-cell card reveal" style="transition-delay: 200ms">
-            <span class="bento-label">DevOps &amp; Tools</span>
-            <h3>Infrastructure</h3>
-            <div class="bento-tags">
-              <span class="bento-tag">Git</span>
-              <span class="bento-tag">CI/CD</span>
-              <span class="bento-tag">Jenkins</span>
-              <span class="bento-tag">Azure DevOps</span>
-              <span class="bento-tag">Jira</span>
-              <span class="bento-tag">Figma</span>
-              <span class="bento-tag">Agile/Scrum</span>
-            </div>
-          </div>
-
-          <!-- AI Productivity & LLM Tooling -->
-          <div
-            class="bento-cell bento-full card reveal"
-            style="transition-delay: 240ms"
-          >
-            <span class="bento-label">AI Productivity &amp; Workflows</span>
-            <h3>AI-Augmented Engineering</h3>
-            <p>
-              Pioneering the integration of LLM tooling and AI code assistance
-              inside automated development pipelines, including specialized
-              agent logic, custom MCP servers, and Figma-to-code compiler
-              environments.
-            </p>
-            <div class="bento-tags">
-              <span class="bento-tag">AI Code Assistants (Cursor/Copilot)</span>
-              <span class="bento-tag">LLM Orchestration (Antigravity)</span>
-              <span class="bento-tag">Model Context Protocol (MCP)</span>
-              <span class="bento-tag">Figma-to-Flutter Automation</span>
-              <span class="bento-tag">Prompt Engineering</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Open Source — dark section -->
-    <section id="opensource">
-      <div class="container">
-        <div class="section-header reveal">
-          <span class="eyebrow">Open Source</span>
-          <h2>Building in public.</h2>
-        </div>
-        <div class="os-layout">
-          <div class="os-left-col">
-            <a
-              href="https://github.com/akashgk"
-              target="_blank"
-              class="os-card card reveal"
-            >
-              <div class="os-card-header">
-                <svg
-                  class="icon os-card-icon"
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
-                  />
-                </svg>
-                <h3>akashgk</h3>
-              </div>
-              <p>
-                Browse my repositories, experiments, and open source
-                contributions on GitHub.
-              </p>
-              <span class="link-arrow"
-                >View Profile <span class="chevron">›</span></span
-              >
-            </a>
-
-            <div class="os-card card reveal" style="transition-delay: 60ms">
-              <div class="os-card-header">
-                <svg
-                  class="icon os-card-icon"
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <line x1="6" y1="3" x2="6" y2="15" />
-                  <circle cx="18" cy="6" r="3" />
-                  <circle cx="6" cy="18" r="3" />
-                  <path d="M18 9a9 9 0 0 1-9 9" />
-                </svg>
-                <h3>The Algorithms</h3>
-              </div>
-              <span class="os-badge">Maintainer &amp; Contributor</span>
-              <p>
-                Core contributor and maintainer of the Dart repository for the
-                largest open-source organization on GitHub dedicated to
-                explaining data structures and algorithm implementations.
-              </p>
-              <a
-                href="https://github.com/TheAlgorithms/Dart"
-                target="_blank"
-                class="link-arrow"
-              >
-                Explore Repository <span class="chevron">›</span>
-              </a>
-            </div>
-          </div>
-
-          <div class="reveal" style="transition-delay: 120ms">
-            <div class="os-packages-header">
-              <h3>Published Packages</h3>
-              <a
-                href="https://pub.dev/publishers/akashgk.com/packages"
-                target="_blank"
-                class="link-arrow"
-                >pub.dev <span class="chevron">›</span></a
-              >
-            </div>
-            <div class="pkg-grid">
-              <a
-                href="https://pub.dev/packages/dartapi"
-                target="_blank"
-                class="pkg-card card reveal"
-              >
-                <span class="pkg-name">dartapi</span>
-                <span class="pkg-desc">Dart API CLI</span>
-              </a>
-              <a
-                href="https://pub.dev/packages/dartapi_db"
-                target="_blank"
-                class="pkg-card card reveal"
-                style="transition-delay: 60ms"
-              >
-                <span class="pkg-name">dartapi_db</span>
-                <span class="pkg-desc">Database Layer</span>
-              </a>
-              <a
-                href="https://pub.dev/packages/dartapi_auth"
-                target="_blank"
-                class="pkg-card card reveal"
-                style="transition-delay: 120ms"
-              >
-                <span class="pkg-name">dartapi_auth</span>
-                <span class="pkg-desc">Auth Utilities</span>
-              </a>
-              <a
-                href="https://pub.dev/packages/dartapi_core"
-                target="_blank"
-                class="pkg-card card reveal"
-                style="transition-delay: 180ms"
-              >
-                <span class="pkg-name">dartapi_core</span>
-                <span class="pkg-desc">Core Logic</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Playground (Arcade) — dark section -->
-    <section id="playground">
-      <div class="container">
-        <div class="section-header section-header-center reveal">
-          <span class="eyebrow">Arcade</span>
-          <h2>Dynamic Island Bounce.</h2>
+      <!-- ══ 02 RECORD ══ -->
+      <section id="record" class="folio">
+        <div class="rail" aria-hidden="true">
+          <span class="rail-no">02</span>
+          <span class="rail-label">Record</span>
         </div>
 
-        <p class="playground-desc reveal">
-          An interactive, Apple-inspired experience. Bounce the notification
-          ball off the Dynamic Island to trigger animations, unlock career
-          milestones, and catch falling skills!
-        </p>
+        <div class="folio-body">
+          <header class="folio-head">
+            <h2 class="rise">The record.</h2>
+            <p class="folio-sub rise">Three entries. Open one to read the detail.</p>
+          </header>
 
-        <div class="game-wrapper reveal" style="transition-delay: 100ms">
-          <!-- iOS-style Game Console — rises & un-tilts into view -->
-          <div class="device-scene" id="device-scene">
-            <div class="iphone-device" id="iphone-device">
-              <div class="iphone-bezel">
-                <div class="iphone-screen">
-                  <!-- Status Bar -->
-                  <div class="iphone-status-bar">
-                    <span
-                      class="status-time"
-                      title="Always 9:41 — like every Apple keynote."
-                      >9:41</span
-                    >
-                    <div class="status-icons">
-                      <svg
-                        class="icon"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M5 12.55a11 11 0 0 1 14.08 0" />
-                        <path d="M1.42 9a16 16 0 0 1 21.16 0" />
-                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
-                        <line x1="12" y1="20" x2="12.01" y2="20" />
-                      </svg>
-                      <svg
-                        class="icon"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                        style="transform: rotate(90deg) scaleX(-1)"
-                      >
-                        <rect
-                          x="1"
-                          y="6"
-                          width="18"
-                          height="12"
-                          rx="2"
-                          ry="2"
-                        />
-                        <line x1="23" y1="13" x2="23" y2="11" />
-                      </svg>
-                    </div>
-                  </div>
+          <div class="ledger" id="ledger">
+            <div class="ledger-head" aria-hidden="true">
+              <span>№</span><span>Period</span><span>Entity</span><span>Role</span><span></span>
+            </div>
 
-                  <!-- Dynamic Island Capsule (morphs dynamically) -->
-                  <div class="dynamic-island" id="game-island">
-                    <div class="island-capsule">
-                      <span class="island-dot"></span>
-                      <span class="island-camera"></span>
-                    </div>
-                    <!-- Morphing notification contents -->
-                    <div class="island-notification" id="island-notif">
-                      <div class="notif-header">
-                        <div class="notif-icon-wrap" id="notif-icon-wrap">
-                          <svg
-                            class="icon"
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true"
-                          >
-                            <rect
-                              x="2"
-                              y="7"
-                              width="20"
-                              height="14"
-                              rx="2"
-                              ry="2"
-                            />
-                            <path
-                              d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"
-                            />
-                          </svg>
-                        </div>
-                        <div class="notif-title-wrap">
-                          <h4 id="notif-title">System Alert</h4>
-                          <p id="notif-subtitle">Dynamic Island Active</p>
-                        </div>
-                      </div>
-                      <div class="notif-badge" id="notif-badge">Flutter</div>
-                    </div>
-                  </div>
-
-                  <!-- Game Canvas -->
-                  <canvas id="game-canvas"></canvas>
-
-                  <!-- HUD Info Overlay -->
-                  <div class="game-hud">
-                    <div class="hud-item">
-                      <span class="hud-label">SCORE</span>
-                      <span class="hud-value" id="game-score">0</span>
-                    </div>
-                    <div class="hud-lives" id="game-lives">
-                      <span class="live-dot"></span>
-                      <span class="live-dot"></span>
-                      <span class="live-dot"></span>
-                    </div>
-                    <div class="hud-item text-right">
-                      <span class="hud-label">BEST</span>
-                      <span class="hud-value" id="game-highscore">0</span>
-                    </div>
-                  </div>
-
-                  <!-- Start / Game Over Overlays -->
-                  <div class="game-overlay active" id="game-overlay">
-                    <div class="overlay-content">
-                      <h3 id="overlay-title">DYNAMIC BOUNCE</h3>
-                      <p id="overlay-desc">
-                        Bounce the ball to compile code and reveal career
-                        achievements.
-                      </p>
-                      <button class="btn-pill" id="start-btn">
-                        Start Compilation
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- iOS Home Indicator -->
-                  <div class="iphone-home-indicator"></div>
+            <article class="entry rise">
+              <button class="entry-row" aria-expanded="false" aria-controls="entry-1">
+                <span class="e-no">001</span>
+                <span class="e-period">2023 — <em>now</em></span>
+                <span class="e-org">Commercial Bank of Qatar<small>via Linnk Group</small></span>
+                <span class="e-role">Mobile Application Developer</span>
+                <span class="e-mark" aria-hidden="true"></span>
+              </button>
+              <div class="entry-detail" id="entry-1">
+                <div class="entry-inner">
+                  <p>
+                    End-to-end delivery of the Corporate Trade Portal alongside a
+                    cross-functional team of eight-plus engineers. Designed the Flutter and
+                    Dart architecture for high-value banking products, and led the move to
+                    Clean Architecture — cutting the technical debt that had been slowing
+                    every release.
+                  </p>
+                  <ul class="entry-tags">
+                    <li>Flutter</li><li>Dart</li><li>Clean Architecture</li>
+                    <li>BLoC</li><li>Trade Finance</li><li>Azure DevOps</li>
+                  </ul>
                 </div>
               </div>
-              <!-- Interactive Shadows & Reflections -->
-              <div class="iphone-glare"></div>
-            </div>
-          </div>
+            </article>
 
-          <!-- Game Controls & Achievements List -->
-          <div class="game-info-sidebar">
-            <div class="info-card card">
-              <h3>Arcade Console</h3>
-              <p>
-                Control the paddle to keep the ball in play. Hit the Dynamic
-                Island to display achievements.
+            <article class="entry rise">
+              <button class="entry-row" aria-expanded="false" aria-controls="entry-2">
+                <span class="e-no">002</span>
+                <span class="e-period">2021 — 2023</span>
+                <span class="e-org">PyjamaHR</span>
+                <span class="e-role">Software Development Engineer</span>
+                <span class="e-mark" aria-hidden="true"></span>
+              </button>
+              <div class="entry-detail" id="entry-2">
+                <div class="entry-inner">
+                  <p>
+                    Built the first version of the PyjamaHR mobile app from an empty
+                    repository to store release — requirements, architecture, shipping, the
+                    lot. Wrote a React Chrome extension that let recruiters source
+                    candidates straight from job boards, and rebuilt sign-up on Google
+                    Identity Services, which visibly cut drop-off.
+                  </p>
+                  <ul class="entry-tags">
+                    <li>Flutter</li><li>ReactJS</li><li>Chrome Extensions</li>
+                    <li>Google Identity</li><li>0 → 1</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="entry rise">
+              <button class="entry-row" aria-expanded="false" aria-controls="entry-3">
+                <span class="e-no">003</span>
+                <span class="e-period">2018 — 2021</span>
+                <span class="e-org">InnovationM</span>
+                <span class="e-role">Software Engineer</span>
+                <span class="e-mark" aria-hidden="true"></span>
+              </button>
+              <div class="entry-detail" id="entry-3">
+                <div class="entry-inner">
+                  <p>
+                    Client mobile work for OneAssist, EZMall and the British Council's IELTS
+                    prep app. Built an automated testing framework that raised coverage and
+                    pulled production defects down, and prototyped an audio social app on
+                    Agora and Flutter.
+                  </p>
+                  <ul class="entry-tags">
+                    <li>Android</li><li>iOS</li><li>Flutter</li>
+                    <li>Test Automation</li><li>Agora SDK</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 03 INDEX ══ -->
+      <section id="index" class="folio folio-tint">
+        <div class="rail" aria-hidden="true">
+          <span class="rail-no">03</span>
+          <span class="rail-label">Index</span>
+        </div>
+
+        <div class="folio-body">
+          <header class="folio-head">
+            <h2 class="rise">Index of tools.</h2>
+            <p class="folio-sub rise">
+              Listed the way a book lists its terms — not as a grid of logos.
+            </p>
+          </header>
+
+          <div class="idx">
+            <section class="idx-group rise">
+              <h3>A — Mobile</h3>
+              <ul>
+                <li><span class="t">Flutter</span><i class="leader"></i><span class="n">primary · 8 yrs</span></li>
+                <li><span class="t">Dart</span><i class="leader"></i><span class="n">primary · 8 yrs</span></li>
+                <li><span class="t">Swift &amp; iOS</span><i class="leader"></i><span class="n">native</span></li>
+                <li><span class="t">Android</span><i class="leader"></i><span class="n">native</span></li>
+                <li><span class="t">BLoC · Riverpod</span><i class="leader"></i><span class="n">state</span></li>
+                <li><span class="t">Clean Architecture</span><i class="leader"></i><span class="n">house style</span></li>
+              </ul>
+            </section>
+
+            <section class="idx-group rise">
+              <h3>B — Web &amp; Server</h3>
+              <ul>
+                <li><span class="t">ReactJS</span><i class="leader"></i><span class="n">fluent</span></li>
+                <li><span class="t">Next.js</span><i class="leader"></i><span class="n">fluent</span></li>
+                <li><span class="t">Python · FastAPI</span><i class="leader"></i><span class="n">services</span></li>
+                <li><span class="t">Node.js</span><i class="leader"></i><span class="n">services</span></li>
+                <li><span class="t">Firebase</span><i class="leader"></i><span class="n">backend</span></li>
+                <li><span class="t">Docker</span><i class="leader"></i><span class="n">packaging</span></li>
+              </ul>
+            </section>
+
+            <section class="idx-group rise">
+              <h3>C — Delivery</h3>
+              <ul>
+                <li><span class="t">Git</span><i class="leader"></i><span class="n">daily</span></li>
+                <li><span class="t">CI/CD · Jenkins</span><i class="leader"></i><span class="n">pipelines</span></li>
+                <li><span class="t">Azure DevOps</span><i class="leader"></i><span class="n">boards &amp; builds</span></li>
+                <li><span class="t">Test automation</span><i class="leader"></i><span class="n">coverage</span></li>
+                <li><span class="t">Figma</span><i class="leader"></i><span class="n">handoff</span></li>
+                <li><span class="t">Agile / Scrum</span><i class="leader"></i><span class="n">how we work</span></li>
+              </ul>
+            </section>
+
+            <section class="idx-group rise idx-wide">
+              <h3>D — Machine assistance</h3>
+              <p class="idx-note">
+                I put LLM tooling inside the pipeline rather than beside it: agent logic for
+                repetitive review, custom <strong>MCP</strong> servers wired to internal
+                systems, and a Figma-to-Flutter path that turns handoff into a build step.
+              </p>
+              <ul>
+                <li><span class="t">Model Context Protocol</span><i class="leader"></i><span class="n">custom servers</span></li>
+                <li><span class="t">Coding agents</span><i class="leader"></i><span class="n">in-pipeline</span></li>
+                <li><span class="t">Figma → Flutter</span><i class="leader"></i><span class="n">automation</span></li>
+                <li><span class="t">Prompt engineering</span><i class="leader"></i><span class="n">tooling</span></li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 04 CATALOGUE ══ -->
+      <section id="catalogue" class="folio">
+        <div class="rail" aria-hidden="true">
+          <span class="rail-no">04</span>
+          <span class="rail-label">Catalogue</span>
+        </div>
+
+        <div class="folio-body">
+          <header class="folio-head">
+            <h2 class="rise">Catalogue of public work.</h2>
+            <p class="folio-sub rise">
+              Four packages on pub.dev, one maintainership, everything else on GitHub.
+            </p>
+          </header>
+
+          <ul class="cat">
+            <li class="cat-item rise">
+              <a href="https://pub.dev/packages/dartapi" target="_blank" rel="noopener">
+                <span class="cat-no">AGK·01</span>
+                <span class="cat-name">dartapi</span>
+                <span class="cat-desc">A CLI that scaffolds and runs typed Dart APIs — routes, handlers, project layout.</span>
+                <span class="cat-src">pub.dev</span>
+              </a>
+            </li>
+            <li class="cat-item rise">
+              <a href="https://pub.dev/packages/dartapi_core" target="_blank" rel="noopener">
+                <span class="cat-no">AGK·02</span>
+                <span class="cat-name">dartapi_core</span>
+                <span class="cat-desc">The shared contracts underneath it: request, response, typed route definitions.</span>
+                <span class="cat-src">pub.dev</span>
+              </a>
+            </li>
+            <li class="cat-item rise">
+              <a href="https://pub.dev/packages/dartapi_db" target="_blank" rel="noopener">
+                <span class="cat-no">AGK·03</span>
+                <span class="cat-name">dartapi_db</span>
+                <span class="cat-desc">Database layer — connections, queries and migrations without an ORM in the way.</span>
+                <span class="cat-src">pub.dev</span>
+              </a>
+            </li>
+            <li class="cat-item rise">
+              <a href="https://pub.dev/packages/dartapi_auth" target="_blank" rel="noopener">
+                <span class="cat-no">AGK·04</span>
+                <span class="cat-name">dartapi_auth</span>
+                <span class="cat-desc">JWT issuing, verification and guards for the same stack.</span>
+                <span class="cat-src">pub.dev</span>
+              </a>
+            </li>
+            <li class="cat-item cat-feature rise">
+              <a href="https://github.com/TheAlgorithms/Dart" target="_blank" rel="noopener">
+                <span class="cat-no">TA·DART</span>
+                <span class="cat-name">TheAlgorithms / Dart</span>
+                <span class="cat-desc">
+                  Maintainer and core contributor of the Dart repository at the largest
+                  open-source organisation on GitHub — data structures and algorithms,
+                  written to be read.
+                </span>
+                <span class="cat-src">github.com</span>
+              </a>
+            </li>
+            <li class="cat-item rise">
+              <a href="https://github.com/akashgk" target="_blank" rel="noopener">
+                <span class="cat-no">SOURCE</span>
+                <span class="cat-name">github.com/akashgk</span>
+                <span class="cat-desc">Repositories, experiments and half-finished ideas kept in public.</span>
+                <span class="cat-src">github.com</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ══ 05 PRESS ══ -->
+      <section id="press" class="folio folio-tint">
+        <div class="rail" aria-hidden="true">
+          <span class="rail-no">05</span>
+          <span class="rail-label">Press</span>
+        </div>
+
+        <div class="folio-body">
+          <header class="folio-head">
+            <h2 class="rise">The press.</h2>
+            <p class="folio-sub rise">
+              Words fall down the sheet. Type them before they hit the baseline —
+              three misprints and the run is over.
+            </p>
+          </header>
+
+          <div class="press rise">
+            <div class="press-sheet" id="press-sheet">
+              <div class="sheet-rules" aria-hidden="true"></div>
+              <div class="sheet-baseline" aria-hidden="true"></div>
+              <div class="sheet-field" id="sheet-field" aria-hidden="true"></div>
+
+              <div class="sheet-hud">
+                <span><i>Set</i><b id="press-score">0</b></span>
+                <span><i>Best</i><b id="press-best">0</b></span>
+                <span class="sheet-misprints" id="press-lives">
+                  <em></em><em></em><em></em>
+                </span>
+              </div>
+
+              <div class="sheet-overlay" id="press-overlay">
+                <p class="sheet-title" id="press-title">The Press</p>
+                <p class="sheet-copy" id="press-copy">
+                  Set the words before they fall off the sheet.
+                </p>
+                <button class="btn" id="press-start">Ink the plate</button>
+                <p class="sheet-hint">Just start typing — no need to click anything after that.</p>
+              </div>
+
+              <label class="sr-only" for="press-input">Type the falling words</label>
+              <input
+                id="press-input"
+                class="press-input"
+                type="text"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                aria-live="off"
+              />
+              <div class="press-buffer" id="press-buffer" aria-hidden="true"><span></span><i>|</i></div>
+            </div>
+
+            <aside class="press-side">
+              <h3>Proofs pulled</h3>
+              <ol class="proofs" id="proofs">
+                <li data-at="4"><b>Corporate Trade Portal</b><span>Lead mobile architecture, CBQ</span></li>
+                <li data-at="10"><b>PyjamaHR, 0 → 1</b><span>First mobile app, shipped solo</span></li>
+                <li data-at="18"><b>dartapi</b><span>Four packages on pub.dev</span></li>
+                <li data-at="28"><b>TheAlgorithms / Dart</b><span>Maintainer</span></li>
+                <li data-at="40"><b>Eight years in</b><span>Still enjoying it</span></li>
+              </ol>
+              <p class="proofs-count"><span id="proofs-count">0</span> of 5 pulled</p>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 06 CONTACT ══ -->
+      <section id="contact" class="folio">
+        <div class="rail" aria-hidden="true">
+          <span class="rail-no">06</span>
+          <span class="rail-label">Contact</span>
+        </div>
+
+        <div class="folio-body">
+          <div class="card-reply">
+            <div class="reply-main">
+              <h2 class="rise">Write to me.</h2>
+              <p class="reply-sub rise">
+                A role, a project, a second opinion on an architecture decision —
+                all welcome. I read everything.
               </p>
 
-              <div class="control-hints">
-                <div class="control-hint">
-                  <span class="hint-key">Mouse</span> Move horizontally
+              <dl class="reply-fields">
+                <div class="field rise">
+                  <dt>Email</dt>
+                  <dd><a href="mailto:krishnanag1996@gmail.com">krishnanag1996@gmail.com</a></dd>
                 </div>
-                <div class="control-hint">
-                  <span class="hint-key">Touch</span> Drag anywhere on screen
+                <div class="field rise">
+                  <dt>LinkedIn</dt>
+                  <dd><a href="https://www.linkedin.com/in/akashgkrishnan" target="_blank" rel="noopener">in/akashgkrishnan</a></dd>
                 </div>
-                <div class="control-hint">
-                  <span class="hint-key">Keys</span> Left &amp; Right arrows
+                <div class="field rise">
+                  <dt>Telephone — Qatar</dt>
+                  <dd><a href="tel:+97471743533">+974 7174 3533</a></dd>
                 </div>
-              </div>
-
-              <!-- Audio & Mute Toggle -->
-              <div class="game-controls-row">
-                <button
-                  class="btn-game-toggle"
-                  id="sound-btn"
-                  title="Toggle Sound"
-                >
-                  <svg
-                    class="icon"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                    id="sound-icon"
-                  >
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                    <path
-                      d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"
-                    />
-                  </svg>
-                  <span>Sound FX On</span>
-                </button>
-              </div>
+                <div class="field rise">
+                  <dt>Telephone — India</dt>
+                  <dd><a href="tel:+918130233807">+91 8130 233807</a></dd>
+                </div>
+                <div class="field rise">
+                  <dt>Papers</dt>
+                  <dd><a href="/AKASH_G_KRISHNAN_RESUME.pdf" download>Résumé, PDF</a></dd>
+                </div>
+              </dl>
             </div>
 
-            <div class="info-card card">
-              <h3>Milestones Discovered</h3>
-              <div class="milestones-list">
-                <div class="milestone-item-check locked" id="ms-cbq">
-                  <span class="ms-dot"></span>
-                  <div class="ms-details">
-                    <h4>CBQ Corporate Portal</h4>
-                    <p>Lead Mobile Architect (6+ Devs)</p>
-                  </div>
-                </div>
-                <div class="milestone-item-check locked" id="ms-pyjama">
-                  <span class="ms-dot"></span>
-                  <div class="ms-details">
-                    <h4>PyjamaHR App</h4>
-                    <p>Built Flutter app from scratch</p>
-                  </div>
-                </div>
-                <div class="milestone-item-check locked" id="ms-packages">
-                  <span class="ms-dot"></span>
-                  <div class="ms-details">
-                    <h4>Open Source Packages</h4>
-                    <p>dartapi CLI &amp; core databases</p>
-                  </div>
-                </div>
-                <div class="milestone-item-check locked" id="ms-qatar">
-                  <span class="ms-dot"></span>
-                  <div class="ms-details">
-                    <h4>Fintech Architect</h4>
-                    <p>Secure clean code in Qatar</p>
-                  </div>
-                </div>
-                <div class="milestone-item-check locked" id="ms-developer">
-                  <span class="ms-dot"></span>
-                  <div class="ms-details">
-                    <h4>Mobile Expert Stack</h4>
-                    <p>Flutter, Swift, Dart, BLoC</p>
-                  </div>
-                </div>
-              </div>
-              <div class="discovery-tracker">
-                Unlocked: <span id="unlocked-count">0</span>/5
+            <div class="reply-stamp rise" aria-hidden="true">
+              <div class="stamp">
+                <span class="stamp-top">Open to work</span>
+                <span class="stamp-mid">DOHA</span>
+                <span class="stamp-bot">Qatar · <span id="stamp-year"></span></span>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
 
-    <!-- Contact — light section -->
-    <section id="contact" class="section-light">
-      <div class="container">
-        <div class="contact-wrapper">
-          <div class="section-header section-header-center reveal">
-            <span class="eyebrow">Contact</span>
-            <h2>Let's build something.</h2>
-          </div>
-          <p class="contact-sub reveal">
-            Whether you have a project, an idea, or just want to connect —<br />
-            my inbox is always open.
-          </p>
-          <div class="contact-links reveal" style="transition-delay: 100ms">
-            <a
-              href="mailto:krishnanag1996@gmail.com"
-              class="contact-link card reveal"
-            >
-              <span class="contact-link-icon">
-                <svg
-                  class="icon"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                  />
-                  <polyline points="22,6 12,13 2,6" />
-                </svg>
-              </span>
-              <span class="contact-link-text">
-                <h4>Email</h4>
-                <span>krishnanag1996@gmail.com</span>
-              </span>
-            </a>
-            <a
-              href="https://www.linkedin.com/in/akashgkrishnan"
-              target="_blank"
-              class="contact-link card reveal"
-              style="transition-delay: 70ms"
-            >
-              <span class="contact-link-icon">
-                <svg
-                  class="icon"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-                  />
-                  <rect x="2" y="9" width="4" height="12" />
-                  <circle cx="4" cy="4" r="2" />
-                </svg>
-              </span>
-              <span class="contact-link-text">
-                <h4>LinkedIn</h4>
-                <span>akashgkrishnan</span>
-              </span>
-            </a>
-            <a
-              href="tel:+97471743533"
-              class="contact-link card reveal"
-              style="transition-delay: 140ms"
-            >
-              <span class="contact-link-icon">
-                <svg
-                  class="icon"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
-                  />
-                </svg>
-              </span>
-              <span class="contact-link-text">
-                <h4>Qatar</h4>
-                <span>+974 7174 3533</span>
-              </span>
-            </a>
-            <a
-              href="tel:+918130233807"
-              class="contact-link card reveal"
-              style="transition-delay: 210ms"
-            >
-              <span class="contact-link-icon">
-                <svg
-                  class="icon"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
-                  />
-                </svg>
-              </span>
-              <span class="contact-link-text">
-                <h4>India</h4>
-                <span>+91 8130 233807</span>
-              </span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer — Apple-style light gray -->
-    <footer class="footer">
-      <div class="container footer-inner">
-        <p>&copy; <span id="year"></span> Akash G Krishnan. Built with care.</p>
-        <div class="footer-links">
-          <a
-            href="https://github.com/akashgk"
-            target="_blank"
-            class="footer-link"
-            >GitHub</a
-          >
-          <a
-            href="https://www.linkedin.com/in/akashgkrishnan"
-            target="_blank"
-            class="footer-link"
-            >LinkedIn</a
-          >
-          <a href="/AKASH_G_KRISHNAN_RESUME.pdf" download class="footer-link"
-            >Resume</a
-          >
+    <!-- ══ Colophon ══ -->
+    <footer class="colophon">
+      <div class="colophon-inner">
+        <p class="colo-note">
+          Set in the system serif and monospace faces of your own machine. No web fonts, no
+          frameworks, no libraries — three files, written by hand and served flat from
+          GitHub Pages.
+        </p>
+        <div class="colo-meta">
+          <span>&copy; <span id="year"></span> Akash G Krishnan</span>
+          <nav>
+            <a href="https://github.com/akashgk" target="_blank" rel="noopener">GitHub</a>
+            <a href="https://www.linkedin.com/in/akashgkrishnan" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="/AKASH_G_KRISHNAN_RESUME.pdf" download>Résumé</a>
+            <a href="https://pub.dev/publishers/akashgk.com/packages" target="_blank" rel="noopener">pub.dev</a>
+          </nav>
         </div>
       </div>
     </footer>
 
-    <!-- Defer Analytics -->
     <script>
       setTimeout(() => {
         const s = document.createElement("script");
@@ -1020,9 +558,7 @@
         s.async = true;
         document.body.appendChild(s);
         window.dataLayer = window.dataLayer || [];
-        function gtag() {
-          dataLayer.push(arguments);
-        }
+        function gtag() { dataLayer.push(arguments); }
         gtag("js", new Date());
         gtag("config", "G-SKBCVDV7G0");
       }, 3000);
