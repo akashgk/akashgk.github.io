@@ -20,49 +20,71 @@ npx serve .
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Main portfolio page (single-page layout) |
+| `index.html` | Main portfolio page (the dossier) |
 | `styles.css` | All styles for the main page |
 | `script.js` | All JS for the main page |
 | `privacy.html` | Privacy policy page |
 | `wa.html` | WhatsApp-related utility page |
 | `valentines.html` | Personal/fun page |
+| `troy.html` | Standalone Trojan War / Odyssey learning page |
 | `sitemap.xml` | SEO sitemap |
 | `CNAME` | GitHub Pages custom domain (`akashgk.com`) |
 
 ## Architecture
 
-**Main page (`index.html` + `styles.css` + `script.js`)** is a single-page portfolio with these sections (in order): Hero → Marquee strip → Stats Bar → About → Experience → Skills (bento grid) → Open Source → Playground (canvas arcade game) → Contact → Footer.
+**Main page (`index.html` + `styles.css` + `script.js`)** is a single page laid out as a
+printed **dossier** — a numbered document rather than a scrolling brochure. Sections in
+order: Masthead (title block) → 01 Opening → 02 Record → 03 Index → 04 Catalogue →
+05 Press → 06 Contact → Colophon.
 
-**Design system** ("Midnight Aurora", defined in `styles.css` `:root`):
-- One cohesive deep-ink dark theme (`--bg: #07070b`); `.section-light` sections are subtly elevated panels (`--bg-elev: #0c0c14`) framed by hairline borders instead of a light/dark alternation
-- Accents: indigo (`--accent: #818cf8`, `--accent-soft: #a5b4fc` for links), white pill CTAs (`.btn-pill`, white bg + indigo glow on hover), chevron text links (`.link-arrow`)
-- Signature aurora gradient (`--grad`, cyan→indigo→violet→fuchsia) used for the hero headline span, stat numbers, logo dot, and scroll-progress hairline
-- Shared `.card` class: translucent glass surface + 1px hairline border, 24px radius, hover lift + border glow, mouse-tracked spotlight (`.card::before` reads `--mx`/`--my` set from JS) and a sheen sweep (`.card::after`). Exception: `.xp-card` uses an opaque background (`#10101a`) because the deck cards overlap while stacking
-- Mono microtype: eyebrows are uppercase `ui-monospace` labels auto-numbered with CSS counters (`01`–`06`); marquee, stat labels, fact labels, and bento labels share the mono treatment
-- Fonts: System font stacks only (SF Pro / Segoe UI / Roboto, `ui-monospace` for mono) — no webfonts are loaded, by design, for performance
-- Motion: transform/opacity only; `.reveal` blur-up rise animation; glass navbar (`saturate(160%) blur(20px)`); gradient scroll-progress hairline (`.scroll-progress`, element injected by JS) pinned to the top of the viewport
-- Hero: faint radially-masked dot grid (`.hero::before`) beneath drifting aurora blobs
+**Design system** ("Dossier", defined in `styles.css` `:root`):
+- Two inks, one layout. `:root` is the paper stock (warm off-white `--paper: #f2efe9`,
+  near-black `--ink`); `html[data-mode="ink"]` swaps the same tokens for a dark warm
+  sheet. The toggle lives in the masthead, persists to `localStorage` under `agk-mode`,
+  falls back to `prefers-color-scheme`, and rewrites `<meta name="theme-color">`
+- One accent only: a redline vermilion (`--accent`) used for marginal marks, section
+  numbers, hover rules and the stamp. No gradients anywhere
+- Typography is the whole design: a **system serif** display stack (Iowan Old Style →
+  Palatino → Georgia) for headlines and prose, and `ui-monospace` for every label,
+  number, nav item and piece of marginalia. Still no webfonts, by design
+- Hairline rules (`--rule`) do the work borders and cards used to do. There is no `.card`
+  class and no glass; surfaces are flat paper, and `.folio-tint` sections are a slightly
+  darker stock painted full-bleed by a `::before` (clipped by `main { overflow-x: clip }`,
+  which also clips the `-100vw` row-hover bleeds without creating a scroll container)
+- A fixed `.grain` layer applies SVG `feTurbulence` noise (`multiply` on paper,
+  `overlay` on ink) so the page reads as stock, not screen
+- Every section is a `.folio`: a two-column grid of a sticky numbered `.rail`
+  (`01 / OPENING`) plus `.folio-body`, collapsing to a stacked header under 860px
 
-**Scroll choreography** (single rAF handler in `script.js` drives everything):
-- Pinned hero scrollytelling: `.hero-stage` (185vh) pins `.hero`; JS sets `--hp` (0→1) and CSS `calc()` rules parallax-dissolve each layer at different speeds. `.settled` class (added after the entry reveal finishes) switches elements from transition-driven to scroll-driven
-- Statement section (`#statement`): JS wraps every word in `.w` spans; words light up from 16% to full opacity as you scroll (Apple product-page style)
-- Experience deck (`.xp-stack`): sticky stacking cards — earlier cards shrink/dim as the next slides over
-- iPhone 3D entrance (`#device-scene`): rises, scales, and un-tilts into view (smoothstep), then follows the cursor on desktop
-- Floating glass pill navbar with a sliding active-section indicator (`.nav-indicator`, iOS segmented-control feel)
+**Motion language** — mechanical, never floaty. No blur-up, no parallax, no pinning:
+- `.rise` (translateY + opacity) via one `IntersectionObserver`, staggered by sibling index
+- `.type-line` letterpress reveal: JS wraps each word in `span > i` so the words rise out
+  of an overflow-hidden box, per-word delay
+- Masthead `.ruler`: a tick-marked measuring rule whose fill tracks scroll progress, with
+  a mono readout of the current section and a sliding underline on the active nav link
+- `.entry` / `.cat-item` hover: a full-bleed tint band plus a padding-left nudge
+- Desktop-only `.crosshair`: hairline cursor guides with an `X 0000 Y 0000` mono readout
+- All of it is disabled under `prefers-reduced-motion`
 
-**Other JS features** (`script.js`, loaded with `defer`):
-- `IntersectionObserver`-based `.reveal` blur-up animations with inline `transition-delay` staggering
-- Confetti bursts (`confettiBurst`) on logo click and on unlocking all 5 game milestones; styled console easter egg
-- Mobile menu toggle (full-screen glass overlay with staggered link reveal)
-- Typed role cycling (`#typed-role`); live "time in Doha" clock (`#doha-time`)
-- Stats counter animation + springy `.pop` scale-in (`data-count` spans)
-- Card spotlight: fine-pointer devices get a cursor-tracked radial highlight on `.card` hover (JS sets `--mx`/`--my`)
-- Canvas arcade game ("Dynamic Bounce") in the Playground section, colored with the aurora palette
-- All scroll effects respect `prefers-reduced-motion` (pin, deck, and word-lighting all degrade to static layout)
+**Interactive pieces** (`script.js`, loaded with `defer`, no libraries):
+- **The Record** (`#record`): the CV as a ledger table. Rows are `<button>`s that expand a
+  detail panel via an animated `grid-template-rows: 0fr → 1fr`; opening one closes the rest
+- **The Index** (`#index`): the stack set as a book index with dotted leaders — a flexed
+  `.leader` element between term and note
+- **The Press** (`#press`): the arcade. Mono words fall down a ruled sheet and you type
+  them before they cross the baseline; three misprints ends the run. A visually hidden
+  `<input>` captures keystrokes (so mobile keyboards work), keystrokes that can not prefix
+  any live word are rejected rather than penalised, matched prefixes bold in place, and
+  score thresholds unlock the five career "proofs" in the margin. Best score persists to
+  `localStorage` (`agk-press-best`). One rAF loop, paused by `IntersectionObserver` when
+  the sheet leaves the screen and by `visibilitychange`
+- Vitals counters, Doha clock, mobile index sheet, console colophon
 
-**Icons**: Inline SVGs using Feather icon paths (stroke-based, `class="icon"`). Static icons are inlined directly in `index.html`; icons set dynamically by JS come from the `ICONS` map at the top of `script.js`. No icon CDN — the page makes zero third-party requests on the critical path.
+**Icons**: none. The old Feather SVG set and the `ICONS` map are gone — labels, rules and
+type carry the meaning instead, which is also why the page makes zero icon requests.
 
-**Analytics**: Google Analytics (`G-SKBCVDV7G0`) is deferred by 3 seconds to avoid blocking initial render.
+**Analytics**: Google Analytics (`G-SKBCVDV7G0`) is deferred by 3 seconds to avoid blocking
+initial render.
 
 ## Deployment
 
