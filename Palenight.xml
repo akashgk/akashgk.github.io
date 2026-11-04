@@ -2017,10 +2017,10 @@
         <WidgetStyle name="Incremental highlight all" styleID="28" bgColor="82AAFF" />
         <WidgetStyle name="Tags match highlighting" styleID="27" bgColor="7E57C2" />
         <WidgetStyle name="Tags attribute" styleID="26" bgColor="FFCB6B" />
-        <WidgetStyle name="Active tab focused indicator" styleID="0" fgColor="80CBC4" />
-        <WidgetStyle name="Active tab unfocused indicator" styleID="0" fgColor="4C5374" />
-        <WidgetStyle name="Active tab text" styleID="0" fgColor="EEFFFF" />
-        <WidgetStyle name="Inactive tabs" styleID="0" fgColor="929AC9" bgColor="31364A" />
+        <WidgetStyle name="Active tab focused indicator" styleID="0" fgColor="7E57C2" />
+        <WidgetStyle name="Active tab unfocused indicator" styleID="0" fgColor="929AC9" />
+        <WidgetStyle name="Active tab text" styleID="0" fgColor="292D3E" />
+        <WidgetStyle name="Inactive tabs" styleID="0" fgColor="676E95" bgColor="D5D8E6" />
         <WidgetStyle name="Tab color 1" styleID="0" bgColor="F3F0CB" />
         <WidgetStyle name="Tab color 2" styleID="0" bgColor="DBF3CB" />
         <WidgetStyle name="Tab color 3" styleID="0" bgColor="CBDBF3" />
