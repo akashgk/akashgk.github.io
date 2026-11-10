@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { canvasTexture, disposeGroup, glowTexture, heroStar, sampleText, seeded } from '../util.js';
+import { canvasTexture, disposeGroup, glowTexture, heroStar, sampleText, seeded, heartInside } from '../util.js';
+import { createDrift } from '../fx.js';
 
 const CAM = new THREE.Vector3(0, 10, -232);
 const LOOK = new THREE.Vector3(0, 10, -95);
@@ -55,7 +56,9 @@ function letterTexture(cfg) {
   tex.generateMipmaps = true;
   tex.minFilter = THREE.LinearMipmapLinearFilter;
   tex.anisotropy = 8;
-  return { tex, aspect: H / W, seconds: total };
+  // where the pen is at any moment of the reveal, in 0..1 paper coordinates
+  const strokes = bands.map((b) => ({ t0: b.t0 / total, t1: b.t1 / total, x0: b.x0 / W, x1: b.x1 / W, y: (b.y1 - size * 0.42) / H }));
+  return { tex, aspect: H / W, seconds: total, strokes };
 }
 
 export async function createLetter(ctx) {
@@ -100,9 +103,11 @@ export async function createLetter(ctx) {
     A[i * 3 + 2] = B[i * 3 + 2] = (rng() - 0.5) * 0.2;
   }
   putName(A, nameSets[0]); putName(B, nameSets[0]);
+  // Before they are words, the particles are one big heart filling the screen.
+  const hs = Math.min(v0.h * 0.78, v0.w * 0.9) / 23, hv = new THREE.Vector3();
   for (let i = 0; i < N; i++) {
-    const a = rng() * Math.PI * 2, r = 5 + rng() * 15;
-    from.set([Math.cos(a) * r, Math.sin(a) * r * 1.2, -5 - rng() * 22], i * 3);
+    heartInside(rng, hv);
+    from.set([hv.x * hs, (hv.y + 1) * hs, (rng() - 0.5) * 3], i * 3);
     info.set([rng(), i < leadN ? 0 : 1, rng()], i * 3);
   }
   const textGeo = new THREE.BufferGeometry();
@@ -124,18 +129,24 @@ export async function createLetter(ctx) {
         vec3 target = mix(aA, aB, m);
         target.xy += vec2(sin(seed * 40. + m * 6.), cos(seed * 70. + m * 5.)) * sin(m * 3.14159) * 1.15;
         target.z += sin(m * 3.14159) * (seed - .5) * 3.;
-        vec3 p = mix(position, target, e);
-        float ang = (1. - e) * (2.2 + seed * 2.);
+        // the heart breathes, then each particle spirals gently into its letter
+        vec3 start = position * (1. + .03 * sin(uTime * 1.6 + position.y * .2));
+        start.xy += vec2(sin(uTime * .8 + seed * 40.), cos(uTime * .6 + seed * 60.)) * .12;
+        vec3 p = mix(start, target, e);
+        float ang = sin(e * 3.14159) * (seed - .5) * 1.4;
         float c = cos(ang), s = sin(ang);
-        p.xy = mat2(c, -s, s, c) * p.xy;
+        vec2 rel = p.xy - target.xy;
+        p.xy = target.xy + mat2(c, -s, s, c) * rel;
         p += .02 * vec3(sin(uTime * .9 + seed * 50.), cos(uTime * .7 + seed * 80.), 0.) * e;
         p.y += (1. - uFade) * (2.6 + seed * 3.);
         vec4 mv = modelViewMatrix * vec4(p, 1.);
         gl_PointSize = uPx * clamp((1.05 + aInfo.z * .55 + (1. - e) * 1.2), 1., 3.);
         gl_Position = projectionMatrix * mv;
         vec3 gold = vec3(1., .72, .36), rose = vec3(1., .42, .56);
-        vColor = mix(gold, mix(rose, gold, seed * .4), isName) * (1.28 + isName * .3) * (.85 + .15 * sin(uTime * 1.6 + seed * 60.));
-        vAlpha = smoothstep(0., .08, k) * uFade;
+        vec3 wordCol = mix(gold, mix(rose, gold, seed * .4), isName) * (1.28 + isName * .3);
+        vec3 heartCol = mix(rose, vec3(1., .62, .7), seed) * 1.2;
+        vColor = mix(heartCol, wordCol, e) * (.85 + .15 * sin(uTime * 1.6 + seed * 60.));
+        vAlpha = (.55 + .45 * e) * uFade;
       }`,
     fragmentShader: `varying vec3 vColor; varying float vAlpha; void main(){ float d = length(gl_PointCoord-.5); float a = smoothstep(.5,.1,d)*vAlpha; if (a<.004) discard; gl_FragColor = vec4(vColor*a, a); }`,
   }));
@@ -143,7 +154,7 @@ export async function createLetter(ctx) {
   group.add(text);
 
   // ---- the letter ----
-  const { tex, aspect, seconds } = letterTexture(cfg);
+  const { tex, aspect, seconds, strokes } = letterTexture(cfg);
   const paperU = { uMap: { value: tex }, uReveal: { value: 0 }, uShow: { value: 0 }, uTime: ctx.uniforms.uTime, uCalm: { value: reduced ? 1 : 0 } };
   const paper = new THREE.Mesh(new THREE.PlaneGeometry(1, aspect, 20, 26), new THREE.ShaderMaterial({
     uniforms: paperU, transparent: true, depthWrite: false, depthTest: false,
@@ -186,6 +197,23 @@ export async function createLetter(ctx) {
   const halo = heroStar(haloTex, new THREE.Color('#f2b16b'), 0);
   halo.renderOrder = 4;
   group.add(halo);
+  // The pen: a point of gold light that writes each line as the ink appears
+  const pen = heroStar(glowTexture(64, true), new THREE.Color('#ffd79a'), 0);
+  pen.renderOrder = 6;
+  pen.scale.setScalar(0.9);
+  group.add(pen);
+
+  // Petals drift down over the whole scene once the letter is out
+  const petals = createDrift(ctx, { count: Math.floor((reduced ? 18 : 40) * Math.max(0.5, ctx.particles)), kind: 'petal', size: 0.4,
+    colors: ['#f07a9a', '#ff9fb6', '#f6c6cf'], box: [v0.w * 1.1, v0.h * 1.2, 10], fall: reduced ? 0.15 : 0.5, sway: 1.2, spin: reduced ? 0.2 : 0.8, seed: 51, opacity: 0.9, lit: 0.45 });
+  petals.mesh.position.set(0, 0, -3);
+  petals.mesh.renderOrder = 3;
+  group.add(petals.mesh);
+  // And at the very end, hearts rise from the page
+  const rising = createDrift(ctx, { count: Math.floor((reduced ? 24 : 60) * Math.max(0.5, ctx.particles)), kind: 'heart', size: 0.5,
+    colors: ['#ff8fae', '#f2c879', '#ffb9cb'], box: [8, 14, 3], fall: reduced ? -0.2 : -0.6, sway: 0.8, spin: 0.6, seed: 61, lit: 0.8 });
+  rising.mesh.renderOrder = 6;
+  group.add(rising.mesh);
 
   // ---- ending: dust drifting upward, slowly ----
   const dustN = Math.floor(320 * ctx.particles);
@@ -226,6 +254,9 @@ export async function createLetter(ctx) {
     if (phase === 'paper' || phase === 'end') paper.position.set(rest.x, rest.y, 0);
     halo.position.set(rest.x, rest.y, -0.5);
     halo.scale.setScalar(rest.s * 1.9);
+    rising.mesh.position.set(rest.x, rest.y + rest.s * aspect * 0.2, 0.4);
+    rising.uniforms.uBox.value.set(rest.s * 0.9, rest.s * aspect * 1.3, 2);
+    petals.uniforms.uBox.value.set(v.w * 1.1, v.h * 1.2, 10);
     placeHeart();
   };
   let constellation = null;
@@ -249,7 +280,23 @@ export async function createLetter(ctx) {
   let phase = 'hidden', timeline = null;
   const showEnding = () => {
     phase = 'end';
+    gsap.to(pen.material, { opacity: 0, duration: 1 });
+    rising.show(true, 2.5);
+    gsap.to(halo.material, { opacity: 0.3, duration: 3 });
     ui.replay(true, () => ctx.story.replay());
+  };
+  // Where on the paper the ink is appearing right now
+  const penPos = new THREE.Vector3();
+  const movePen = () => {
+    const r = paperU.uReveal.value;
+    const st = strokes.find((b) => r >= b.t0 && r <= b.t1);
+    if (!st) { pen.material.opacity += (0 - pen.material.opacity) * 0.2; return; }
+    const f = (r - st.t0) / Math.max(1e-4, st.t1 - st.t0);
+    penPos.set((st.x0 + (st.x1 - st.x0) * f - 0.5), (0.5 - st.y) * aspect, 0.02);
+    paper.localToWorld(penPos);
+    group.worldToLocal(penPos);
+    pen.position.copy(penPos);
+    pen.material.opacity += (0.85 - pen.material.opacity) * 0.25;
   };
   const revealLetter = () => {
     phase = 'paper';
@@ -263,6 +310,7 @@ export async function createLetter(ctx) {
     gsap.to(paperU.uShow, { value: 1, duration: 1.8, delay: 0.5 });
     gsap.to(halo.material, { opacity: 0.2, duration: 2.6, delay: 0.9 });
     gsap.to(dustU.uOn, { value: 1, duration: 4, delay: 0.5 });
+    petals.show(true, 4);
     if (constellation) gsap.to(constellation, { visibility: 1, duration: 4, delay: 1, ease: 'sine.inOut' });
     ui.srLetter([...cfg.lines, cfg.signature].join(' '));
     timeline = gsap.timeline({ delay: reduced ? 1 : 3 });
@@ -306,11 +354,14 @@ export async function createLetter(ctx) {
       else if (phase === 'paper') { timeline?.kill(); paperU.uReveal.value = 1; showEnding(); }
     },
     onResize() { const s = inst.station(); ctx.setRig(s.pos, s.look); layout(); },
-    update(t) {
+    update(t, dt) {
       if (phase === 'text' && !reduced) group.rotation.y = Math.PI + Math.sin(t * 0.32) * 0.05;
       else if (phase !== 'hidden') group.rotation.y += (Math.PI - group.rotation.y) * 0.03;
+      if (phase === 'paper') movePen();
+      if (phase !== 'hidden') { const m = ctx.uniforms.uMusic.value; halo.scale.setScalar(rest.s * (1.9 + m * 0.12)); }
+      petals.update(dt); rising.update(dt);
     },
-    dispose() { timeline?.kill(); disposeGroup(group); },
+    dispose() { timeline?.kill(); petals.dispose(); rising.dispose(); disposeGroup(group); },
   };
   return inst;
 }

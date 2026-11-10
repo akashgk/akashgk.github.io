@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { LAND_B64, MASK_W, MASK_H, CITIES } from '../data/earth-data.js';
-import { disposeGroup, glowTexture, heroStar, seeded, canvasTexture } from '../util.js';
+import { disposeGroup, glowTexture, heroStar, seeded, canvasTexture, heartAt, heartTheta } from '../util.js';
 
 const CENTER = new THREE.Vector3(80, 0, -175);
 const R = 10;
@@ -56,6 +56,63 @@ export function createGlobe(ctx) {
   }));
   group.add(air);
 
+  // A thin, slowly turning layer of cloud, brightest where the night's rim light catches it
+  const cloudU = { uTime: ctx.uniforms.uTime };
+  const clouds = new THREE.Mesh(new THREE.SphereGeometry(R * 1.022, 56, 40), new THREE.ShaderMaterial({
+    uniforms: cloudU, transparent: true, depthWrite: false,
+    vertexShader: 'varying vec3 vN, vV, vP; void main(){ vN = normalize(normalMatrix*normal); vP = normalize(position); vec4 mv = modelViewMatrix*vec4(position,1.); vV = normalize(-mv.xyz); gl_Position = projectionMatrix*mv; }',
+    fragmentShader: /* glsl */`
+      uniform float uTime; varying vec3 vN, vV, vP;
+      float h(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+      float vn(vec3 p) { vec3 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
+        return mix(mix(mix(h(i), h(i + vec3(1,0,0)), f.x), mix(h(i + vec3(0,1,0)), h(i + vec3(1,1,0)), f.x), f.y),
+                   mix(mix(h(i + vec3(0,0,1)), h(i + vec3(1,0,1)), f.x), mix(h(i + vec3(0,1,1)), h(i + vec3(1,1,1)), f.x), f.y), f.z); }
+      void main() {
+        vec3 p = vP;
+        float a0 = uTime * .012; float c = cos(a0), s = sin(a0);
+        p.xz = mat2(c, -s, s, c) * p.xz;
+        float n = vn(p * 4.) * .5 + vn(p * 9. + 3.) * .3 + vn(p * 19. + 7.) * .2;
+        float cloud = smoothstep(.52, .72, n) * (1. - abs(p.y) * .35);
+        float f = 1. - max(dot(normalize(vN), normalize(vV)), 0.);
+        float rim = pow(f, 2.2);
+        float a = cloud * (.035 + rim * .3);
+        gl_FragColor = vec4(mix(vec3(.5, .62, .95), vec3(1., .78, .8), rim) * (.6 + rim), a);
+      }`,
+  }));
+  spin.add(clouds);
+
+  // The moon, keeping its distance
+  const moonU = { uTime: ctx.uniforms.uTime, uSun: { value: new THREE.Vector3(0.6, 0.35, 0.72).normalize() } };
+  const moon = new THREE.Mesh(new THREE.SphereGeometry(R * 0.26, 40, 28), new THREE.ShaderMaterial({
+    uniforms: moonU,
+    vertexShader: 'varying vec3 vN, vP; void main(){ vN = normalize(normalMatrix*normal); vP = position; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
+    fragmentShader: /* glsl */`
+      uniform vec3 uSun; varying vec3 vN, vP;
+      float h(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+      float vn(vec3 p) { vec3 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
+        return mix(mix(mix(h(i), h(i + vec3(1,0,0)), f.x), mix(h(i + vec3(0,1,0)), h(i + vec3(1,1,0)), f.x), f.y),
+                   mix(mix(h(i + vec3(0,0,1)), h(i + vec3(1,0,1)), f.x), mix(h(i + vec3(0,1,1)), h(i + vec3(1,1,1)), f.x), f.y), f.z); }
+      void main() {
+        vec3 n = normalize(vN);
+        vec3 p = normalize(vP);
+        float maria = smoothstep(.5, .62, vn(p * 2.3 + 1.)) * .45;
+        float craters = pow(vn(p * 9.), 6.) * 2.5 + pow(vn(p * 23. + 4.), 10.) * 2.;
+        float shade = .3 + .75 * max(dot(n, uSun), 0.);
+        shade *= 1. - maria;
+        shade *= 1. - craters * .35;
+        vec3 c = vec3(.95, .93, .86) * shade * 0.95;
+        gl_FragColor = vec4(c, 1.);
+      }`,
+  }));
+  // In portrait the frame is tight, so the moon sits nearer, in the top corner above the globe's rim.
+  if (ctx.portrait) { moon.position.set(-R * 0.69, R * 1.34, -R * 1.6); moon.scale.setScalar(0.72); }
+  else moon.position.set(-R * 2.4, R * 1.5, -R * 3.2);
+  group.add(moon);
+  const moonGlow = heroStar(glowTexture(128, false), new THREE.Color('#dfe4ff'), 0.18);
+  moonGlow.scale.setScalar(R * (ctx.portrait ? 1 : 1.5));
+  moonGlow.position.copy(moon.position).add(new THREE.Vector3(0, 0, -0.5));
+  group.add(moonGlow);
+
   // Land as a field of dots, city lights on top. Everything is one draw call.
   const isLand = landMask();
   const rng = seeded(2018);
@@ -110,18 +167,51 @@ export function createGlobe(ctx) {
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
     fragmentShader: `uniform float uDraw, uHead; varying vec2 vUv;
       void main(){ float t = vUv.x; if (t > uDraw) discard;
-        float trail = exp(-max(uHead - t, 0.) * 7.) * step(t, uHead);
-        vec3 c = mix(vec3(1., .62, .24), vec3(1., .32, .5), t) * (1.15 + trail * 3.5);
+        // two lights set out, one from each end, and leave a glow behind them
+        float trailA = exp(-max(uHead - t, 0.) * 7.) * step(t, uHead);
+        float trailB = exp(-max(t - (1. - uHead), 0.) * 7.) * step(1. - uHead, t);
+        vec3 c = mix(vec3(1., .62, .24), vec3(1., .32, .5), t) * (1.15 + (trailA + trailB) * 3.2);
         gl_FragColor = vec4(c, 1.); }`,
   }));
   arc.frustumCulled = false;
   spin.add(arc);
 
   const tex = glowTexture(96, true);
-  const spark = heroStar(tex, new THREE.Color(1, 0.86, 0.62), 0);
-  spark.material.depthTest = true;
-  spark.scale.setScalar(1.4);
-  spin.add(spark);
+  const sparkA = heroStar(tex, new THREE.Color(1, 0.86, 0.62), 0), sparkB = heroStar(tex, new THREE.Color(1, 0.7, 0.8), 0);
+  [sparkA, sparkB].forEach((sp) => { sp.material.depthTest = true; sp.scale.setScalar(1.4); spin.add(sp); });
+  // Where they meet, a small heart blooms and rises
+  const apex = curve.getPoint(0.5);
+  const burstN = 150;
+  const bTheta = new Float32Array(burstN), bSeed = new Float32Array(burstN * 2);
+  for (let i = 0; i < burstN; i++) { bTheta[i] = heartTheta(i / burstN); bSeed.set([rng(), rng()], i * 2); }
+  const burstGeo = new THREE.BufferGeometry();
+  burstGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(burstN * 3), 3));
+  burstGeo.setAttribute('aTheta', new THREE.BufferAttribute(bTheta, 1));
+  burstGeo.setAttribute('aSeed', new THREE.BufferAttribute(bSeed, 2));
+  const burstU = { uK: { value: 2 }, uOrigin: { value: apex.clone() }, uPx: ctx.uniforms.uPx };
+  const burst = new THREE.Points(burstGeo, new THREE.ShaderMaterial({
+    uniforms: burstU, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+    vertexShader: /* glsl */`
+      attribute float aTheta; attribute vec2 aSeed; uniform float uK, uPx; uniform vec3 uOrigin; varying vec3 vC; varying float vA;
+      void main() {
+        float k = clamp(uK, 0., 1.);
+        float e = 1. - pow(1. - k, 3.);
+        float s = sin(aTheta), c = cos(aTheta);
+        vec2 heart = vec2(16. * s * s * s, 13. * c - 5. * cos(2. * aTheta) - 2. * cos(3. * aTheta) - cos(4. * aTheta) + 2.5) / 16.;
+        heart *= e * (1.6 + aSeed.x * .25);
+        heart.y += k * k * 1.8;
+        heart += vec2(aSeed.x - .5, aSeed.y - .5) * k * .5;
+        vec4 mv = modelViewMatrix * vec4(uOrigin, 1.);
+        mv.xy += heart;
+        gl_PointSize = uPx * (2.6 - k * 1.2) * clamp(34. / -mv.z, .6, 2.);
+        gl_Position = projectionMatrix * mv;
+        vC = mix(vec3(1., .5, .62), vec3(1., .82, .5), aSeed.y) * (2.4 - k);
+        vA = uK > 1. ? 0. : smoothstep(0., .08, k) * (1. - k) * (1. - k);
+      }`,
+    fragmentShader: `varying vec3 vC; varying float vA; void main(){ if (vA <= 0.) discard; float d = length(gl_PointCoord-.5); float a = smoothstep(.5,.08,d)*vA; gl_FragColor = vec4(vC*a, a); }`,
+  }));
+  burst.frustumCulled = false;
+  spin.add(burst);
 
   const marker = (lat, lon) => {
     const m = heroStar(tex, new THREE.Color(1, 0.78, 0.5), 0);
@@ -156,7 +246,7 @@ export function createGlobe(ctx) {
   let labelsOn = false;
   let velX = 0, lastDrag = -100, now = 0, entered = false, traveling = false;
   const far = () => ctx.fit(R * 2.45, R * 2.45);
-  const near = () => (ctx.portrait ? Math.min(far(), Math.max(29, ctx.fit(R * 1.2, R * 1))) : ctx.fit(R * 1.5, R * 1.45));
+  const near = () => (ctx.portrait ? Math.min(far(), Math.max(29, ctx.fit(R * 1.2, R * 1))) : ctx.fit(R * 2.2, R * 2.1));
   const shift = () => (ctx.portrait ? 3.1 : 0);
   const stationAt = (d) => ({
     pos: CENTER.clone().add(new THREE.Vector3(0, -shift(), d)),
@@ -204,11 +294,15 @@ export function createGlobe(ctx) {
         tilt.rotation.x += (targetTilt - tilt.rotation.x) * (1 - Math.pow(0.4, dt));
       }
       if (traveling) {
-        const u = (t * 0.2) % 1.2;
-        arcU.uHead.value = Math.min(u, 1.0);
-        const vis = u <= 1;
-        spark.material.opacity = vis ? Math.min(1, Math.sin(Math.min(u, 1) * Math.PI) * 4) : 0;
-        if (vis) curve.getPoint(u, spark.position);
+        // every 5.6 s: 3 s of travel toward each other, then the heart where they meet
+        const cycle = (t * (1 / 5.6)) % 1, travel = Math.min(1, cycle / 0.54);
+        const u = 0.5 * (1 - Math.pow(1 - travel, 2.2));
+        arcU.uHead.value = u;
+        const vis = travel < 1;
+        const o = vis ? Math.min(1, Math.sin(travel * Math.PI) * 3) : 0;
+        sparkA.material.opacity = o; sparkB.material.opacity = o;
+        if (vis) { curve.getPoint(u, sparkA.position); curve.getPoint(1 - u, sparkB.position); }
+        burstU.uK.value = travel >= 1 ? (cycle - 0.54) / 0.4 : 2;
       }
       // Labels are drawn over the sphere so it can never slice them, so hide them by hand round the back.
       if (labelsOn) {

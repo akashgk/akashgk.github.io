@@ -6,7 +6,8 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { createStars } from './stars.js';
 import { createGift } from './scenes/gift.js';
-import { canvasTexture } from './util.js';
+import { canvasTexture, seeded } from './util.js';
+import { createShootingStars } from './fx.js';
 
 const DEBUG = new URLSearchParams(location.search);
 const IS_DEBUG = DEBUG.has('debug');
@@ -32,22 +33,46 @@ const TIERS = [
 ];
 
 const GRADE = {
-  uniforms: { tDiffuse: { value: null }, uFade: { value: 0 }, uExposure: { value: 1 }, uTime: { value: 0 } },
+  uniforms: { tDiffuse: { value: null }, uFade: { value: 0 }, uExposure: { value: 1 }, uTime: { value: 0 }, uWarm: { value: 0 } },
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
   fragmentShader: /* glsl */`
-    uniform sampler2D tDiffuse; uniform float uFade, uExposure, uTime; varying vec2 vUv;
+    uniform sampler2D tDiffuse; uniform float uFade, uExposure, uTime, uWarm; varying vec2 vUv;
     vec3 tone(vec3 x) { return clamp((x * (2.51 * x + .03)) / (x * (2.43 * x + .59) + .14), 0., 1.); }
     vec3 srgb(vec3 c) { return mix(c * 12.92, 1.055 * pow(c, vec3(.41667)) - .055, step(.0031308, c)); }
     void main() {
-      vec3 c = texture2D(tDiffuse, vUv).rgb * uExposure * uFade;
       vec2 q = vUv - .5;
-      c *= 1. - dot(q, q) * .55;
+      // a whisper of lens colour fringing toward the edges, the way a real glass would
+      vec2 off = q * dot(q, q) * .012;
+      vec3 c = vec3(texture2D(tDiffuse, vUv + off).r, texture2D(tDiffuse, vUv).g, texture2D(tDiffuse, vUv - off).b);
+      c *= uExposure * uFade;
+      c *= 1. - dot(q, q) * .6;
+      // the faintest warm lift in the shadows, so the night never goes dead grey
+      c += vec3(.012, .006, .004) * (1. - dot(q, q)) * uFade * (1. + uWarm);
       c = srgb(tone(c));
-      // ordered noise: keeps the dark sky gradients from banding on phone screens
       float n = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(.06711056, .00583715))));
       gl_FragColor = vec4(c + (n - .5) / 255., 1.);
     }`,
 };
+
+// Value noise on a small grid: enough to paint a Milky Way once, at load, in a few milliseconds.
+function noiseField(w, h, seed, octaves = 4, gw = 40, gh = 20) {
+  const rng = seeded(seed);
+  const grid = Float32Array.from({ length: (gw + 1) * (gh + 1) }, () => rng());
+  const at = (x, y, sx, sy) => {
+    const fx = (x / w) * gw * sx, fy = (y / h) * gh * sy;
+    const ix = Math.floor(fx) % gw, iy = Math.floor(fy) % gh, tx = fx - Math.floor(fx), ty = fy - Math.floor(fy);
+    const sxx = tx * tx * (3 - 2 * tx), syy = ty * ty * (3 - 2 * ty);
+    const g = (a, b) => grid[((b % (gh + 1)) * (gw + 1)) + (a % (gw + 1))];
+    return (g(ix, iy) * (1 - sxx) + g(ix + 1, iy) * sxx) * (1 - syy) + (g(ix, iy + 1) * (1 - sxx) + g(ix + 1, iy + 1) * sxx) * syy;
+  };
+  const out = new Float32Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    let v = 0, amp = 0.5, sc = 1;
+    for (let o = 0; o < octaves; o++) { v += at(x, y, sc, sc) * amp; amp *= 0.5; sc *= 2.1; }
+    out[y * w + x] = v;
+  }
+  return out;
+}
 
 function makeSky() {
   const w = 1024, h = 512;
@@ -62,14 +87,41 @@ function makeSky() {
       g.fillStyle = gr; g.fillRect(0, 0, w, h);
     }
   };
-  blob(250, 240, 300, 'rgba(18,28,84,A)', 0.42);
-  blob(310, 190, 150, 'rgba(96,34,78,A)', 0.13);
-  blob(760, 280, 330, 'rgba(16,24,78,A)', 0.42);
-  blob(700, 200, 170, 'rgba(110,40,84,A)', 0.14);
-  blob(520, 360, 240, 'rgba(48,26,80,A)', 0.14);
-  blob(40, 330, 240, 'rgba(36,24,70,A)', 0.16);
-  const mesh = new THREE.Mesh(new THREE.SphereGeometry(900, 32, 20),
+  blob(250, 240, 300, 'rgba(18,28,84,A)', 0.4);
+  blob(310, 190, 150, 'rgba(96,34,78,A)', 0.12);
+  blob(760, 280, 330, 'rgba(16,24,78,A)', 0.4);
+  blob(700, 200, 170, 'rgba(110,40,84,A)', 0.13);
+  blob(520, 360, 240, 'rgba(48,26,80,A)', 0.13);
+  blob(40, 330, 240, 'rgba(36,24,70,A)', 0.15);
+
+  // The Milky Way: a tilted band of cloud with dark dust lanes, painted from noise.
+  const nw = 256, nh = 128;
+  const n1 = noiseField(nw, nh, 11, 5), n2 = noiseField(nw, nh, 29, 5, 56, 28);
+  const img = g.createImageData(nw, nh), d = img.data;
+  for (let y = 0; y < nh; y++) for (let x = 0; x < nw; x++) {
+    const u = x / nw, v = y / nh;
+    const band = Math.exp(-Math.pow((v - (0.47 + Math.sin(u * Math.PI * 2) * 0.1)) * 4.6, 2));
+    const i = y * nw + x;
+    const cloud = Math.max(0, n1[i] - 0.36) * 2.2 * band;
+    const dust = Math.pow(Math.max(0, n2[i] - 0.5) * 2.2, 1.4) * band;
+    const k = Math.max(0, cloud - dust * 0.9);
+    const warm = n2[i];
+    // rose and amber where the cloud is dense, deep blue at its edges
+    d[i * 4] = Math.round((150 * warm + 40) * k + 20 * (1 - warm) * k);
+    d[i * 4 + 1] = Math.round((70 * warm + 40) * k);
+    d[i * 4 + 2] = Math.round((60 * warm + 120 * (1 - warm) + 30) * k);
+    d[i * 4 + 3] = Math.round(Math.min(1, k) * 115);
+  }
+  const small = document.createElement('canvas'); small.width = nw; small.height = nh;
+  small.getContext('2d').putImageData(img, 0, 0);
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+  g.globalAlpha = 0.85;
+  g.drawImage(small, 0, 0, w, h);
+  g.globalAlpha = 1;
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(900, 40, 24),
     new THREE.MeshBasicMaterial({ map: canvasTexture(c), side: THREE.BackSide, depthWrite: false, depthTest: false, fog: false }));
+  mesh.rotation.z = 0.42;
+  mesh.rotation.x = 0.2;
   mesh.renderOrder = -10;
   return mesh;
 }
@@ -145,7 +197,7 @@ export async function startWorld({ content, ui, gestures, music, reduced, onFata
 
   // Point sizes never drop below 1.6 device pixels, or particles vanish on 1x screens.
   const pointScale = () => Math.max(dpr, 1.6);
-  const uniforms = { uTime: { value: 0 }, uPx: { value: pointScale() } };
+  const uniforms = { uTime: { value: 0 }, uPx: { value: pointScale() }, uMusic: { value: 0 } };
   const tan = () => Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
 
   const ctx = {
@@ -168,6 +220,7 @@ export async function startWorld({ content, ui, gestures, music, reduced, onFata
   };
 
   ctx.stars = createStars(ctx, Math.floor(tier.stars * (reduced ? 0.7 : 1)));
+  const shooting = createShootingStars(ctx);
 
   // ---------- camera rig ----------
   const rig = { pos: new THREE.Vector3(), look: new THREE.Vector3(), roll: 0, drift: reduced ? 0 : 1, flying: false };
@@ -323,6 +376,7 @@ export async function startWorld({ content, ui, gestures, music, reduced, onFata
     const t = ms / 1000, dt = Math.min(0.1, t - lastT || 0.016);
     lastT = t;
     uniforms.uTime.value = t;
+    uniforms.uMusic.value = music.sample(t);
 
     const d = rig.drift;
     camera.position.set(rig.pos.x + Math.sin(t * 0.21) * 0.13 * d, rig.pos.y + Math.cos(t * 0.17) * 0.09 * d, rig.pos.z);
@@ -336,6 +390,7 @@ export async function startWorld({ content, ui, gestures, music, reduced, onFata
     sky.position.copy(camera.position);
 
     ready.forEach((inst) => inst.update?.(t, dt));
+    shooting.update(dt);
     composer.render(dt);
 
     fpsFrames++; fpsTime += dt;

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { canvasTexture, disposeGroup, seeded, glowTexture, heroStar } from '../util.js';
+import { canvasTexture, disposeGroup, seeded, glowTexture, heroStar, heartTexture } from '../util.js';
+import { createDrift, createMotes } from '../fx.js';
 
 const BW = 2.4, BH = 1.7, LW = 2.62, LH = 0.52, TOP = BH / 2 + LH - 0.05;
 
@@ -163,7 +164,8 @@ export function createGift(ctx) {
   group.add(box);
 
   const paper = wrappingPaper();
-  const mat = new THREE.MeshStandardMaterial({ map: paper, roughness: 0.46, metalness: 0.05 });
+  // Velvet: a sheen layer catches the light along the edges the way crushed fabric does.
+  const mat = new THREE.MeshPhysicalMaterial({ map: paper, roughness: 0.58, metalness: 0.02, sheen: 1, sheenRoughness: 0.55, sheenColor: new THREE.Color('#ff9fc0'), clearcoat: 0.12, clearcoatRoughness: 0.5 });
   const body = new THREE.Mesh(new RoundedBoxGeometry(BW, BH, BW, 4, 0.05), mat);
   box.add(body);
   const lid = new THREE.Group();
@@ -217,10 +219,31 @@ export function createGift(ctx) {
   box.add(beam);
 
   // Soft presence behind the box, so it does not float in pure black
-  const halo = heroStar(glowTexture(128, false), new THREE.Color('#d84f7e'), 0.2);
+  const glowTex = glowTexture(128, false);
+  const halo = heroStar(glowTex, new THREE.Color('#d84f7e'), 0.2);
   halo.scale.setScalar(13);
   halo.position.set(0, 0.1, -1.6);
   group.add(halo);
+  // A warm pool beneath, as if the box sat on something that caught its light
+  const pool = heroStar(glowTex, new THREE.Color('#f2a85c'), 0.16);
+  pool.scale.set(7.5, 2.2, 1);
+  pool.position.set(0, -1.75, 0.4);
+  group.add(pool);
+
+  // Rose petals drifting down around the box, and fireflies that have taken a liking to it
+  const petals = createDrift(ctx, { count: Math.floor((reduced ? 26 : 54) * Math.max(0.5, ctx.particles)), kind: 'petal', size: 0.3,
+    colors: ['#f0789b', '#ff9bb5', '#f7c3cd', '#e4587f'], box: [6.2, 7.5, 3.2], fall: reduced ? 0.1 : 0.34, sway: 0.6, spin: reduced ? 0.2 : 0.8, seed: 21, lit: 0.5 });
+  petals.mesh.position.set(0, -0.2, 0);
+  group.add(petals.mesh);
+  const flies = createMotes(ctx, { count: Math.floor(44 * Math.max(0.5, ctx.particles)), radius: 2.5, height: 1.6, speed: reduced ? 0.25 : 1, seed: 9 });
+  flies.points.position.set(0, -0.3, 0);
+  group.add(flies.points);
+
+  // The heart of light that leaps out when the lid goes
+  const flash = new THREE.Sprite(new THREE.SpriteMaterial({ map: heartTexture(256, true), color: new THREE.Color('#ffb3c6'), opacity: 0, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending }));
+  flash.scale.setScalar(0.1);
+  flash.position.set(0, BH / 2 + 0.6, 0.2);
+  box.add(flash);
 
   let state = 'idle', float = true;
   const inst = {
@@ -235,6 +258,8 @@ export function createGift(ctx) {
       lights.b.position.set(-3.2, 0.2, 2.2); lights.b.intensity = 8; lights.b.color.set(0xff8fb0);
       ui.title(content.gift.title, 'grand');
       ui.hint(content.gift.hint);
+      petals.show(true, 3);
+      flies.show(true, 3);
     },
     onResize() { const s = inst.station(); ctx.setRig(s.pos, s.look); },
     beat() { inst.open(); },
@@ -260,6 +285,12 @@ export function createGift(ctx) {
       if (!reduced) tl.to(lid.rotation, { x: 2.2, z: -1.6, y: 0.8, duration: 2.2, ease: 'power1.out' }, 0.42);
       tl.to(lid.scale, { x: 0, y: 0, z: 0, duration: 0.9, ease: 'power2.in' }, 1.3 * calm);
       tl.to(mouthU.uGlow, { value: 1, duration: 1.1, ease: 'sine.out' }, 0.55);
+      tl.call(() => { petals.burst(); flies.show(false, 1.2); }, null, 0.7);
+      tl.to(flash.material, { opacity: 0.42, duration: 0.3, ease: 'power2.out' }, 0.95);
+      tl.to(flash.scale, { x: reduced ? 3.5 : 5, y: reduced ? 3.5 : 5, z: 1, duration: 2, ease: 'power2.out' }, 0.95);
+      tl.to(flash.position, { y: BH / 2 + 3.2, duration: 2, ease: 'power1.out' }, 0.95);
+      tl.to(flash.material, { opacity: 0, duration: 1.1, ease: 'sine.in' }, 1.5);
+      tl.to(pool.material, { opacity: 0, duration: 2.5 }, 1.2);
       tl.to(beamU.uGlow, { value: reduced ? 0.4 : 1, duration: 1.3, ease: 'sine.out' }, 0.7);
       tl.to(lights.a, { intensity: 15, duration: 1.2 }, 0.6);
       tl.call(() => {
@@ -281,9 +312,14 @@ export function createGift(ctx) {
       }
       box.rotation.y += dt * (reduced ? 0.04 : state === 'idle' ? 0.2 : 0.42);
       tagPivot.rotation.z = Math.sin(t * 1.3) * 0.05;
-      if (state === 'idle' && float) halo.material.opacity = 0.17 + Math.sin(t * 0.8) * 0.035;
+      if (state === 'idle' && float) {
+        const m = ctx.uniforms.uMusic.value;
+        halo.material.opacity = 0.16 + Math.sin(t * 0.8) * 0.03 + m * 0.07;
+        pool.material.opacity = 0.14 + m * 0.06;
+      }
+      petals.update(dt);
     },
-    dispose() { disposeGroup(group); },
+    dispose() { petals.dispose(); flies.dispose(); disposeGroup(group); glowTex.dispose(); },
   };
   return inst;
 }

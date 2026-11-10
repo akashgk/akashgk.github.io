@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { canvasTexture, disposeGroup, glowTexture, heroStar, seeded } from '../util.js';
+import { canvasTexture, disposeGroup, glowTexture, heroStar, seeded, heartTheta, heartTexture } from '../util.js';
+import { createMotes } from '../fx.js';
 
 const CENTER = new THREE.Vector3(-55, -12, -240);
 
@@ -164,6 +165,42 @@ export function createCake(ctx) {
   const plate = new THREE.Mesh(new THREE.CylinderGeometry(3.45, 3.25, 0.14, 72), gold);
   plate.position.y = 0.07;
   group.add(plate);
+  // A dark lacquered table, so the candlelight has something to shine in
+  const table = new THREE.Mesh(new THREE.CircleGeometry(16, 64), new THREE.MeshPhysicalMaterial({ color: 0x1b1024, roughness: 0.22, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.18, envMapIntensity: 0.9 }));
+  table.rotation.x = -Math.PI / 2;
+  table.position.y = -0.01;
+  group.add(table);
+  // Strings of fairy lights draped behind
+  const bulbs = [], wire = [];
+  const string = (x0, x1, y0, sag, z, n) => {
+    for (let i = 0; i <= n; i++) {
+      const u = i / n, x = x0 + (x1 - x0) * u, y = y0 - Math.sin(u * Math.PI) * sag;
+      wire.push(x, y, z);
+      if (i % 2 === 1) bulbs.push(x, y - 0.12, z, rng());
+    }
+  };
+  string(-13, 13, 9.6, 2.6, -7, 40); string(-14, 11, 7.1, 2.1, -9.5, 36); string(-10, 14, 11.2, 1.8, -11, 38);
+  const wireGeo = new THREE.BufferGeometry(); wireGeo.setAttribute('position', new THREE.Float32BufferAttribute(wire, 3));
+  // three separate strings: draw as segments to avoid joining the ends
+  const segIdx = []; let off = 0;
+  [40, 36, 38].forEach((n) => { for (let i = 0; i < n; i++) segIdx.push(off + i, off + i + 1); off += n + 1; });
+  wireGeo.setIndex(segIdx);
+  group.add(new THREE.LineSegments(wireGeo, new THREE.LineBasicMaterial({ color: 0x3a2a30, transparent: true, opacity: 0.6 })));
+  const bulbGeo = new THREE.BufferGeometry();
+  const bp = new Float32Array(bulbs.length / 4 * 3), bs = new Float32Array(bulbs.length / 4);
+  for (let i = 0; i < bulbs.length / 4; i++) { bp.set(bulbs.slice(i * 4, i * 4 + 3), i * 3); bs[i] = bulbs[i * 4 + 3]; }
+  bulbGeo.setAttribute('position', new THREE.BufferAttribute(bp, 3));
+  bulbGeo.setAttribute('aS', new THREE.BufferAttribute(bs, 1));
+  const bulbU = { uTime: ctx.uniforms.uTime, uPx: ctx.uniforms.uPx, uOn: { value: 1 }, uMusic: ctx.uniforms.uMusic };
+  const fairy = new THREE.Points(bulbGeo, new THREE.ShaderMaterial({
+    uniforms: bulbU, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: `attribute float aS; uniform float uTime, uPx, uOn, uMusic; varying float vA; varying vec3 vC;
+      void main(){ vec4 mv = modelViewMatrix*vec4(position,1.); float tw = .7 + .3*sin(uTime*(1.2+aS*2.)+aS*40.);
+        gl_PointSize = uPx * (5. + tw * 3. + uMusic * 1.5) * clamp(22./-mv.z, .5, 2.); gl_Position = projectionMatrix*mv;
+        vA = uOn * (.5 + tw*.5); vC = mix(vec3(1.,.72,.38), vec3(1.,.55,.6), step(.7, aS)); }`,
+    fragmentShader: `varying float vA; varying vec3 vC; void main(){ float d = length(gl_PointCoord-.5); float a = smoothstep(.5,.0,d); a = a*a*vA; if (a<.004) discard; gl_FragColor = vec4(vC*a*1.6, a); }`,
+  }));
+  group.add(fairy);
   const sponge = new THREE.MeshStandardMaterial({ color: 0xf6e4cd, roughness: 0.62 });
   const rose = new THREE.MeshStandardMaterial({ color: 0xc23b67, roughness: 0.24, metalness: 0.03 });
   const T1 = 1.72, T2 = 3.04;
@@ -213,40 +250,64 @@ export function createCake(ctx) {
     return f;
   });
 
-  // Warm pool of light under the plate
+  // Soft halos around each flame, breathing with the flicker
   const glowTex = glowTexture(128, false);
+  const halos = tips.map((p) => {
+    const h = heroStar(glowTex, new THREE.Color('#ffb15c'), 0.42);
+    h.material.depthTest = true;
+    h.scale.setScalar(2.6);
+    h.position.copy(p).add(new THREE.Vector3(0, 0.55, 0.3));
+    group.add(h);
+    return h;
+  });
+  const wishMotes = createMotes(ctx, { count: Math.floor(40 * Math.max(0.5, ctx.particles)), radius: 1.9, height: 1.4, speed: reduced ? 0.3 : 0.8, size: 0.8, seed: 41 });
+  wishMotes.points.position.set(0, T2 + 1.3, 0.1);
+  group.add(wishMotes.points);
+
+  // Warm pool of light under the plate
   const pool = heroStar(glowTex, new THREE.Color('#ff9a57'), 0.14);
   pool.scale.setScalar(19);
   pool.position.set(0, 3.8, -1.5);
   group.add(pool);
 
   // Smoke: one point cloud per wick's worth of particles, driven by a clock uniform
-  const smokeN = Math.floor(130 * Math.max(0.6, ctx.particles));
-  const sp = new Float32Array(smokeN * 3), sinfo = new Float32Array(smokeN * 3);
+  const smokeN = Math.floor(260 * Math.max(0.6, ctx.particles));
+  const sp = new Float32Array(smokeN * 3), sinfo = new Float32Array(smokeN * 3), sTheta = new Float32Array(smokeN);
   for (let i = 0; i < smokeN; i++) {
     sp.set(tips[i % 2].toArray(), i * 3);
-    sinfo.set([rng() * 1.3, rng(), rng()], i * 3);
+    sinfo.set([rng() * 0.7, rng(), rng()], i * 3);
+    sTheta[i] = heartTheta(rng());
   }
   const smokeGeo = new THREE.BufferGeometry();
   smokeGeo.setAttribute('position', new THREE.BufferAttribute(sp, 3));
   smokeGeo.setAttribute('aInfo', new THREE.BufferAttribute(sinfo, 3));
-  const smokeU = { uT: { value: -1 }, uPx: ctx.uniforms.uPx };
+  smokeGeo.setAttribute('aTheta', new THREE.BufferAttribute(sTheta, 1));
+  const heartAnchor = new THREE.Vector3((tips[0].x + tips[1].x) / 2, T2 + 3.5, 0.1);
+  const smokeU = { uT: { value: -1 }, uPx: ctx.uniforms.uPx, uHeart: { value: heartAnchor }, uCalm: { value: reduced ? 1 : 0 } };
   const smoke = new THREE.Points(smokeGeo, new THREE.ShaderMaterial({
     uniforms: smokeU, transparent: true, depthWrite: false,
     vertexShader: /* glsl */`
-      attribute vec3 aInfo; uniform float uT, uPx; varying float vA;
+      attribute vec3 aInfo; attribute float aTheta; uniform float uT, uPx, uCalm; uniform vec3 uHeart; varying float vA, vH;
       void main() {
-        float t = uT - aInfo.x; float life = 3.4 + aInfo.y * 1.8; float k = clamp(t / life, 0., 1.);
+        float t = uT - aInfo.x; float life = 5.6 + aInfo.y * 1.6; float k = clamp(t / life, 0., 1.);
         vec3 p = position;
         p.y += k * (3.2 + aInfo.z * 1.4);
         p.x += sin(k * 7. + aInfo.y * 6.) * k * .55;
         p.z += cos(k * 5. + aInfo.z * 6.) * k * .32;
+        // on its way up, the smoke gathers for a moment into the shape of a heart
+        float s = sin(aTheta), c = cos(aTheta);
+        vec2 heart = vec2(16. * s * s * s, 13. * c - 5. * cos(2. * aTheta) - 2. * cos(3. * aTheta) - cos(4. * aTheta) + 2.5) / 16. * 1.9;
+        // the heart drifts up as one, on the shared clock, so its shape holds while it rises
+        vec3 hp = uHeart + vec3(heart.x * (1. + uT * .04), heart.y + uT * .32 - .6, (aInfo.z - .5) * .4);
+        float g = smoothstep(.1, .26, k) * (1. - smoothstep(.52, .74, k)) * (1. - uCalm);
+        p = mix(p, hp, g);
         vec4 mv = modelViewMatrix * vec4(p, 1.);
-        gl_PointSize = uPx * (8. + k * 66.) * (14. / -mv.z);
-        vA = t > 0. ? smoothstep(0., .07, k) * pow(1. - k, 1.8) * .13 : 0.;
+        gl_PointSize = uPx * mix(8. + k * 60., 9., g) * (14. / -mv.z);
+        vA = t > 0. ? smoothstep(0., .07, k) * pow(1. - k, 1.6) * (.11 + g * .55) : 0.;
+        vH = g;
         gl_Position = projectionMatrix * mv;
       }`,
-    fragmentShader: `varying float vA; void main(){ float d = length(gl_PointCoord-.5); float a = smoothstep(.5,.0,d)*vA; if (a<.003) discard; gl_FragColor = vec4(vec3(.72,.7,.76), a); }`,
+    fragmentShader: `varying float vA, vH; void main(){ float d = length(gl_PointCoord-.5); float a = smoothstep(.5,.0,d)*vA; if (a<.003) discard; gl_FragColor = vec4(mix(vec3(.72,.7,.76), vec3(1.,.6,.72), vH) * (1. + vH * 1.4), a); }`,
   }));
   smoke.frustumCulled = false; smoke.visible = false;
   group.add(smoke);
@@ -262,11 +323,17 @@ export function createCake(ctx) {
     for (let k = 0; k < shells; k++) {
       const o2 = [(rng() - 0.5) * 2 * wide, 5.5 + rng() * 4, -3 - rng() * 7];
       const size = 3 + rng() * 2.2;
+      const heartShell = k % 3 === 1; // every third shell bursts as a heart
       for (let i = 0; i < perShell; i++) {
         const j = k * perShell + i;
         const z = rng() * 2 - 1, a = rng() * Math.PI * 2, r = Math.sqrt(1 - z * z), m = size * (0.72 + rng() * 0.28);
         p.set(o2, j * 3);
-        d.set([Math.cos(a) * r * m, Math.sin(a) * r * m, z * m], j * 3);
+        if (heartShell) {
+          const th = heartTheta(rng()), sn = Math.sin(th), cs = Math.cos(th);
+          const hx = 16 * sn * sn * sn / 16, hy = (13 * cs - 5 * Math.cos(2 * th) - 2 * Math.cos(3 * th) - Math.cos(4 * th) + 2.5) / 16;
+          const inner = 0.75 + rng() * 0.3;
+          d.set([hx * m * inner, hy * m * inner, (rng() - 0.5) * m * 0.3], j * 3);
+        } else d.set([Math.cos(a) * r * m, Math.sin(a) * r * m, z * m], j * 3);
         s.set([k * 1.02 + rng() * 0.05, rng()], j * 2);
         c.set(shellColors[k % shellColors.length], j * 3);
       }
@@ -302,24 +369,26 @@ export function createCake(ctx) {
   const confN = Math.floor((reduced ? 90 : 300) * ctx.particles);
   const confGeo = new THREE.InstancedBufferGeometry();
   const plane = new THREE.PlaneGeometry(0.1, 0.17);
-  confGeo.index = plane.index; confGeo.setAttribute('position', plane.attributes.position);
-  const vel = new Float32Array(confN * 3), spinA = new Float32Array(confN * 4), cc = new Float32Array(confN * 3);
+  confGeo.index = plane.index; confGeo.setAttribute('position', plane.attributes.position); confGeo.setAttribute('uv', plane.attributes.uv);
+  const vel = new Float32Array(confN * 3), spinA = new Float32Array(confN * 4), cc = new Float32Array(confN * 3), kind = new Float32Array(confN);
   const confColors = [[0.95, 0.62, 0.2], [0.95, 0.3, 0.46], [1, 0.9, 0.74], [0.98, 0.45, 0.6], [1, 0.76, 0.34]];
   for (let i = 0; i < confN; i++) {
     const a = rng() * Math.PI * 2, r = 1 + rng() * (ctx.portrait ? 5 : 11);
     vel.set([Math.cos(a) * r, 5 + rng() * 9, Math.sin(a) * r * 0.55], i * 3);
     spinA.set([rng() * 2 - 1, rng() * 2 - 1, rng() * 2 - 1, 1.5 + rng() * 5], i * 4);
     cc.set(confColors[i % confColors.length], i * 3);
+    kind[i] = i % 2; // half paper squares, half little hearts
   }
+  confGeo.setAttribute('aKind', new THREE.InstancedBufferAttribute(kind, 1));
   confGeo.setAttribute('aVel', new THREE.InstancedBufferAttribute(vel, 3));
   confGeo.setAttribute('aSpin', new THREE.InstancedBufferAttribute(spinA, 4));
   confGeo.setAttribute('aColor', new THREE.InstancedBufferAttribute(cc, 3));
   confGeo.instanceCount = confN;
-  const confU = { uT: { value: -1 } };
+  const confU = { uT: { value: -1 }, uHeart: { value: heartTexture(64) } };
   const confetti = new THREE.Mesh(confGeo, new THREE.ShaderMaterial({
-    uniforms: confU, side: THREE.DoubleSide,
+    uniforms: confU, side: THREE.DoubleSide, transparent: true, depthWrite: false,
     vertexShader: /* glsl */`
-      attribute vec3 aVel, aColor; attribute vec4 aSpin; uniform float uT; varying vec3 vC;
+      attribute vec3 aVel, aColor; attribute vec4 aSpin; attribute float aKind; uniform float uT; varying vec3 vC; varying vec2 vUv; varying float vKind;
       vec3 rot(vec3 v, vec3 a, float t) { a = normalize(a); return v * cos(t) + cross(a, v) * sin(t) + a * dot(a, v) * (1. - cos(t)); }
       void main() {
         float seed = aSpin.w, t = uT - seed * .03;
@@ -327,13 +396,14 @@ export function createCake(ctx) {
         world.y -= max(t, 0.) * (1.05 + seed * .08);
         world.x += sin(t * 1.3 + seed * 5.) * .35;
         float ang = t * seed;
-        vec3 p = rot(position, aSpin.xyz, ang);
+        vUv = uv; vKind = aKind;
+        vec3 p = rot(position * (1. + aKind * .9), aSpin.xyz, ang);
         vec3 n = rot(vec3(0., 0., 1.), aSpin.xyz, ang);
-        vC = aColor * (.3 + abs(n.z) * .55 + pow(abs(n.y), 8.) * .35);
+        vC = aColor * (.3 + abs(n.z) * .55 + pow(abs(n.y), 8.) * .35) * (1. + aKind * .25);
         float alive = step(0., t) * step(t, 14.);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(world + p * alive, 1.);
       }`,
-    fragmentShader: 'varying vec3 vC; void main(){ gl_FragColor = vec4(vC, 1.); }',
+    fragmentShader: `uniform sampler2D uHeart; varying vec3 vC; varying vec2 vUv; varying float vKind; void main(){ float a = vKind > .5 ? texture2D(uHeart, vUv).a : 1.; if (a < .3) discard; gl_FragColor = vec4(vC, 1.); }`,
   }));
   confetti.frustumCulled = false; confetti.visible = false;
   group.add(confetti);
@@ -385,6 +455,8 @@ export function createCake(ctx) {
     flames.forEach((f, i) => {
       tl.to(f.userData.u.uOut, { value: 1, duration: reduced ? 1.2 : 0.75, ease: 'power2.in' }, i * 0.26);
     });
+    halos.forEach((h, i) => tl.to(h.material, { opacity: 0, duration: 0.5 }, i * 0.26));
+    tl.call(() => wishMotes.show(false, 0.8), null, 0);
     tl.to(lights.a, { intensity: 0.6, duration: 0.8 }, 0.1);
     tl.to(lights.b, { intensity: 0.6, duration: 0.8 }, 0.35);
     tl.to(pool.material, { opacity: 0.045, duration: 1.1 }, 0.2);
@@ -394,8 +466,9 @@ export function createCake(ctx) {
       if (fireworks) { fireworks.visible = true; fireU.uT.value = 0; }
       gsap.to(lights.key, { intensity: 1.6, duration: 2 });
       gsap.to(lights.hemi, { intensity: 0.85, duration: 2 });
-    }, null, reduced ? 2 : 2.3);
-    tl.call(() => { inst.done = true; ctx.story.showNext(); }, null, 5.5);
+    }, null, reduced ? 2 : 4.2);
+    tl.to(bulbU.uOn, { value: 1.6, duration: 1.5 }, reduced ? 2 : 4.2);
+    tl.call(() => { inst.done = true; ctx.story.showNext(); }, null, reduced ? 5.5 : 7.2);
   }
 
   const station = () => {
@@ -416,6 +489,7 @@ export function createCake(ctx) {
     },
     enter() {
       state = 'lit';
+      wishMotes.show(true, 2.5);
       ui.title(cfg.title);
       ui.hint(cfg.hint);
       if (navigator.mediaDevices?.getUserMedia) ui.mic(cfg.micButton, useMic);
@@ -426,15 +500,18 @@ export function createCake(ctx) {
       if (!group.visible) return;
       if (state === 'lit' || state === 'hidden') {
         const fl = reduced ? 1 : 0.86 + Math.sin(t * 11.3) * 0.06 + Math.sin(t * 23.1 + 1) * 0.04 + Math.sin(t * 4.7) * 0.07;
-        lights.a.intensity = 11 * fl;
-        lights.b.intensity = 11 * (reduced ? 1 : 0.86 + Math.sin(t * 13.1 + 2) * 0.07 + Math.sin(t * 5.3) * 0.07);
+        const fl2 = reduced ? 1 : 0.86 + Math.sin(t * 13.1 + 2) * 0.07 + Math.sin(t * 5.3) * 0.07;
+        const m = ctx.uniforms.uMusic.value * 0.12;
+        lights.a.intensity = 11 * (fl + m);
+        lights.b.intensity = 11 * (fl2 + m);
+        if (state === 'lit') { halos[0].scale.setScalar(2.4 + fl * 0.5 + m * 2); halos[1].scale.setScalar(2.4 + fl2 * 0.5 + m * 2); }
       }
       if (smoke.visible) smokeU.uT.value += dt;
       if (confetti.visible) confU.uT.value += dt * (reduced ? 0.5 : 1);
       if (fireworks?.visible) fireU.uT.value += dt;
     },
     left() { gsap.to(lights.a, { intensity: 0, duration: 0.5 }); gsap.to(lights.b, { intensity: 0, duration: 0.5 }); },
-    dispose() { stopMic(); disposeGroup(group); plane.dispose(); },
+    dispose() { stopMic(); wishMotes.dispose(); disposeGroup(group); plane.dispose(); glowTex.dispose(); },
   };
   return inst;
 }
