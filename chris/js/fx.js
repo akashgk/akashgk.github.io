@@ -285,3 +285,55 @@ export function createNebula(ctx, { width = 90, height = 60, strength = 1, seed 
     dispose() { mesh.geometry.dispose(); mesh.material.dispose(); },
   };
 }
+
+/**
+ * Stardust that follows her finger or cursor. A small ring buffer of points: each one is born
+ * where the pointer was and then lives out its second or so entirely on the GPU.
+ */
+export function createTrail(ctx, count = 160) {
+  const pos = new Float32Array(count * 3), born = new Float32Array(count * 2).fill(-100);
+  const geo = new THREE.BufferGeometry();
+  const aPos = new THREE.BufferAttribute(pos, 3), aBorn = new THREE.BufferAttribute(born, 2);
+  aPos.setUsage(THREE.DynamicDrawUsage); aBorn.setUsage(THREE.DynamicDrawUsage);
+  geo.setAttribute('position', aPos);
+  geo.setAttribute('aBorn', aBorn);
+  const U = { uTime: ctx.uniforms.uTime, uPx: ctx.uniforms.uPx };
+  const points = new THREE.Points(geo, new THREE.ShaderMaterial({
+    uniforms: U, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+    vertexShader: /* glsl */`
+      attribute vec2 aBorn; uniform float uTime, uPx; varying vec3 vColor; varying float vAlpha;
+      void main() {
+        float seed = aBorn.y, age = uTime - aBorn.x, life = 1. + seed * 1.3, k = clamp(age / life, 0., 1.);
+        vec4 mv = modelViewMatrix * vec4(position, 1.);
+        // set loose, each mote wanders a little and sinks, in view space so it reads the same from any angle
+        mv.xy += vec2(sin(seed * 51. + age * 2.6) * .09, -k * k * .34 + cos(seed * 37.) * .05) * (.4 + k);
+        float tw = .7 + .3 * sin(age * 17. + seed * 40.);
+        gl_PointSize = uPx * (6. + seed * 10.) * (1. - k * .6) * tw;
+        gl_Position = projectionMatrix * mv;
+        vColor = mix(vec3(1., .8, .46), vec3(1., .5, .66), fract(seed * 7.3)) * (2.6 - k * 1.2);
+        vAlpha = age < 0. || k >= 1. ? 0. : smoothstep(0., .05, k) * pow(1. - k, 1.2);
+      }`,
+    fragmentShader: `varying vec3 vColor; varying float vAlpha; void main(){ if (vAlpha <= 0.) discard; float d = length(gl_PointCoord-.5); float a = smoothstep(.5,.0,d); a = (a * a * .7 + pow(a, 8.)) * vAlpha; gl_FragColor = vec4(vColor*a, a); }`,
+  }));
+  points.frustumCulled = false;
+  points.renderOrder = 20;
+  ctx.scene.add(points);
+  let head = 0;
+  const v = new THREE.Vector3();
+  return {
+    points,
+    /** Leave `n` motes at a place on screen (CSS pixels), a few units in front of the lens. */
+    emit(x, y, n = 1, spread = 0.05) {
+      const cam = ctx.camera;
+      for (let i = 0; i < n; i++) {
+        v.set((x / ctx.width) * 2 - 1, 1 - (y / ctx.height) * 2, 0.5).unproject(cam).sub(cam.position).normalize();
+        v.multiplyScalar(8).add(cam.position);
+        pos.set([v.x + (Math.random() - 0.5) * spread, v.y + (Math.random() - 0.5) * spread, v.z + (Math.random() - 0.5) * spread], head * 3);
+        born.set([ctx.uniforms.uTime.value - Math.random() * 0.05, Math.random()], head * 2);
+        head = (head + 1) % count;
+      }
+      aPos.needsUpdate = true; aBorn.needsUpdate = true;
+    },
+    dispose() { geo.dispose(); points.material.dispose(); points.removeFromParent(); },
+  };
+}

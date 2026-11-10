@@ -115,11 +115,12 @@ export async function createLetter(ctx) {
   const attrA = new THREE.BufferAttribute(A, 3), attrB = new THREE.BufferAttribute(B, 3);
   textGeo.setAttribute('aA', attrA); textGeo.setAttribute('aB', attrB);
   textGeo.setAttribute('aInfo', new THREE.BufferAttribute(info, 3));
-  const textU = { uAssemble: { value: 0 }, uMix: { value: 0 }, uFade: { value: 1 }, uTime: ctx.uniforms.uTime, uPx: ctx.uniforms.uPx };
+  const textU = { uAssemble: { value: 0 }, uMix: { value: 0 }, uFade: { value: 1 }, uTime: ctx.uniforms.uTime, uPx: ctx.uniforms.uPx,
+    uPtr: { value: new THREE.Vector3() }, uPtrOn: { value: 0 } };
   const text = new THREE.Points(textGeo, new THREE.ShaderMaterial({
     uniforms: textU, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
     vertexShader: /* glsl */`
-      attribute vec3 aA, aB, aInfo; uniform float uAssemble, uMix, uFade, uTime, uPx;
+      attribute vec3 aA, aB, aInfo; uniform float uAssemble, uMix, uFade, uTime, uPx, uPtrOn; uniform vec3 uPtr;
       varying vec3 vColor; varying float vAlpha;
       void main() {
         float seed = aInfo.x, isName = aInfo.y;
@@ -139,13 +140,18 @@ export async function createLetter(ctx) {
         p.xy = target.xy + mat2(c, -s, s, c) * rel;
         p += .02 * vec3(sin(uTime * .9 + seed * 50.), cos(uTime * .7 + seed * 80.), 0.) * e;
         p.y += (1. - uFade) * (2.6 + seed * 3.);
+        // the light parts around her finger like sand, and closes again behind it
+        vec2 away = p.xy - uPtr.xy;
+        float push = uPtrOn * exp(-dot(away, away) / 1.9);
+        p.xy += normalize(away + vec2(1e-4)) * push * (.9 + seed * 1.3);
+        p.z += push * (seed - .5) * 2.4;
         vec4 mv = modelViewMatrix * vec4(p, 1.);
-        gl_PointSize = uPx * clamp((1.05 + aInfo.z * .55 + (1. - e) * 1.2), 1., 3.);
+        gl_PointSize = uPx * clamp((1.05 + aInfo.z * .55 + (1. - e) * 1.2 + push * 1.4), 1., 3.6);
         gl_Position = projectionMatrix * mv;
         vec3 gold = vec3(1., .72, .36), rose = vec3(1., .42, .56);
         vec3 wordCol = mix(gold, mix(rose, gold, seed * .4), isName) * (1.28 + isName * .3);
         vec3 heartCol = mix(rose, vec3(1., .62, .7), seed) * 1.2;
-        vColor = mix(heartCol, wordCol, e) * (.85 + .15 * sin(uTime * 1.6 + seed * 60.));
+        vColor = mix(heartCol, wordCol, e) * (.85 + .15 * sin(uTime * 1.6 + seed * 60.)) * (1. + push * 1.1);
         vAlpha = (.55 + .45 * e) * uFade;
       }`,
     fragmentShader: `varying vec3 vColor; varying float vAlpha; void main(){ float d = length(gl_PointCoord-.5); float a = smoothstep(.5,.1,d)*vAlpha; if (a<.004) discard; gl_FragColor = vec4(vColor*a, a); }`,
@@ -277,9 +283,11 @@ export async function createLetter(ctx) {
     }
   };
 
-  let phase = 'hidden', timeline = null;
+  let phase = 'hidden', timeline = null, settled = false;
+  const ptr = new THREE.Vector3();
   const showEnding = () => {
     phase = 'end';
+    ctx.flash(0.3, 2.4);
     gsap.to(pen.material, { opacity: 0, duration: 1 });
     rising.show(true, 2.5);
     gsap.to(halo.material, { opacity: 0.3, duration: 3 });
@@ -306,7 +314,7 @@ export async function createLetter(ctx) {
     paper.position.set(rest.x, rest.y - (reduced ? 0 : 1.8), reduced ? 0 : -16);
     if (!reduced) paper.rotation.set(0.32, -0.22, 0.05);
     gsap.to(paper.position, { x: rest.x, y: rest.y, z: 0, duration: reduced ? 0.1 : 3, ease: 'power2.out', delay: 0.5 });
-    gsap.to(paper.rotation, { x: 0, y: 0, z: 0, duration: 3.2, ease: 'power2.out', delay: 0.5 });
+    gsap.to(paper.rotation, { x: 0, y: 0, z: 0, duration: 3.2, ease: 'power2.out', delay: 0.5, onComplete() { settled = true; } });
     gsap.to(paperU.uShow, { value: 1, duration: 1.8, delay: 0.5 });
     gsap.to(halo.material, { opacity: 0.2, duration: 2.6, delay: 0.9 });
     gsap.to(dustU.uOn, { value: 1, duration: 4, delay: 0.5 });
@@ -318,7 +326,7 @@ export async function createLetter(ctx) {
   };
 
   const inst = {
-    group, keep: false,
+    group, keep: false, parallax: 0.3,
     station() {
       return { pos: CAM.clone(), look: LOOK.clone(), via: [new THREE.Vector3(-46, -3, -226), new THREE.Vector3(-30, 6, -252)], dur: 6.5, roll: -0.12, ease: 'sine.inOut' };
     },
@@ -358,6 +366,17 @@ export async function createLetter(ctx) {
       if (phase === 'text' && !reduced) group.rotation.y = Math.PI + Math.sin(t * 0.32) * 0.05;
       else if (phase !== 'hidden') group.rotation.y += (Math.PI - group.rotation.y) * 0.03;
       if (phase === 'paper') movePen();
+      // Her finger (or cursor) in the plane of the words
+      const P = ctx.pointer;
+      const on = phase === 'text' && P.active && !!ctx.hitPlaneZ(P.x, P.y, group.position.z, ptr);
+      if (on) textU.uPtr.value.copy(group.worldToLocal(ptr));
+      textU.uPtrOn.value += ((on ? 1 : 0) - textU.uPtrOn.value) * Math.min(1, dt * (on ? 10 : 3));
+      // Once it has come to rest, the page turns a few degrees toward wherever she is pointing
+      if (settled && !reduced) {
+        const k = P.mouse && P.active ? 1 : 0;
+        paper.rotation.y += (-P.nx * 0.13 * k - paper.rotation.y) * Math.min(1, dt * 4);
+        paper.rotation.x += (-P.ny * 0.08 * k - paper.rotation.x) * Math.min(1, dt * 4);
+      }
       if (phase !== 'hidden') { const m = ctx.uniforms.uMusic.value; halo.scale.setScalar(rest.s * (1.9 + m * 0.12)); }
       petals.update(dt); rising.update(dt);
     },

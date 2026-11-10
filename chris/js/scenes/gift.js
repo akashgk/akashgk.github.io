@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { canvasTexture, disposeGroup, seeded, glowTexture, heroStar, heartTexture } from '../util.js';
-import { createDrift, createMotes } from '../fx.js';
+import { createDrift, createMotes, createRipple } from '../fx.js';
 
 const BW = 2.4, BH = 1.7, LW = 2.62, LH = 0.52, TOP = BH / 2 + LH - 0.05;
 
@@ -245,7 +245,14 @@ export function createGift(ctx) {
   flash.position.set(0, BH / 2 + 0.6, 0.2);
   box.add(flash);
 
+  // A ring of light for every time she taps the box
+  const ripple = createRipple(ctx, { color: [1, 0.74, 0.5], size: 1.5 });
+  ctx.scene.add(ripple.mesh);
+  const boxWorld = new THREE.Vector3();
+
   let state = 'idle', float = true;
+  // What her scrolling asks for, and the eased value the box actually follows, so nothing ever snaps.
+  let pullWant = 0, pullK = 0, spinVel = 0, hop = 0;
   const inst = {
     group,
     done: false,
@@ -264,17 +271,33 @@ export function createGift(ctx) {
     onResize() { const s = inst.station(); ctx.setRig(s.pos, s.look); },
     beat() { inst.open(); },
     // Scrolling lifts the lid a touch and loosens the ribbon before it gives way.
-    pull(p) {
+    pull(p) { pullWant = Math.max(0, p); },
+    // A sideways drag turns the box in her hands, and it keeps turning for a moment after.
+    drag(dx) {
       if (state !== 'idle') return;
-      const k = Math.max(0, p);
-      lid.position.y = LID_Y + k * k * 0.16;
-      lid.rotation.z = k * 0.05;
-      ribbonU.uP.value = k * 0.06;
+      spinVel = dx * 0.0075;
+      box.rotation.y += spinVel;
     },
+    // A tap makes the box jump, as if something inside heard her.
+    tap(x, y) {
+      if (state !== 'idle' || hop > 0.05 || !ctx.pick(x, y, [body, lidMesh])) return;
+      ctx.buzz(6);
+      ripple.fire(box.getWorldPosition(boxWorld), 1.1);
+      if (reduced) return;
+      gsap.timeline()
+        .to(inst, { hopping: 1, duration: 0.16, ease: 'power2.out' })
+        .to(inst, { hopping: 0, duration: 0.75, ease: 'bounce.out' });
+      gsap.fromTo(box.scale, { x: 1.07, y: 0.9, z: 1.07 }, { x: 1, y: 1, z: 1, duration: 0.8, ease: 'elastic.out(1,.45)' });
+    },
+    get hopping() { return hop; },
+    set hopping(v) { hop = v; },
     open() {
       if (state !== 'idle') return;
       state = 'opening';
       ui.hint(null); ui.title(null);
+      gsap.killTweensOf(box.scale); gsap.killTweensOf(inst); hop = 0;
+      ctx.buzz(18);
+      gsap.delayedCall(0.5, () => { ctx.flash(0.4, 1.8); ctx.shake(0.16); });
       const tl = gsap.timeline();
       const calm = reduced ? 1.5 : 1;
       if (!reduced) tl.to(box.scale, { x: 1.05, y: 0.93, z: 1.05, duration: 0.22, ease: 'sine.out' }, 0)
@@ -307,19 +330,31 @@ export function createGift(ctx) {
       tl.call(() => { float = false; ctx.story.advance(); }, null, 3.7);
     },
     update(t, dt) {
-      if (state === 'idle' && !reduced) {
-        box.position.y = -0.42 + Math.sin(t * 0.72) * 0.1;
+      if (state === 'idle') {
+        // As she scrolls the lid lifts on its light, the ribbon loosens and the whole box trembles to be opened.
+        pullK += (pullWant - pullK) * Math.min(1, dt * (pullWant > pullK ? 16 : 6));
+        const k = pullK;
+        lid.position.y = LID_Y + k * k * 0.3;
+        lid.rotation.z = k * 0.07; lid.rotation.x = -k * 0.05;
+        ribbonU.uP.value = k * 0.09;
+        mouthU.uGlow.value = k * 0.9;
+        lights.a.intensity = 16 + k * 14;
+        const shiver = reduced ? 0 : k * k * 0.022;
+        box.rotation.z = Math.sin(t * 41) * shiver;
+        box.position.x = Math.sin(t * 53 + 1) * shiver * 0.8;
+        if (!reduced) box.position.y = -0.42 + Math.sin(t * 0.72) * 0.1 + hop * 0.5;
       }
-      box.rotation.y += dt * (reduced ? 0.04 : state === 'idle' ? 0.2 : 0.42);
+      box.rotation.y += dt * (reduced ? 0.04 : state === 'idle' ? 0.2 : 0.42) + spinVel;
+      spinVel *= Math.pow(0.03, dt);
       tagPivot.rotation.z = Math.sin(t * 1.3) * 0.05;
       if (state === 'idle' && float) {
         const m = ctx.uniforms.uMusic.value;
-        halo.material.opacity = 0.16 + Math.sin(t * 0.8) * 0.03 + m * 0.07;
+        halo.material.opacity = 0.16 + Math.sin(t * 0.8) * 0.03 + m * 0.07 + pullK * 0.14;
         pool.material.opacity = 0.14 + m * 0.06;
       }
       petals.update(dt);
     },
-    dispose() { petals.dispose(); flies.dispose(); disposeGroup(group); glowTex.dispose(); },
+    dispose() { gsap.killTweensOf(inst); petals.dispose(); flies.dispose(); ripple.dispose(); ripple.mesh.removeFromParent(); disposeGroup(group); glowTex.dispose(); },
   };
   return inst;
 }

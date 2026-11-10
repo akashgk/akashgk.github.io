@@ -12,6 +12,7 @@ body{position:fixed;inset:0;font:400 16px/1.45 var(--sans);-webkit-font-smoothin
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation}
 button:focus-visible{outline:1px solid var(--gold);outline-offset:3px}
 #gl{position:fixed;inset:0;width:100%;height:100%;display:block}
+.can-grab #gl{cursor:grab}.grabbing #gl{cursor:grabbing}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .noscript{position:fixed;inset:auto 24px 40%;text-align:center;font-family:var(--serif);font-size:24px}
 
@@ -77,6 +78,8 @@ button:focus-visible{outline:1px solid var(--gold);outline-offset:3px}
   box-shadow:0 26px 60px -14px rgba(0,0,0,.75),0 0 54px -6px rgba(242,200,121,.35);
   transform:translate(-50%,24px) rotate(var(--tilt,-1deg));opacity:0;transition:opacity .75s var(--ease),transform 1s var(--ease);pointer-events:none}
 #card.on{opacity:1;transform:translate(-50%,0) rotate(var(--tilt,-1deg))}
+/* The print lifts off the table a little as she scrolls on from it */
+#card{translate:0 calc(var(--pull,0) * -12px);scale:calc(1 - var(--pull,0) * .025)}
 #card-photo{margin:0 0 13px;background:#d8cdb8;overflow:hidden;line-height:0}
 #card-photo img{display:block;width:100%;max-height:43dvh;object-fit:cover}
 #card-date{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#a0485f;font-weight:500}
@@ -139,7 +142,7 @@ button:focus-visible{outline:1px solid var(--gold);outline-offset:3px}
 
 @media (prefers-reduced-motion:reduce){
   #hint.on,#next,#loader i,.fb-flame{animation:none}
-  #hint,#next,#card-hint,.fb-hint{translate:none}
+  #hint,#next,#card-hint,.fb-hint,#card{translate:none;scale:none}
   #hint.on,#next{opacity:.9}
   #title,#caption span,#card,.fb-scene{transform:none!important;transition-property:opacity}
   #card{transform:translate(-50%,0) rotate(var(--tilt,-1deg))!important}

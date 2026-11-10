@@ -7,7 +7,7 @@ export function createUI(content, music) {
   const say = (t) => (t ? t.replace('{scroll}', coarse ? content.ui.scrollTouch : content.ui.scrollMouse) : t);
   const root = document.documentElement;
   root.classList.toggle('coarse', coarse);
-  const el = { title: $('title'), caption: $('caption'), hint: $('hint'), next: $('next'), replay: $('replay'), mic: $('mic'),
+  const el = { root, title: $('title'), caption: $('caption'), hint: $('hint'), next: $('next'), replay: $('replay'), mic: $('mic'),
     card: $('card'), cardPhoto: $('card-photo'), cardDate: $('card-date'), cardCaption: $('card-caption'), cardHint: $('card-hint'),
     leader: $('leader'), progress: $('progress'), mute: $('mute'), loader: $('loader'), sr: $('sr-letter') };
   el.next.querySelector('span').textContent = say(content.ui.next);
@@ -56,6 +56,8 @@ export function createUI(content, music) {
     },
     /** 0..1 as she scrolls toward the next step; the cue fills and leans with it. */
     pull(p) { root.style.setProperty('--pull', Math.max(0, p).toFixed(3)); },
+    /** While she is turning something by hand. */
+    grab(on) { root.classList.toggle('grabbing', on); },
     /** A tap does not move the story; nudge whatever is telling her how. */
     poke() {
       for (const n of [el.hint, el.next, el.cardHint]) {

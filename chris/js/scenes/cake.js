@@ -124,14 +124,15 @@ function flame(uniforms, seed) {
         gl_Position = projectionMatrix * mv;
       }`,
     fragmentShader: /* glsl */`
-      uniform float uTime, uSeed, uOut, uCalm; varying vec2 vUv;
+      uniform float uTime, uSeed, uOut, uCalm, uBlow; varying vec2 vUv;
       float n(float x) { return sin(x) * .5 + sin(x * 2.3 + 1.7) * .3 + sin(x * 5.1 + .5) * .2; }
       void main() {
         float y = (vUv.y - .07) / .62;              // 0 at the wick, 1 at the tip
         float t = uTime * mix(1., .25, uCalm);
-        float sway = n(t * 3.1 + uSeed * 9. + y * 2.4) * .075 * y * (1. + y);
-        float x = (vUv.x - .5) + sway - uOut * y * y * .42;
-        float h = 1. + n(t * 5.3 + uSeed * 4.) * .09;
+        // her breath arriving: the flame leans over, shortens and gutters before it goes
+        float sway = n(t * (3.1 + uBlow * 9.) + uSeed * 9. + y * 2.4) * (.075 + uBlow * .07) * y * (1. + y);
+        float x = (vUv.x - .5) + sway - (uOut + uBlow * .62) * y * y * .42;
+        float h = (1. + n(t * 5.3 + uSeed * 4.) * .09) * (1. - uBlow * .2);
         float yy = y / (h * (1. - uOut * .85) + .001);
         float width = .17 * pow(clamp(yy, 0., 1.), .55) * pow(clamp(1. - yy, 0., 1.), .85) * 2.2 * (1. - uOut * .5);
         float d = abs(x) / max(width, .001);
@@ -242,7 +243,8 @@ export function createCake(ctx) {
     const w = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.018, 0.16, 6), wickMat);
     w.position.copy(p); group.add(w);
   });
-  const flameU = { uTime: ctx.uniforms.uTime, uCalm: { value: reduced ? 1 : 0 } };
+  const flameU = { uTime: ctx.uniforms.uTime, uCalm: { value: reduced ? 1 : 0 }, uBlow: { value: 0 } };
+  let pullWant = 0, pullK = 0;
   const flames = tips.map((p, i) => {
     const f = flame(flameU, i * 1.37 + 0.2);
     f.position.copy(p).add(new THREE.Vector3(0, 0.08, 0));
@@ -462,6 +464,7 @@ export function createCake(ctx) {
     tl.to(pool.material, { opacity: 0.045, duration: 1.1 }, 0.2);
     tl.call(() => { smoke.visible = true; smokeU.uT.value = 0; }, null, 0.45);
     tl.call(() => {
+      ctx.flash(0.55, 2); ctx.buzz(22);
       confetti.visible = true; confU.uT.value = 0;
       if (fireworks) { fireworks.visible = true; fireU.uT.value = 0; }
       gsap.to(lights.key, { intensity: 1.6, duration: 2 });
@@ -495,16 +498,26 @@ export function createCake(ctx) {
       if (navigator.mediaDevices?.getUserMedia) ui.mic(cfg.micButton, useMic);
     },
     beat() { blow(); },
+    pull(p) { pullWant = Math.max(0, p); },
+    // Once the candles are out, every tap throws another handful of confetti.
+    tap() {
+      if (state !== 'out' || !confetti.visible || confU.uT.value < 2.2) return;
+      confU.uT.value = 0;
+      ctx.flash(0.22, 1); ctx.buzz(8);
+    },
     onResize() { const s = station(); ctx.setRig(s.pos, s.look); },
     update(t, dt) {
       if (!group.visible) return;
+      pullK += ((state === 'lit' ? pullWant : 0) - pullK) * Math.min(1, dt * (pullWant > pullK ? 16 : 5));
+      flameU.uBlow.value = pullK;
       if (state === 'lit' || state === 'hidden') {
         const fl = reduced ? 1 : 0.86 + Math.sin(t * 11.3) * 0.06 + Math.sin(t * 23.1 + 1) * 0.04 + Math.sin(t * 4.7) * 0.07;
         const fl2 = reduced ? 1 : 0.86 + Math.sin(t * 13.1 + 2) * 0.07 + Math.sin(t * 5.3) * 0.07;
         const m = ctx.uniforms.uMusic.value * 0.12;
-        lights.a.intensity = 11 * (fl + m);
-        lights.b.intensity = 11 * (fl2 + m);
-        if (state === 'lit') { halos[0].scale.setScalar(2.4 + fl * 0.5 + m * 2); halos[1].scale.setScalar(2.4 + fl2 * 0.5 + m * 2); }
+        const dim = 1 - pullK * 0.4; // the room darkens as the flames bend
+        lights.a.intensity = 11 * (fl + m) * dim;
+        lights.b.intensity = 11 * (fl2 + m) * dim;
+        if (state === 'lit') { halos[0].scale.setScalar((2.4 + fl * 0.5 + m * 2) * dim); halos[1].scale.setScalar((2.4 + fl2 * 0.5 + m * 2) * dim); }
       }
       if (smoke.visible) smokeU.uT.value += dt;
       if (confetti.visible) confU.uT.value += dt * (reduced ? 0.5 : 1);
