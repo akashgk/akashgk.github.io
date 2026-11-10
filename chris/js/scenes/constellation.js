@@ -91,8 +91,12 @@ export function createConstellation(ctx) {
     return s;
   });
   let state = 'hidden', lit = 0, openIndex = -1, morphed = false;
+  let pullWant = 0, pullK = 0, turnWant = 0, turn = 0, thump = 0;
   const glow = { halo: 0 };
+  const hit = new THREE.Vector3();
   const worldStar = (i) => group.localToWorld(stars[i].position.clone());
+  // The same star with the sky turned back to rest: what the camera flies to, since the turn always settles.
+  const restStar = (i) => stars[i].position.clone().multiplyScalar(group.scale.x).add(group.position);
 
   // A veil of nebula far behind the stars
   const nebula = createNebula(ctx, { width: 120, height: 80, strength: reduced ? 0.5 : 0.8, seed: 4.1 });
@@ -132,7 +136,7 @@ export function createConstellation(ctx) {
 
   // Where the camera sits to read star i's card: close in, star above (portrait) or left (landscape).
   const cardView = (i) => {
-    const p = worldStar(i);
+    const p = restStar(i);
     const dist = 9, v = ctx.viewAt(dist);
     const wide = ctx.aspect >= 1;
     const look = p.clone().add(new THREE.Vector3(wide ? v.w * 0.2 : 0, wide ? 0 : -v.h * 0.29, 0));
@@ -187,6 +191,8 @@ export function createConstellation(ctx) {
       value: 1, duration: dur, ease: 'sine.inOut',
       onComplete() {
         state = 'heart'; inst.done = true; ctx.story.showNext();
+        ctx.flash(0.45, 2.2); thump = 1; ctx.buzz(14);
+        ripple.fire(group.localToWorld(new THREE.Vector3(0, 0.5, 0)), 2.4);
         gsap.to(glow, { halo: 0.2, duration: 3, ease: 'sine.inOut' });
         rain.show(true, 3);
       },
@@ -222,19 +228,46 @@ export function createConstellation(ctx) {
       if (state === 'await') openCard(lit - 1);
       else if (state === 'card') { if (lit < count) nextCard(); else closeCard(); }
     },
-    left() { group.visible = false; motes.points.visible = false; ripple.mesh.visible = false; },
+    pull(p) { pullWant = Math.max(0, p); },
+    // From far away the whole sky turns a little under her finger, then settles back.
+    drag(dx) {
+      if (state !== 'await' && state !== 'heart' && state !== 'lighting') return;
+      turnWant = THREE.MathUtils.clamp(turnWant + dx * 0.0042, -0.62, 0.62);
+    },
+    // Touch the heart and it beats. Touch the waiting star and it answers.
+    tap(x, y) {
+      if (state === 'heart') {
+        thump = 1; ctx.buzz(10);
+        const p = ctx.hitPlaneZ(x, y, group.position.z, hit);
+        ripple.fire(p || group.position, 1.5);
+      } else if (state === 'await') {
+        const p = worldStar(lit - 1), q = ctx.project(p);
+        if (Math.hypot(q.x - x, q.y - y) < 90) { ripple.fire(p, 1.3); ctx.buzz(6); }
+      }
+    },
+    left() { group.visible = false; motes.points.visible = false; ripple.mesh.visible = false; turn = turnWant = 0; group.rotation.y = 0; state = 'gone'; },
     onResize() {
       if (state === 'await' || state === 'heart') { const s = overview(); ctx.setRig(s.pos, s.look); }
       else if (state === 'card') { const v = cardView(openIndex); ctx.setRig(v.pos, v.look); }
     },
     update(t, dt) {
+      pullK += (pullWant - pullK) * Math.min(1, dt * (pullWant > pullK ? 16 : 6));
       stars.forEach((s, i) => {
-        const pulse = state === 'await' && i === lit - 1 && !reduced ? 1 + Math.sin(t * 2.4) * 0.17 : 1;
+        // the waiting star swells toward her as she scrolls for it
+        const pulse = state === 'await' && i === lit - 1 ? 1 + (reduced ? 0 : Math.sin(t * 2.4) * 0.17) + pullK * 0.55 : 1;
         s.scale.setScalar(s.userData.size * pulse);
       });
+      // With a card open, the thread creeps out toward the next star under her finger before it commits.
+      if (state === 'card' && lit < count) U.uDraw.value = (lit - 1 + pullK * 0.3) / (count - 1);
+      if (state !== 'gone') {
+        turnWant *= state === 'card' || state === 'flying' || state === 'morph' ? 0 : Math.pow(0.25, dt);
+        turn += (turnWant - turn) * Math.min(1, dt * 7);
+        group.rotation.y = turn;
+      }
+      thump *= Math.pow(0.02, dt);
       if (morphed) {
-        // the heart beats with the music
-        const m = reduced ? 0 : ctx.uniforms.uMusic.value;
+        // the heart beats with the music, and once more whenever she touches it
+        const m = Math.min(1.6, (reduced ? 0 : ctx.uniforms.uMusic.value) + thump * 1.5);
         U.uBeat.value = m;
         halo.scale.setScalar(30 + m * 4);
         halo.material.opacity = glow.halo * U.uVis.value * (0.8 + m * 0.4);

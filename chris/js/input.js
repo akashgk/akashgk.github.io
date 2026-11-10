@@ -11,7 +11,7 @@ const WHEEL_QUIET = 200; // ms of wheel silence that ends a trackpad flick
 const LOCK_MS = 650; // after a beat, ignore input this long so one flick is one step
 
 export function createGestures({ onDoubleTap, onFirstGesture }) {
-  const handlers = { beat: null, pull: null, poke: null, drag: null, dragEnd: null };
+  const handlers = { beat: null, pull: null, poke: null, tap: null, drag: null, dragEnd: null };
   let start = null, last = null, axis = null, lastTap = null, firstDone = false;
   let pull = 0, lockedUntil = 0, wheelLast = 0, wheelSpent = false, settle = 0;
 
@@ -84,7 +84,8 @@ export function createGestures({ onDoubleTap, onFirstGesture }) {
         return;
       }
       lastTap = { t: now, x: e.clientX, y: e.clientY };
-      handlers.poke?.(); // a tap does not move the story; it only reminds her how
+      handlers.tap?.(e.clientX, e.clientY); // the world answers a touch, but only a scroll moves the story on
+      handlers.poke?.();
       return;
     }
     if (a === 'h') { handlers.dragEnd?.(l?.vx || 0, l?.vy || 0); return; }

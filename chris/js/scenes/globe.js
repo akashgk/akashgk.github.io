@@ -141,11 +141,21 @@ export function createGlobe(ctx) {
   geo.setAttribute('position', new THREE.Float32BufferAttribute(P, 3));
   geo.setAttribute('aColor', new THREE.Float32BufferAttribute(C, 3));
   geo.setAttribute('aSize', new THREE.Float32BufferAttribute(S, 1));
+  const dotU = { uPx: ctx.uniforms.uPx, uHit: { value: new THREE.Vector3(0, 1, 0) }, uHitT: { value: 9 }, uNear: { value: new THREE.Vector3(0, 1, 0) }, uHover: { value: 0 } };
   const dots = new THREE.Points(geo, new THREE.ShaderMaterial({
-    uniforms: { uPx: ctx.uniforms.uPx }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-    vertexShader: `attribute vec3 aColor; attribute float aSize; uniform float uPx; varying vec3 vColor; varying float vAlpha;
-      void main(){ vec4 mv = modelViewMatrix*vec4(position,1.); gl_PointSize = uPx * aSize * clamp(62. / -mv.z, 1., 3.2);
-        vColor = aColor; vec3 n = normalize(normalMatrix*position); vAlpha = smoothstep(0., .34, dot(n, normalize(-mv.xyz))); gl_Position = projectionMatrix*mv; }`,
+    uniforms: dotU, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: /* glsl */`attribute vec3 aColor; attribute float aSize; uniform float uPx, uHitT, uHover; uniform vec3 uHit, uNear; varying vec3 vColor; varying float vAlpha;
+      void main(){
+        vec3 dir = normalize(position);
+        // a touch sends a ring of light round the world, lifting the land as it passes
+        float ang = acos(clamp(dot(dir, uHit), -1., 1.));
+        float wave = exp(-pow((ang - uHitT * 1.15) * 13., 2.)) * (1. - smoothstep(1.1, 2.6, uHitT)) * smoothstep(0., .14, uHitT);
+        // and the land under her cursor glows, as if lit from her side of the glass
+        float near = exp(-pow(acos(clamp(dot(dir, uNear), -1., 1.)) * 5.5, 2.)) * uHover;
+        vec3 p = position * (1. + wave * .035 + near * .012);
+        vec4 mv = modelViewMatrix*vec4(p,1.); gl_PointSize = uPx * aSize * (1. + wave * .75 + near * .5) * clamp(62. / -mv.z, 1., 3.2);
+        vColor = aColor * (1. + wave * 1.7 + near * 1.3) + vec3(1., .62, .34) * (wave * .22 + near * .12);
+        vec3 n = normalize(normalMatrix*position); vAlpha = smoothstep(0., .34, dot(n, normalize(-mv.xyz))); gl_Position = projectionMatrix*mv; }`,
     fragmentShader: `varying vec3 vColor; varying float vAlpha; void main(){ float d = length(gl_PointCoord-.5); float a = smoothstep(.5,.12,d)*vAlpha; if (a<.01) discard; gl_FragColor = vec4(vColor*a, a); }`,
   }));
   spin.add(dots);
@@ -244,7 +254,10 @@ export function createGlobe(ctx) {
 
   const wq = new THREE.Quaternion(), facing = new THREE.Vector3();
   let labelsOn = false;
-  let velX = 0, lastDrag = -100, now = 0, entered = false, traveling = false;
+  let velX = 0, velY = 0, lastDrag = -100, now = 0, entered = false, traveling = false, dragging = false;
+  const hit = new THREE.Vector3();
+  // Where on the turning globe (in its own frame) a point on screen lands, or null if it misses.
+  const surface = (x, y, out) => (ctx.hitSphere(x, y, CENTER, R, hit) ? spin.worldToLocal(out.copy(hit)).normalize() : null);
   const far = () => ctx.fit(R * 2.45, R * 2.45);
   const near = () => (ctx.portrait ? Math.min(far(), Math.max(29, ctx.fit(R * 1.2, R * 1))) : ctx.fit(R * 2.2, R * 2.1));
   const shift = () => (ctx.portrait ? 3.1 : 0);
@@ -264,6 +277,7 @@ export function createGlobe(ctx) {
     },
     enter() {
       entered = true;
+      ui.el.root.classList.add('can-grab');
       ui.hint(cfg.hint);
       gsap.to([m1.material, l1.material], { opacity: 1, duration: 1.2, delay: 0.1 });
       m1.scale.setScalar(1.05); m2.scale.setScalar(1.05);
@@ -279,13 +293,24 @@ export function createGlobe(ctx) {
       const k = 0.0058 * (near() / 34);
       spin.rotation.y += dx * k;
       tilt.rotation.x = THREE.MathUtils.clamp(tilt.rotation.x + dy * k * 0.6, -0.55, 1.05);
-      velX = dx * k; lastDrag = now;
+      velX = dx * k; velY = dy * k * 0.6; lastDrag = now;
+      if (!dragging) { dragging = true; ui.grab(true); }
     },
-    dragEnd() { lastDrag = now; if (reduced) velX = 0; },
+    dragEnd() { lastDrag = now; dragging = false; ui.grab(false); if (reduced) velX = velY = 0; },
+    tap(x, y) {
+      if (!entered || !surface(x, y, dotU.uHit.value)) return;
+      dotU.uHitT.value = 0;
+      ctx.buzz(6);
+    },
+    leaving() { ui.grab(false); ui.el.root.classList.remove('can-grab'); },
     onResize() { const s = stationAt(entered ? near() : far()); ctx.setRig(s.pos, s.look); sizeLabels(); },
     update(t, dt) {
       now = t;
       spin.rotation.y += velX; velX *= Math.pow(0.0025, dt);
+      if (!dragging) { tilt.rotation.x = THREE.MathUtils.clamp(tilt.rotation.x + velY, -0.55, 1.05); velY *= Math.pow(0.0025, dt); }
+      dotU.uHitT.value += dt;
+      const over = entered && ctx.pointer.active && !!surface(ctx.pointer.x, ctx.pointer.y, dotU.uNear.value);
+      dotU.uHover.value += ((over ? 1 : 0) - dotU.uHover.value) * Math.min(1, dt * 6);
       // left alone, the globe drifts home so the arc is back in front of her
       if (t - lastDrag > 4 && Math.abs(velX) < 0.0004 && entered) {
         let diff = (targetSpin - spin.rotation.y) % (Math.PI * 2);
@@ -318,7 +343,7 @@ export function createGlobe(ctx) {
         m1.scale.setScalar(p); m2.scale.setScalar(p + 0.04);
       }
     },
-    dispose() { disposeGroup(group); tex.dispose(); },
+    dispose() { ui.grab(false); ui.el.root.classList.remove('can-grab'); disposeGroup(group); tex.dispose(); },
   };
   return inst;
 }

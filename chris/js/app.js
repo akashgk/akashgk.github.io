@@ -7,7 +7,7 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { createStars } from './stars.js';
 import { createGift } from './scenes/gift.js';
 import { canvasTexture, seeded } from './util.js';
-import { createShootingStars } from './fx.js';
+import { createShootingStars, createTrail } from './fx.js';
 
 const DEBUG = new URLSearchParams(location.search);
 const IS_DEBUG = DEBUG.has('debug');
@@ -26,6 +26,8 @@ function detectTier() {
   return forced !== null && forced !== '' ? +forced : tier;
 }
 
+const BASE_FOV = 45;
+
 const TIERS = [
   { dpr: 1.25, stars: 2800, msaa: 0, bloom: 0.4, particles: 0.45 },
   { dpr: 1.7, stars: 5200, msaa: 2, bloom: 0.5, particles: 0.7 },
@@ -33,18 +35,31 @@ const TIERS = [
 ];
 
 const GRADE = {
-  uniforms: { tDiffuse: { value: null }, uFade: { value: 0 }, uExposure: { value: 1 }, uTime: { value: 0 }, uWarm: { value: 0 } },
+  uniforms: { tDiffuse: { value: null }, uFade: { value: 0 }, uExposure: { value: 1 }, uTime: { value: 0 }, uWarm: { value: 0 }, uWarp: { value: 0 }, uFlash: { value: 0 } },
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
   fragmentShader: /* glsl */`
-    uniform sampler2D tDiffuse; uniform float uFade, uExposure, uTime, uWarm; varying vec2 vUv;
+    uniform sampler2D tDiffuse; uniform float uFade, uExposure, uTime, uWarm, uWarp, uFlash; varying vec2 vUv;
     vec3 tone(vec3 x) { return clamp((x * (2.51 * x + .03)) / (x * (2.43 * x + .59) + .14), 0., 1.); }
     vec3 srgb(vec3 c) { return mix(c * 12.92, 1.055 * pow(c, vec3(.41667)) - .055, step(.0031308, c)); }
     void main() {
       vec2 q = vUv - .5;
       // a whisper of lens colour fringing toward the edges, the way a real glass would
-      vec2 off = q * dot(q, q) * .012;
-      vec3 c = vec3(texture2D(tDiffuse, vUv + off).r, texture2D(tDiffuse, vUv).g, texture2D(tDiffuse, vUv - off).b);
-      c *= uExposure * uFade;
+      vec2 off = q * dot(q, q) * (.012 + uWarp * .05);
+      vec3 c = vec3(0.);
+      if (uWarp > .004) {
+        // in flight between scenes the sky smears outward from the centre, as it would at speed
+        float reach = uWarp * .11 * (.25 + dot(q, q) * 2.4);
+        // each pixel starts its taps at a different depth, so the smear is a streak and not a row of dots
+        float jit = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(.06711056, .00583715)) + uTime));
+        for (int i = 0; i < 8; i++) {
+          vec2 uv = vUv - q * reach * ((float(i) + jit) / 8.);
+          c += vec3(texture2D(tDiffuse, uv + off).r, texture2D(tDiffuse, uv).g, texture2D(tDiffuse, uv - off).b);
+        }
+        c /= 8.;
+        c *= 1. + uWarp * .5; // a smeared star is a dimmer star; give some of it back
+      } else c = vec3(texture2D(tDiffuse, vUv + off).r, texture2D(tDiffuse, vUv).g, texture2D(tDiffuse, vUv - off).b);
+      c *= uExposure * uFade * (1. + uFlash);
+      c += vec3(1., .82, .62) * uFlash * .05 * uFade;
       c *= 1. - dot(q, q) * .6;
       // the faintest warm lift in the shadows, so the night never goes dead grey
       c += vec3(.012, .006, .004) * (1. - dot(q, q)) * uFade * (1. + uWarm);
@@ -168,7 +183,7 @@ export async function startWorld({ content, ui, gestures, music, reduced, onFata
   const scene = new THREE.Scene();
   scene.environment = makeEnvironment(renderer);
   scene.environmentIntensity = 0.55;
-  const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 1500);
+  const camera = new THREE.PerspectiveCamera(BASE_FOV, W / H, 0.1, 1500);
   const sky = makeSky();
   scene.add(sky);
 
@@ -198,7 +213,8 @@ export async function startWorld({ content, ui, gestures, music, reduced, onFata
   // Point sizes never drop below 1.6 device pixels, or particles vanish on 1x screens.
   const pointScale = () => Math.max(dpr, 1.6);
   const uniforms = { uTime: { value: 0 }, uPx: { value: pointScale() }, uMusic: { value: 0 } };
-  const tan = () => Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  // Framing maths always uses the resting lens, never the wider one a flight borrows for a moment.
+  const tan = () => Math.tan(THREE.MathUtils.degToRad(BASE_FOV / 2));
 
   const ctx = {
     scene, camera, renderer, reduced, content, ui, music, gestures, lights, uniforms, gsap, bloom,
@@ -217,13 +233,89 @@ export async function startWorld({ content, ui, gestures, music, reduced, onFata
     fade(to, dur = 1, ease = 'sine.inOut') {
       return new Promise((resolve) => gsap.to(grade.uniforms.uFade, { value: to, duration: dur, ease, onComplete: resolve }));
     },
+    /** A bloom of light across the whole frame, for the moments that deserve one. */
+    flash(amount = 0.6, dur = 1.4) {
+      gsap.fromTo(grade.uniforms.uFlash, { value: reduced ? amount * 0.35 : amount }, { value: 0, duration: dur, ease: 'power2.out', overwrite: true });
+    },
+    /** A short tremor through the camera. */
+    shake(amount = 0.2) { if (!reduced) rig.shake = Math.max(rig.shake, amount); },
+    /** A tick in the hand, on phones that can. */
+    buzz(ms = 8) { try { navigator.vibrate?.(ms); } catch { /* not allowed, not needed */ } },
+    /** Where a ray through a point on screen meets a sphere, or null. */
+    hitSphere(x, y, center, radius, out = new THREE.Vector3()) {
+      ndc.set((x / W) * 2 - 1, 1 - (y / H) * 2);
+      caster.setFromCamera(ndc, camera);
+      ball.center.copy(center); ball.radius = radius;
+      return caster.ray.intersectSphere(ball, out);
+    },
+    /** Where a ray through a point on screen meets the plane z = `z`, or null. */
+    hitPlaneZ(x, y, z, out = new THREE.Vector3()) {
+      ndc.set((x / W) * 2 - 1, 1 - (y / H) * 2);
+      caster.setFromCamera(ndc, camera);
+      sheet.constant = -z;
+      return caster.ray.intersectPlane(sheet, out);
+    },
+    /** First of `objects` under a point on screen, or null. */
+    pick(x, y, objects) {
+      ndc.set((x / W) * 2 - 1, 1 - (y / H) * 2);
+      caster.setFromCamera(ndc, camera);
+      return caster.intersectObjects(objects, false)[0] || null;
+    },
   };
+  const caster = new THREE.Raycaster(), ndc = new THREE.Vector2(), ball = new THREE.Sphere(), sheet = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+
+  // ---------- pointer ----------
+  // Where her finger or cursor is. A mouse is always "there"; a finger only while it touches.
+  const pointer = { x: W / 2, y: H / 2, nx: 0, ny: 0, active: false, down: false, mouse: false };
+  ctx.pointer = pointer;
+  const trail = reduced ? null : createTrail(ctx, tierIndex === 0 ? 90 : 160);
+  ctx.sparkle = (x, y, n = 12) => trail?.emit(x, y, n, 0.34);
+  let trailX = 0, trailY = 0;
+  const track = (e) => {
+    pointer.x = e.clientX; pointer.y = e.clientY;
+    pointer.nx = (e.clientX / W) * 2 - 1; pointer.ny = 1 - (e.clientY / H) * 2;
+    pointer.mouse = e.pointerType === 'mouse';
+  };
+  addEventListener('pointerdown', (e) => { track(e); pointer.down = true; pointer.active = true; trailX = e.clientX; trailY = e.clientY; }, { passive: true });
+  addEventListener('pointermove', (e) => {
+    track(e);
+    if (pointer.mouse) pointer.active = true;
+    if (!trail || !pointer.active) return;
+    const moved = Math.hypot(e.clientX - trailX, e.clientY - trailY);
+    if (moved < 9) return;
+    // an even dusting along the stroke, however fast it was drawn
+    const n = Math.min(5, Math.floor(moved / 9));
+    for (let i = 1; i <= n; i++) trail.emit(trailX + (e.clientX - trailX) * (i / n), trailY + (e.clientY - trailY) * (i / n), 1);
+    trailX = e.clientX; trailY = e.clientY;
+  }, { passive: true });
+  const lift = (e) => { pointer.down = false; if (e.pointerType !== 'mouse') pointer.active = false; };
+  addEventListener('pointerup', lift, { passive: true });
+  addEventListener('pointercancel', lift, { passive: true });
+  document.documentElement.addEventListener('pointerleave', () => { pointer.active = false; pointer.down = false; });
+
+  // On a phone there is no cursor to lean with, so the world leans with the phone itself.
+  // (iPhones ask permission for this with a system dialog; not worth interrupting her for.)
+  const tiltOf = { x: 0, y: 0, on: false };
+  if (!reduced && matchMedia('(pointer: coarse)').matches && 'DeviceOrientationEvent' in window && typeof DeviceOrientationEvent.requestPermission !== 'function') {
+    let base = null;
+    addEventListener('deviceorientation', (e) => {
+      if (e.gamma == null || e.beta == null) return;
+      const side = Math.abs(screen.orientation?.angle || 0) === 90;
+      const gx = side ? e.beta : e.gamma, gy = side ? e.gamma : e.beta;
+      if (!base) base = { x: gx, y: gy };
+      // however she holds it becomes "level" after a few seconds
+      base.x += (gx - base.x) * 0.02; base.y += (gy - base.y) * 0.02;
+      tiltOf.x = THREE.MathUtils.clamp((gx - base.x) / 16, -1, 1);
+      tiltOf.y = THREE.MathUtils.clamp((gy - base.y) / 16, -1, 1);
+      tiltOf.on = true;
+    });
+  }
 
   ctx.stars = createStars(ctx, Math.floor(tier.stars * (reduced ? 0.7 : 1)));
   const shooting = createShootingStars(ctx);
 
   // ---------- camera rig ----------
-  const rig = { pos: new THREE.Vector3(), look: new THREE.Vector3(), roll: 0, drift: reduced ? 0 : 1, flying: false };
+  const rig = { pos: new THREE.Vector3(), look: new THREE.Vector3(), roll: 0, drift: reduced ? 0 : 1, flying: false, shake: 0 };
   ctx.rig = rig;
   ctx.setRig = (pos, look) => { rig.pos.copy(pos); rig.look.copy(look); rig.roll = 0; };
 
@@ -344,7 +436,12 @@ export async function startWorld({ content, ui, gestures, music, reduced, onFata
   gestures.on({
     beat() {
       if (busy || !current) return;
+      ctx.buzz(8);
       if (current.done) story.advance(); else current.beat?.();
+    },
+    tap(x, y) {
+      ctx.sparkle(x, y);
+      if (!busy) current?.tap?.(x, y);
     },
     pull(p) {
       ui.pull(busy || !current ? 0 : p);
@@ -369,13 +466,15 @@ export async function startWorld({ content, ui, gestures, music, reduced, onFata
   };
   const stats = { degrades: 0, perScene: {} };
 
-  const up = new THREE.Vector3();
-  let lean = 0;
+  const up = new THREE.Vector3(), fwd = new THREE.Vector3(), right = new THREE.Vector3(), rise = new THREE.Vector3(), lastPos = new THREE.Vector3();
+  const sway = { x: 0, y: 0, k: 1 };
+  let lean = 0, warp = 0, fov = BASE_FOV;
   function frame(ms) {
     if (stopped) return;
     const t = ms / 1000, dt = Math.min(0.1, t - lastT || 0.016);
     lastT = t;
     uniforms.uTime.value = t;
+    grade.uniforms.uTime.value = t % 7;
     uniforms.uMusic.value = music.sample(t);
 
     const d = rig.drift;
@@ -384,6 +483,34 @@ export async function startWorld({ content, ui, gestures, music, reduced, onFata
     const want = busy || reduced ? 0 : gestures.pull;
     lean += (want - lean) * Math.min(1, dt * (want > lean ? 14 : 3.5));
     if (Math.abs(lean) > 1e-4) camera.position.lerp(rig.look, lean * 0.07);
+
+    // The camera swings a little around whatever it is looking at, following her cursor (or the
+    // tilt of her phone), so the scene has real depth under her hand instead of sitting flat.
+    const wantX = reduced ? 0 : pointer.mouse && pointer.active ? pointer.nx : tiltOf.on ? tiltOf.x : 0;
+    const wantY = reduced ? 0 : pointer.mouse && pointer.active ? pointer.ny : tiltOf.on ? -tiltOf.y : 0;
+    const ease = 1 - Math.pow(0.03, dt);
+    sway.x += (wantX - sway.x) * ease; sway.y += (wantY - sway.y) * ease;
+    sway.k += ((busy ? 0.5 : current?.parallax ?? 1) - sway.k) * ease;
+    fwd.subVectors(rig.look, camera.position);
+    const reach = Math.min(fwd.length(), 60) * sway.k;
+    fwd.normalize();
+    right.set(-fwd.z, 0, fwd.x).normalize(); // forward crossed with world up
+    rise.crossVectors(right, fwd);
+    camera.position.addScaledVector(right, sway.x * reach * 0.045).addScaledVector(rise, sway.y * reach * 0.03);
+    if (rig.shake > 0.002) {
+      camera.position.x += (Math.random() - 0.5) * rig.shake; camera.position.y += (Math.random() - 0.5) * rig.shake;
+      rig.shake *= Math.pow(0.004, dt);
+    }
+
+    // Speed between scenes: the lens opens and the stars streak. Card-to-card moves are too slow to trigger it.
+    const speed = rig.flying ? rig.pos.distanceTo(lastPos) / dt : 0;
+    lastPos.copy(rig.pos);
+    const wantWarp = THREE.MathUtils.smoothstep(speed, 9, 42);
+    warp += (wantWarp - warp) * (1 - Math.pow(wantWarp > warp ? 0.02 : 0.12, dt));
+    grade.uniforms.uWarp.value = warp;
+    const wantFov = BASE_FOV + warp * 9;
+    if (Math.abs(wantFov - fov) > 0.01) { fov = wantFov; camera.fov = fov; camera.updateProjectionMatrix(); }
+
     up.set(Math.sin(rig.roll), Math.cos(rig.roll), 0);
     camera.up.copy(up);
     camera.lookAt(rig.look);
